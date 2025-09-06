@@ -44,6 +44,7 @@ export default function Home() {
           applicationUrl: job.fields['Application URL'] || '',
           tags: job.fields.Tags ? job.fields.Tags.split(',').map(tag => tag.trim()) : [],
         }));
+        console.log(transformedJobs)
         setJobs(transformedJobs);
       } catch (error) {
         console.error('Error fetching jobs:', error);
