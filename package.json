@@ -6,7 +6,14 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "init-gulf-jobs": "node scripts/init-gulf-jobs.js",
+    "debug-gulf-jobs": "node scripts/debug-gulf-jobs.js",
+    "test-gulf-jobs": "node scripts/test-gulf-jobs.js",
+    "test-jobs-api": "node scripts/test-jobs-api.js",
+    "trigger-gulf-jobs": "node scripts/trigger-gulf-jobs.js",
+    "scrape-gulf-jobs": "curl -X POST http://localhost:3000/api/gulf-jobs",
+    "start-scheduler": "curl -X POST http://localhost:3000/api/scheduler -H 'Content-Type: application/json' -d '{\"action\":\"start\"}'"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",

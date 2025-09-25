@@ -4,11 +4,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { Job, SearchFilters } from '@/types';
 import JobCard from '@/components/jobs/JobCard';
 import JobFilters from '@/components/jobs/JobFilters';
-import { getJobs } from '@/lib/data-service';
 
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [jobStats, setJobStats] = useState<any>(null);
   const [filters, setFilters] = useState<SearchFilters>({
     query: '',
     location: '',
@@ -23,9 +23,17 @@ export default function Home() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const jobs = await getJobs();
-        console.log('Fetched jobs:', jobs);
-        setJobs(jobs);
+        const response = await fetch('/api/jobs?includeStats=true');
+        const data = await response.json();
+        
+        if (data.success) {
+          console.log('Fetched jobs:', data.jobs);
+          console.log('Job statistics:', data.statistics);
+          setJobs(data.jobs);
+          setJobStats(data.statistics);
+        } else {
+          console.error('Error fetching jobs:', data.error);
+        }
       } catch (error) {
         console.error('Error fetching jobs:', error);
       } finally {
@@ -113,6 +121,33 @@ export default function Home() {
         <p className="text-gray-600">
           Discover amazing opportunities with top companies. {filteredAndSortedJobs.length} jobs available.
         </p>
+        
+        {/* Gulf Jobs Indicator */}
+        {jobStats && jobStats.totalJobs > 0 && (
+          <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                <div>
+                  <h3 className="text-sm font-semibold text-blue-800">
+                    🌍 Gulf Jobs Available
+                  </h3>
+                  <p className="text-xs text-blue-600">
+                    {jobStats.totalJobs} jobs from {Object.keys(jobStats.byCountry).length} Gulf countries
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-blue-600">
+                  Recent: {jobStats.recentJobs} jobs
+                </div>
+                <div className="text-xs text-blue-500">
+                  Sources: {Object.keys(jobStats.bySource).join(', ')}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Filters */}

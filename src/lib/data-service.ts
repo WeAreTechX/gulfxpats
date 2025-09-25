@@ -28,9 +28,22 @@ class DataService {
   // Generic method to get jobs from any source
   async getJobs(): Promise<Job[]> {
     try {
-      const { getJobsFromGoogleSheets } = await import('./google-sheets');
-      const gsJobs = await getJobsFromGoogleSheets();
-      return gsJobs.slice(1);
+      // First try to get Gulf jobs from storage (server-side only)
+      if (typeof window === 'undefined') {
+        try {
+          const { gulfJobStorage } = await import('./gulf-job-storage');
+          const gulfJobs = await gulfJobStorage.loadLatestJobs();
+          if (gulfJobs.length > 0) {
+            console.log(`Loaded ${gulfJobs.length} Gulf jobs from storage`);
+            return gulfJobStorage.transformToJobs(gulfJobs);
+          }
+        } catch (gulfError) {
+          console.log(gulfError);
+          console.log('Gulf jobs not available, falling back to Google Sheets');
+        }
+      }
+
+      return []
     } catch (error) {
       console.error(`Error fetching jobs from ${this.config.source}:`, error);
       return [];
@@ -50,30 +63,6 @@ class DataService {
     }
   }
 
-  // Generic method to get resources from any source
-  async getResources(): Promise<Resource[]> {
-    try {
-      const { getResourcesFromGoogleSheets } = await import('./google-sheets');
-      const gsResources = await getResourcesFromGoogleSheets();
-      return gsResources.map(resource => this.transformGoogleSheetsResourceToResource(resource));
-    } catch (error) {
-      console.error(`Error fetching resources from ${this.config.source}:`, error);
-      return [];
-    }
-  }
-
-  // Generic method to get a specific job by ID
-  async getJobById(id: string): Promise<Job | null> {
-    try {
-      const { getJobByIdFromGoogleSheets } = await import('./google-sheets');
-      const gsJob = await getJobByIdFromGoogleSheets(id);
-      return gsJob ? this.transformGoogleSheetsJobToJob(gsJob) : null;
-    } catch (error) {
-      console.error(`Error fetching job by ID from ${this.config.source}:`, error);
-      return null;
-    }
-  }
-
   // Generic method to get a specific company by ID
   async getCompanyById(id: string): Promise<Company | null> {
     try {
@@ -83,6 +72,18 @@ class DataService {
     } catch (error) {
       console.error(`Error fetching company by ID from ${this.config.source}:`, error);
       return null;
+    }
+  }
+
+  // Generic method to get resources from any source
+  async getResources(): Promise<Resource[]> {
+    try {
+      const { getResourcesFromGoogleSheets } = await import('./google-sheets');
+      const gsResources = await getResourcesFromGoogleSheets();
+      return gsResources.map(resource => this.transformGoogleSheetsResourceToResource(resource));
+    } catch (error) {
+      console.error(`Error fetching resources from ${this.config.source}:`, error);
+      return [];
     }
   }
 
@@ -120,6 +121,78 @@ class DataService {
       tags: gsResource.tags ? gsResource.tags.split(',').map((t: string) => t.trim()).filter((t: string) => t) : [],
     };
   }
+
+  // Method to get Gulf jobs specifically
+  async getGulfJobs(): Promise<Job[]> {
+    try {
+      if (typeof window === 'undefined') {
+        const { gulfJobStorage } = await import('./gulf-job-storage');
+        const gulfJobs = await gulfJobStorage.loadLatestJobs();
+        return gulfJobStorage.transformToJobs(gulfJobs);
+      }
+      return [];
+    } catch (error) {
+      console.error('Error fetching Gulf jobs:', error);
+      return [];
+    }
+  }
+
+  // Method to get jobs by country
+  async getJobsByCountry(country: string): Promise<Job[]> {
+    try {
+      if (typeof window === 'undefined') {
+        const { gulfJobStorage } = await import('./gulf-job-storage');
+        const gulfJobs = await gulfJobStorage.loadLatestJobs();
+        const filteredJobs = gulfJobs.filter(job => 
+          job.location.toLowerCase().includes(country.toLowerCase())
+        );
+        return gulfJobStorage.transformToJobs(filteredJobs);
+      }
+      return [];
+    } catch (error) {
+      console.error(`Error fetching jobs for ${country}:`, error);
+      return [];
+    }
+  }
+
+  // Method to get jobs by city
+  async getJobsByCity(city: string, country?: string): Promise<Job[]> {
+    try {
+      if (typeof window === 'undefined') {
+        const { gulfJobStorage } = await import('./gulf-job-storage');
+        const gulfJobs = await gulfJobStorage.loadLatestJobs();
+        let filteredJobs = gulfJobs.filter(job => 
+          job.location.toLowerCase().includes(city.toLowerCase())
+        );
+        
+        if (country) {
+          filteredJobs = filteredJobs.filter(job => 
+            job.location.toLowerCase().includes(country.toLowerCase())
+          );
+        }
+        
+        return gulfJobStorage.transformToJobs(filteredJobs);
+      }
+      return [];
+    } catch (error) {
+      console.error(`Error fetching jobs for ${city}:`, error);
+      return [];
+    }
+  }
+
+  // Method to get job statistics
+  async getJobStatistics(): Promise<any> {
+    try {
+      if (typeof window === 'undefined') {
+        const { gulfJobStorage } = await import('./gulf-job-storage');
+        return await gulfJobStorage.getJobStatistics();
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting job statistics:', error);
+      return null;
+    }
+  }
 }
 
 // Create and export default instance
@@ -131,7 +204,12 @@ export { DataService, dataService };
 // Export convenience functions that use the default instance
 export const getJobs = () => dataService.getJobs();
 export const getCompanies = () => dataService.getCompanies();
-export const getResources = () => dataService.getResources();
-export const getJobById = (id: string) => dataService.getJobById(id);
 export const getCompanyById = (id: string) => dataService.getCompanyById(id);
+export const getResources = () => dataService.getResources();
 export const getResourceById = (id: string) => dataService.getResourceById(id);
+
+// Export Gulf job functions
+export const getGulfJobs = () => dataService.getGulfJobs();
+export const getJobsByCountry = (country: string) => dataService.getJobsByCountry(country);
+export const getJobsByCity = (city: string, country?: string) => dataService.getJobsByCity(city, country);
+export const getJobStatistics = () => dataService.getJobStatistics();
