@@ -1,38 +1,41 @@
 import 'dotenv/config';
+import { Job, JobType, JobStatus } from "@/types";
 
 // Google Sheets API types
 interface GoogleSheetsJob {
-  id: string;
+  uid: string;
   title: string;
-  company: string;
+  description: string;
+  basicRequirements: string;
+  preferredRequirements: string;
+  status: JobStatus,
+  postedDate: string;
   location: string;
-  type: string;
+  type: JobType,
   remote: boolean;
   salaryMin: number;
   salaryMax: number;
   currency: string;
-  description: string;
-  requirements: string;
-  benefits: string;
-  postedDate: string;
-  applicationUrl: string;
-  tags: string;
+  companyId: string;
+  companyName: string;
+  companyIndustry: string;
+  companySize: string;
+  hiringManager: string;
+  hiringManagerContact: string;
 }
 
 interface GoogleSheetsCompany {
-  id: string;
+  uid: string;
   name: string;
-  logo?: string;
-  description: string;
+  email: string;
   website: string;
+  logo: string;
+  location: string;
   address: string;
-  industry: string;
-  size: string;
-  founded: number;
-  openRoles: number;
-  linkedinUrl?: string;
-  twitterUrl?: string;
-  facebookUrl?: string;
+  rawAddress: string;
+  phone: string;
+  description: string;
+  linkedIn?: string
 }
 
 interface GoogleSheetsResource {
@@ -51,7 +54,7 @@ interface GoogleSheetsResource {
 const GOOGLE_SHEETS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY;
 const GOOGLE_SHEETS_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_ID;
 const GOOGLE_SHEETS_JOBS_RANGE = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_JOBS_RANGE || 'Jobs!A2:P';
-const GOOGLE_SHEETS_COMPANIES_RANGE = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_COMPANIES_RANGE || 'Companies!A2:M';
+const GOOGLE_SHEETS_COMPANIES_RANGE = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_COMPANIES_RANGE || 'Companies!A1:N';
 const GOOGLE_SHEETS_RESOURCES_RANGE = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_RESOURCES_RANGE || 'Resources!A2:I';
 
 // Helper function to fetch data from Google Sheets
@@ -77,41 +80,43 @@ async function fetchGoogleSheetsData(range: string): Promise<string[][]> {
 }
 
 // Transform raw Google Sheets data to structured objects
-export function transformGoogleSheetsJob(row: string[]): GoogleSheetsJob {
+export function transformGoogleSheetsJob(row: string[]): Job {
   return {
-    id: row[0] || '',
-    title: row[1] || '',
-    company: row[2] || '',
-    location: row[3] || '',
-    type: row[4] || 'full-time',
-    remote: row[5]?.toLowerCase() === 'true' || row[5]?.toLowerCase() === 'yes',
-    salaryMin: parseFloat(row[6]) || 0,
-    salaryMax: parseFloat(row[7]) || 0,
-    currency: row[8] || 'USD',
-    description: row[9] || '',
-    requirements: row[10] || '',
-    benefits: row[11] || '',
-    postedDate: row[12] || '',
-    applicationUrl: row[13] || '',
-    tags: row[14] || '',
+    uid: row[0],
+    title: row[1],
+    description: row[2],
+    basicRequirements: row[3],
+    preferredRequirements: row[4],
+    status: (row[5] as JobStatus) || 'open',
+    postedDate: row[6],
+    location: row[7],
+    type: (row[5] as JobType) || 'full-time',
+    remote: !!(row[8] && row[8].toLowerCase() === 'remote'),
+    salaryMin: parseFloat(row[9]),
+    salaryMax: parseFloat(row[10]),
+    currency: row[11],
+    companyId: row[12],
+    companyName: row[13],
+    companyIndustry: row[14],
+    companySize: row[15],
+    hiringManager: row[16],
+    hiringManagerContact: row[17]
   };
 }
 
 export function transformGoogleSheetsCompany(row: string[]): GoogleSheetsCompany {
   return {
-    id: row[0] || '',
-    name: row[1] || '',
-    logo: row[2] || undefined,
-    description: row[3] || '',
-    website: row[4] || '',
-    address: row[5] || '',
-    industry: row[6] || '',
-    size: row[7] || '',
-    founded: parseInt(row[8]) || 0,
-    openRoles: parseInt(row[9]) || 0,
-    linkedinUrl: row[10] || undefined,
-    twitterUrl: row[11] || undefined,
-    facebookUrl: row[12] || undefined,
+    uid: row[0],
+    name: row[1],
+    email: row[2],
+    website: row[3],
+    logo: row[4],
+    location: row[5],
+    address: row[6],
+    rawAddress: row[7],
+    phone: row[8],
+    description: row[9],
+    linkedIn: row[10]
   };
 }
 
@@ -161,10 +166,10 @@ export async function getResourcesFromGoogleSheets(): Promise<GoogleSheetsResour
 }
 
 // Helper function to get a specific job by ID
-export async function getJobByIdFromGoogleSheets(id: string): Promise<GoogleSheetsJob | null> {
+export async function getJobByIdFromGoogleSheets(uid: string): Promise<GoogleSheetsJob | null> {
   try {
     const jobs = await getJobsFromGoogleSheets();
-    return jobs.find(job => job.id === id) || null;
+    return jobs.find(job => job.uid === uid) || null;
   } catch (error) {
     console.error('Error fetching job by ID from Google Sheets:', error);
     return null;
@@ -172,10 +177,10 @@ export async function getJobByIdFromGoogleSheets(id: string): Promise<GoogleShee
 }
 
 // Helper function to get a specific company by ID
-export async function getCompanyByIdFromGoogleSheets(id: string): Promise<GoogleSheetsCompany | null> {
+export async function getCompanyByIdFromGoogleSheets(uid: string): Promise<GoogleSheetsCompany | null> {
   try {
     const companies = await getCompaniesFromGoogleSheets();
-    return companies.find(company => company.id === id) || null;
+    return companies.find(company => company.uid === uid) || null;
   } catch (error) {
     console.error('Error fetching company by ID from Google Sheets:', error);
     return null;

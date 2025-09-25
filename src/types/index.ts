@@ -1,40 +1,40 @@
+export type JobType = 'full-time' | 'contract' | 'part-time' | 'internship';
+export type JobStatus = 'open' | 'paused' | 'closed';
 export interface Job {
-  id: string;
+  uid: string;
   title: string;
-  company: string;
-  companyId: string;
-  location: string;
-  type: 'full-time' | 'part-time' | 'contract' | 'internship';
-  remote: boolean;
-  salary?: {
-    min: number;
-    max: number;
-    currency: string;
-  };
   description: string;
-  requirements: string[];
-  benefits: string[];
-  postedAt: string;
-  applicationUrl: string;
-  tags: string[];
+  basicRequirements: string;
+  preferredRequirements: string;
+  status: 'open' | 'closed' | 'paused';
+  postedDate: string;
+  location: string;
+  type: JobType,
+  remote: boolean;
+  salaryMin: number;
+  salaryMax: number;
+  currency: string;
+  companyId: string;
+  companyName: string;
+  companyIndustry: string;
+  companySize: string;
+  hiringManager: string;
+  hiringManagerContact: string;
 }
 
 export interface Company {
-  id: string;
+  uid: string;
   name: string;
-  logo?: string;
-  description: string;
+  email: string;
   website: string;
+  logo: string;
+  location: string;
   address: string;
-  industry: string;
-  size: string;
-  founded: number;
-  openJobs: number;
-  socialMedia: {
-    linkedin?: string;
-    twitter?: string;
-    facebook?: string;
-  };
+  rawAddress: string;
+  phone: string;
+  description: string;
+  linkedIn?: string;
+  openJobs?: number;
 }
 
 export interface User {
@@ -69,10 +69,8 @@ export interface SearchFilters {
   location: string;
   jobType: string;
   remote: boolean;
-  salary: {
-    min: number;
-    max: number;
-  };
+  salaryMin: number;
+  salaryMax: number;
   company: string;
 }
 

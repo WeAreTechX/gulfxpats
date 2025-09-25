@@ -1,14 +1,5 @@
 import 'dotenv/config';
-
 import Airtable from 'airtable';
-import { 
-  getJobsFromGoogleSheets, 
-  getCompaniesFromGoogleSheets, 
-  getResourcesFromGoogleSheets,
-  transformGoogleSheetsJob,
-  transformGoogleSheetsCompany,
-  transformGoogleSheetsResource
-} from './google-sheets';
 
 // Initialize Airtable only if API key is available
 const base = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY && process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID
@@ -69,36 +60,8 @@ export interface AirtableResource {
   };
 }
 
-export async function getJobs(): Promise<AirtableJob[]> {
-  // Check if we should use Google Sheets instead
-  if (process.env.NEXT_PUBLIC_USE_GOOGLE_SHEETS === 'true') {
-    try {
-      const gsJobs = await getJobsFromGoogleSheets();
-      return gsJobs.map(job => ({
-        id: job.id,
-        fields: {
-          Title: job.title,
-          Company: [job.company],
-          Location: job.location,
-          Type: job.type,
-          Remote: job.remote,
-          'Salary Min': job.salaryMin,
-          'Salary Max': job.salaryMax,
-          Currency: job.currency,
-          Description: job.description,
-          Requirements: job.requirements,
-          Benefits: job.benefits,
-          'Posted Date': job.postedDate,
-          'Application URL': job.applicationUrl,
-          Tags: job.tags,
-        }
-      }));
-    } catch (error) {
-      console.error('Error fetching jobs from Google Sheets:', error);
-      return [];
-    }
-  }
-
+// Airtable-specific functions (no Google Sheets dependencies)
+export async function getJobsFromAirtable(): Promise<AirtableJob[]> {
   if (!base) {
     console.log('Airtable not configured, returning empty array');
     return [];
@@ -119,34 +82,7 @@ export async function getJobs(): Promise<AirtableJob[]> {
   }
 }
 
-export async function getCompanies(): Promise<AirtableCompany[]> {
-  // Check if we should use Google Sheets instead
-  if (process.env.NEXT_PUBLIC_USE_GOOGLE_SHEETS === 'true') {
-    try {
-      const gsCompanies = await getCompaniesFromGoogleSheets();
-      return gsCompanies.map(company => ({
-        id: company.id,
-        fields: {
-          Name: company.name,
-          Logo: company.logo ? [{ url: company.logo }] : [],
-          Description: company.description,
-          Website: company.website,
-          Address: company.address,
-          Industry: company.industry,
-          Size: company.size,
-          Founded: company.founded,
-          OpenRoles: company.openRoles,
-          'LinkedIn URL': company.linkedinUrl,
-          'Twitter URL': company.twitterUrl,
-          'Facebook URL': company.facebookUrl,
-        }
-      }));
-    } catch (error) {
-      console.error('Error fetching companies from Google Sheets:', error);
-      return [];
-    }
-  }
-
+export async function getCompaniesFromAirtable(): Promise<AirtableCompany[]> {
   if (!base) {
     console.log('Airtable not configured, returning empty array');
     return [];
@@ -167,30 +103,7 @@ export async function getCompanies(): Promise<AirtableCompany[]> {
   }
 }
 
-export async function getResources(): Promise<AirtableResource[]> {
-  // Check if we should use Google Sheets instead
-  if (process.env.NEXT_PUBLIC_USE_GOOGLE_SHEETS === 'true') {
-    try {
-      const gsResources = await getResourcesFromGoogleSheets();
-      return gsResources.map(resource => ({
-        id: resource.id,
-        fields: {
-          Title: resource.title,
-          Type: resource.type,
-          URL: resource.url,
-          Description: resource.description,
-          Duration: resource.duration,
-          Author: resource.author,
-          'Published Date': resource.publishedDate,
-          Tags: resource.tags,
-        }
-      }));
-    } catch (error) {
-      console.error('Error fetching resources from Google Sheets:', error);
-      return [];
-    }
-  }
-
+export async function getResourcesFromAirtable(): Promise<AirtableResource[]> {
   if (!base) {
     console.log('Airtable not configured, returning empty array');
     return [];
@@ -211,7 +124,7 @@ export async function getResources(): Promise<AirtableResource[]> {
   }
 }
 
-export async function getJobById(id: string): Promise<AirtableJob | null> {
+export async function getJobByIdFromAirtable(id: string): Promise<AirtableJob | null> {
   if (!base) {
     console.log('Airtable not configured, returning null');
     return null;
@@ -229,7 +142,7 @@ export async function getJobById(id: string): Promise<AirtableJob | null> {
   }
 }
 
-export async function getCompanyById(id: string): Promise<AirtableCompany | null> {
+export async function getCompanyByIdFromAirtable(id: string): Promise<AirtableCompany | null> {
   if (!base) {
     console.log('Airtable not configured, returning null');
     return null;
@@ -245,4 +158,53 @@ export async function getCompanyById(id: string): Promise<AirtableCompany | null
     console.error('Error fetching company from Airtable:', error);
     return null;
   }
+}
+
+export async function getResourceByIdFromAirtable(id: string): Promise<AirtableResource | null> {
+  if (!base) {
+    console.log('Airtable not configured, returning null');
+    return null;
+  }
+
+  try {
+    const record = await base('Resources').find(id);
+    return {
+      id: record.id,
+      fields: record.fields as any
+    };
+  } catch (error) {
+    console.error('Error fetching resource from Airtable:', error);
+    return null;
+  }
+}
+
+// Legacy functions for backward compatibility (deprecated - use data-service.ts instead)
+export async function getJobs(): Promise<AirtableJob[]> {
+  console.warn('getJobs() is deprecated. Use getJobsFromAirtable() or data-service.ts instead.');
+  return getJobsFromAirtable();
+}
+
+export async function getCompanies(): Promise<AirtableCompany[]> {
+  console.warn('getCompanies() is deprecated. Use getCompaniesFromAirtable() or data-service.ts instead.');
+  return getCompaniesFromAirtable();
+}
+
+export async function getResources(): Promise<AirtableResource[]> {
+  console.warn('getResources() is deprecated. Use getResourcesFromAirtable() or data-service.ts instead.');
+  return getResourcesFromAirtable();
+}
+
+export async function getJobById(id: string): Promise<AirtableJob | null> {
+  console.warn('getJobById() is deprecated. Use getJobByIdFromAirtable() or data-service.ts instead.');
+  return getJobByIdFromAirtable(id);
+}
+
+export async function getCompanyById(id: string): Promise<AirtableCompany | null> {
+  console.warn('getCompanyById() is deprecated. Use getCompanyByIdFromAirtable() or data-service.ts instead.');
+  return getCompanyByIdFromAirtable(id);
+}
+
+export async function getResourceById(id: string): Promise<AirtableResource | null> {
+  console.warn('getResourceById() is deprecated. Use getResourceByIdFromAirtable() or data-service.ts instead.');
+  return getResourceByIdFromAirtable(id);
 }

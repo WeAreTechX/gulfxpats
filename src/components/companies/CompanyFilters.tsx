@@ -2,18 +2,24 @@
 
 import { useState } from 'react';
 import { Search, Filter, X } from 'lucide-react';
-import { SearchFilters } from '@/types';
 
-interface JobFiltersProps {
-  filters: SearchFilters;
-  onFiltersChange: (filters: SearchFilters) => void;
+interface CompanyFilters {
+  query: string;
+  location: string;
+  industry: string;
+  openJobs: boolean;
+}
+
+interface CompanyFiltersProps {
+  filters: CompanyFilters;
+  onFiltersChange: (filters: CompanyFilters) => void;
   onSortChange: (sort: { field: string; direction: string }) => void;
 }
 
-export default function JobFilters({ filters, onFiltersChange, onSortChange }: JobFiltersProps) {
+export default function CompanyFilters({ filters, onFiltersChange, onSortChange }: CompanyFiltersProps) {
   const [showFilters, setShowFilters] = useState(false);
 
-  const handleFilterChange = (key: keyof SearchFilters, value: any) => {
+  const handleFilterChange = (key: keyof CompanyFilters, value: any) => {
     onFiltersChange({
       ...filters,
       [key]: value,
@@ -24,16 +30,12 @@ export default function JobFilters({ filters, onFiltersChange, onSortChange }: J
     onFiltersChange({
       query: '',
       location: '',
-      jobType: '',
-      remote: false,
-      salaryMin: 0,
-      salaryMax: 0,
-      company: '',
+      industry: '',
+      openJobs: false,
     });
   };
 
-  const hasActiveFilters = filters.query || filters.location || filters.jobType || 
-    filters.remote || filters.salaryMin > 0 || filters.company;
+  const hasActiveFilters = filters.query || filters.location || filters.industry || filters.openJobs;
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
@@ -43,7 +45,7 @@ export default function JobFilters({ filters, onFiltersChange, onSortChange }: J
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search jobs, companies, or keywords..."
+            placeholder="Search companies, industries, or keywords..."
             value={filters.query}
             onChange={(e) => handleFilterChange('query', e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none text-black font-medium"
@@ -52,7 +54,7 @@ export default function JobFilters({ filters, onFiltersChange, onSortChange }: J
         <div className="flex gap-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center px-4 py-2 border border-gray-300 rounded-lg  text-black cursor-pointer ${showFilters ? 'bg-black text-white ' : ''}`}
+            className={`flex items-center px-4 py-2 border border-gray-300 rounded-lg text-black cursor-pointer ${showFilters ? 'bg-[#101418] text-white' : ''}`}
           >
             <Filter className="h-4 w-4 mr-2" />
             Filters
@@ -87,36 +89,29 @@ export default function JobFilters({ filters, onFiltersChange, onSortChange }: J
               />
             </div>
 
-            {/* Job Type */}
+            {/* Industry */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Job Type
+                Industry
               </label>
               <select
-                value={filters.jobType}
-                onChange={(e) => handleFilterChange('jobType', e.target.value)}
+                value={filters.industry}
+                onChange={(e) => handleFilterChange('industry', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none text-black"
               >
-                <option value="">All Types</option>
-                <option value="full-time">Full Time</option>
-                <option value="part-time">Part Time</option>
-                <option value="contract">Contract</option>
-                <option value="internship">Internship</option>
+                <option value="">All Industries</option>
+                <option value="Technology">Technology</option>
+                <option value="Finance">Finance</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Education">Education</option>
+                <option value="Retail">Retail</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Media">Media</option>
+                <option value="Non-profit">Non-profit</option>
+                <option value="Government">Government</option>
+                <option value="Other">Other</option>
               </select>
-            </div>
-
-            {/* Company */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Company
-              </label>
-              <input
-                type="text"
-                placeholder="Company name"
-                value={filters.company}
-                onChange={(e) => handleFilterChange('company', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none text-black"
-              />
             </div>
 
             {/* Sort */}
@@ -131,33 +126,35 @@ export default function JobFilters({ filters, onFiltersChange, onSortChange }: J
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none text-black"
               >
-                <option value="postedAt-desc">Newest First</option>
-                <option value="postedAt-asc">Oldest First</option>
-                <option value="salary-desc">Salary: High to Low</option>
-                <option value="salary-asc">Salary: Low to High</option>
-                <option value="title-asc">Title: A to Z</option>
-                <option value="title-desc">Title: Z to A</option>
-                <option value="company-asc">Company: A to Z</option>
-                <option value="company-desc">Company: Z to A</option>
+                <option value="name-asc">Name: A to Z</option>
+                <option value="name-desc">Name: Z to A</option>
+                <option value="location-asc">Location: A to Z</option>
+                <option value="location-desc">Location: Z to A</option>
+                <option value="industry-asc">Industry: A to Z</option>
+                <option value="industry-desc">Industry: Z to A</option>
               </select>
             </div>
-          </div>
 
-          {/* Remote Work */}
-          <div className="mt-4">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={filters.remote}
-                onChange={(e) => handleFilterChange('remote', e.target.checked)}
-                className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
-              />
-              <span className="ml-2 text-sm text-gray-700">Remote work only</span>
-            </label>
+            {/* Open Jobs Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Filter
+              </label>
+              <div className="flex items-center h-10">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={filters.openJobs}
+                    onChange={(e) => handleFilterChange('openJobs', e.target.checked)}
+                    className="h-4 w-4 text-[#101418] focus:ring-[#101418] border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">Has open jobs</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 }
-
