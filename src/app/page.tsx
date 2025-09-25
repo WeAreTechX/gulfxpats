@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Job, Company } from '@/types';
 import JobCard from '@/components/jobs/JobCard';
 import CompanyCard from '@/components/companies/CompanyCard';
-import { getJobs, getCompanies } from '@/lib/data-service';
 import { ArrowRight, Briefcase, Building2 } from 'lucide-react';
 
 export default function Home() {
@@ -16,17 +15,25 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch jobs and companies using unified data service
-        const [jobs, companies] = await Promise.all([
-          getJobs(),
-          getCompanies()
+        // Fetch jobs and companies using API endpoints
+        const [jobsResponse, companiesResponse] = await Promise.all([
+          fetch('/api/jobs'),
+          fetch('/api/companies')
         ]);
 
-        console.log('Fetched jobs:', jobs);
-        console.log('Fetched companies:', companies);
+        const jobsData = await jobsResponse.json();
+        const companiesData = await companiesResponse.json();
 
-        setJobs(jobs);
-        setCompanies(companies);
+        console.log('Fetched jobs:', jobsData);
+        console.log('Fetched companies:', companiesData);
+
+        if (jobsData.success) {
+          setJobs(jobsData.jobs || []);
+        }
+        
+        if (companiesData.success) {
+          setCompanies(companiesData.companies || []);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {

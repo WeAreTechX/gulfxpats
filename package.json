@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "init-gulf-jobs": "node scripts/init-gulf-jobs.js",
+    "setup-airtable-admin": "node scripts/setup-airtable-admin.js",
     "debug-gulf-jobs": "node scripts/debug-gulf-jobs.js",
     "test-gulf-jobs": "node scripts/test-gulf-jobs.js",
     "test-jobs-api": "node scripts/test-jobs-api.js",

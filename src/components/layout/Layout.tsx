@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import TopNav from './TopNav';
 
 interface LayoutProps {
@@ -7,6 +8,17 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const pathname = usePathname();
+
+  // Don't show main layout wrapper if we're on admin routes (they have their own layout)
+  const isAdminRoute = pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    // Admin routes use their own layout, just render children
+    return <>{children}</>;
+  }
+
+  // For non-admin routes, show TopNav and main layout
   return (
     <div className="min-h-screen bg-[#F7F7F7]">
       <TopNav />
