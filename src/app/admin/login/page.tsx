@@ -54,6 +54,10 @@ export default function AdminLogin() {
       if (data.success) {
         // Store admin data in sessionStorage
         sessionStorage.setItem('admin_session', JSON.stringify(data.admin));
+        
+        // Dispatch custom event to notify layout of session change
+        window.dispatchEvent(new CustomEvent('admin_session_changed'));
+        
         router.push('/admin/overview');
       } else {
         setError(data.error || 'Login failed');

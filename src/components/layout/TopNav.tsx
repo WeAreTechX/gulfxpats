@@ -11,7 +11,9 @@ import {
   User, 
   Menu, 
   X,
-  Search
+  Instagram,
+  Linkedin,
+  Twitter
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -67,14 +69,35 @@ export default function TopNav() {
               })}
             </div>
 
-            {/* Search & Actions */}
-            <div className="hidden md:flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-[#101418] transition-colors rounded-full hover:bg-gray-100">
-                <Search className="h-5 w-5" />
-              </button>
-              <button className="bg-[#101418] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[#1a1f26] transition-colors">
-                Post Job
-              </button>
+            {/* Social Media CTAs */}
+            <div className="hidden md:flex items-center space-x-3">
+              <a 
+                href="https://www.instagram.com/wearetechx/"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-pink-500 transition-colors rounded-full hover:bg-pink-50"
+                aria-label="Follow us on Instagram"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a 
+                href="https://linkedin.com/company/wearetechx"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
+                aria-label="Follow us on LinkedIn"
+              >
+                <Linkedin className="h-5 w-5" />
+              </a>
+              <a 
+                href="https://x.com/wearetechx"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-blue-400 transition-colors rounded-full hover:bg-blue-50"
+                aria-label="Follow us on Twitter"
+              >
+                <Twitter className="h-5 w-5" />
+              </a>
             </div>
 
             {/* Mobile menu button */}
@@ -113,9 +136,35 @@ export default function TopNav() {
                 );
               })}
               <div className="pt-4 border-t border-gray-200">
-                <button className="w-full bg-[#101418] text-white px-4 py-3 rounded-full text-sm font-medium hover:bg-[#1a1f26] transition-colors">
-                  Post Job
-                </button>
+                <div className="flex justify-center space-x-4">
+                  <a 
+                    href="https://instagram.com/jingu" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="p-3 text-gray-400 hover:text-pink-500 transition-colors rounded-full hover:bg-pink-50"
+                    aria-label="Follow us on Instagram"
+                  >
+                    <Instagram className="h-6 w-6" />
+                  </a>
+                  <a 
+                    href="https://linkedin.com/company/jingu" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="p-3 text-gray-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
+                    aria-label="Follow us on LinkedIn"
+                  >
+                    <Linkedin className="h-6 w-6" />
+                  </a>
+                  <a 
+                    href="https://twitter.com/jingu" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="p-3 text-gray-400 hover:text-blue-400 transition-colors rounded-full hover:bg-blue-50"
+                    aria-label="Follow us on Twitter"
+                  >
+                    <Twitter className="h-6 w-6" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>

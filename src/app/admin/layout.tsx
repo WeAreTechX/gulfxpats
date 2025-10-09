@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Home, 
@@ -23,9 +23,43 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   // Check if we're on the login page
   const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/admin/login';
+
+  // Check if admin is logged in using sessionStorage
+  const checkAuth = () => {
+    try {
+      const adminData = sessionStorage.getItem('admin_session');
+      
+      if (adminData) {
+        const admin = JSON.parse(adminData);
+        
+        // Check if session is expired (24 hours)
+        const loginTime = new Date(admin.loginTime);
+        const now = new Date();
+        const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
+        
+        if (hoursDiff > 24) {
+          // Session expired
+          sessionStorage.removeItem('admin_session');
+          router.push('/admin/login');
+        } else {
+          setIsLoggedIn(true);
+          setAdminName(admin.name || 'Admin');
+        }
+      } else {
+        router.push('/admin/login');
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      sessionStorage.removeItem('admin_session');
+      router.push('/admin/login');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     // If we're on the login page, don't check auth
@@ -34,40 +68,28 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       return;
     }
 
-    // Check if admin is logged in using sessionStorage
-    const checkAuth = () => {
-      try {
-        const adminData = sessionStorage.getItem('admin_session');
-        
-        if (adminData) {
-          const admin = JSON.parse(adminData);
-          
-          // Check if session is expired (24 hours)
-          const loginTime = new Date(admin.loginTime);
-          const now = new Date();
-          const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
-          
-          if (hoursDiff > 24) {
-            // Session expired
-            sessionStorage.removeItem('admin_session');
-            router.push('/admin/login');
-          } else {
-            setIsLoggedIn(true);
-            setAdminName(admin.name || 'Admin');
-          }
-        } else {
-          router.push('/admin/login');
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        sessionStorage.removeItem('admin_session');
-        router.push('/admin/login');
-      } finally {
-        setIsLoading(false);
+    // Initial auth check
+    checkAuth();
+
+    // Listen for storage changes (when login happens in another tab/window)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'admin_session') {
+        checkAuth();
       }
     };
 
-    checkAuth();
+    // Listen for custom storage events (when login happens in same tab)
+    const handleCustomStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('admin_session_changed', handleCustomStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('admin_session_changed', handleCustomStorageChange);
+    };
   }, [router, isLoginPage]);
 
   const handleLogout = async () => {
@@ -121,21 +143,33 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <div className="hidden md:flex items-center space-x-8">
               <Link
                 href="/admin/overview"
-                className="flex items-center space-x-2 text-gray-700 hover:text-[#101418] transition-colors"
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                  pathname === '/admin/overview' || pathname === '/admin'
+                    ? 'bg-[#101418] text-white'
+                    : 'text-gray-700 hover:text-[#101418] hover:bg-gray-100'
+                }`}
               >
                 <Home className="h-5 w-5" />
                 <span>Overview</span>
               </Link>
               <Link
                 href="/admin/jobs"
-                className="flex items-center space-x-2 text-gray-700 hover:text-[#101418] transition-colors"
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                  pathname === '/admin/jobs'
+                    ? 'bg-[#101418] text-white'
+                    : 'text-gray-700 hover:text-[#101418] hover:bg-gray-100'
+                }`}
               >
                 <Briefcase className="h-5 w-5" />
                 <span>Jobs</span>
               </Link>
               <Link
                 href="/admin/companies"
-                className="flex items-center space-x-2 text-gray-700 hover:text-[#101418] transition-colors"
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                  pathname === '/admin/companies'
+                    ? 'bg-[#101418] text-white'
+                    : 'text-gray-700 hover:text-[#101418] hover:bg-gray-100'
+                }`}
               >
                 <Building2 className="h-5 w-5" />
                 <span>Companies</span>
@@ -170,10 +204,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white">
-            <div className="px-4 py-4 space-y-4">
+            <div className="px-4 py-4 space-y-2">
               <Link
                 href="/admin/overview"
-                className="flex items-center space-x-2 text-gray-700 hover:text-[#101418] transition-colors"
+                className={`flex items-center space-x-2 px-3 py-3 rounded-lg transition-colors ${
+                  pathname === '/admin/overview' || pathname === '/admin'
+                    ? 'bg-[#101418] text-white'
+                    : 'text-gray-700 hover:text-[#101418] hover:bg-gray-100'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Home className="h-5 w-5" />
@@ -181,7 +219,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </Link>
               <Link
                 href="/admin/jobs"
-                className="flex items-center space-x-2 text-gray-700 hover:text-[#101418] transition-colors"
+                className={`flex items-center space-x-2 px-3 py-3 rounded-lg transition-colors ${
+                  pathname === '/admin/jobs'
+                    ? 'bg-[#101418] text-white'
+                    : 'text-gray-700 hover:text-[#101418] hover:bg-gray-100'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Briefcase className="h-5 w-5" />
@@ -189,7 +231,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </Link>
               <Link
                 href="/admin/companies"
-                className="flex items-center space-x-2 text-gray-700 hover:text-[#101418] transition-colors"
+                className={`flex items-center space-x-2 px-3 py-3 rounded-lg transition-colors ${
+                  pathname === '/admin/companies'
+                    ? 'bg-[#101418] text-white'
+                    : 'text-gray-700 hover:text-[#101418] hover:bg-gray-100'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Building2 className="h-5 w-5" />

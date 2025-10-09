@@ -59,9 +59,9 @@ export default function CompanyCard({ company }: CompanyCardProps) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <span className="bg-gray-200 text-[#101418] text-xs px-3 py-1 rounded-full font-medium">
-              0 open jobs
-            </span>
+            {/*<span className="bg-gray-200 text-[#101418] text-xs px-3 py-1 rounded-full font-medium">*/}
+            {/*  0 open jobs*/}
+            {/*</span>*/}
           </div>
           <div className="flex items-center text-gray-400 group-hover:text-[#101418] transition-colors">
             <ExternalLink className="h-4 w-4" />
