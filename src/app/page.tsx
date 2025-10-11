@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Job, Company } from '@/types';
+import { JobN, Company } from '@/types';
 import JobCard from '@/components/jobs/JobCard';
 import CompanyCard from '@/components/companies/CompanyCard';
 import { ArrowRight, Briefcase, Building2 } from 'lucide-react';
 
 export default function Home() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<JobN[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +16,9 @@ export default function Home() {
     const fetchData = async () => {
       try {
         // Fetch jobs and companies using API endpoints
+        const response = await fetch('/api/scrape-jobs', { method: 'POST'});
+        console.log(response);
+
         const [jobsResponse, companiesResponse] = await Promise.all([
           fetch('/api/jobs'),
           fetch('/api/companies')
@@ -30,7 +33,7 @@ export default function Home() {
         if (jobsData.success) {
           setJobs(jobsData.jobs || []);
         }
-        
+
         if (companiesData.success) {
           setCompanies(companiesData.companies || []);
         }

@@ -1,6 +1,32 @@
+export interface Job {
+  title: string;
+  company: string;
+  role: string;
+  description: string;
+  salary?: string;
+  location: string;
+  postedDate?: string;
+  source: string;
+  directLink: string;
+}
+
+export interface ScrapedData {
+  datePulled: string;
+  period: string;
+  totalJobs: number;
+  jobs: Job[];
+}
+
+export interface ScraperConfig {
+  name: string;
+  baseUrl: string;
+  enabled: boolean;
+  scraper: (period: string) => Promise<Job[]>;
+}
+
 export type JobType = 'full-time' | 'contract' | 'part-time' | 'internship';
 export type JobStatus = 'open' | 'paused' | 'closed';
-export interface Job {
+export interface JobN {
   uid: string;
   title: string;
   description: string;
@@ -20,6 +46,11 @@ export interface Job {
   companySize: string;
   hiringManager: string;
   hiringManagerContact: string;
+  sourceUrl?: string;
+  company: string;
+  role: string;
+  source: string;
+  directLink: string;
 }
 
 export interface Company {

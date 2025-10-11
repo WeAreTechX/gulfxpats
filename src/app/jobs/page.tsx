@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Job, SearchFilters } from '@/types';
+import { JobN, SearchFilters } from '@/types';
 import JobCard from '@/components/jobs/JobCard';
 import JobFilters from '@/components/jobs/JobFilters';
 
 export default function Home() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<JobN[]>([]);
   const [loading, setLoading] = useState(true);
   const [jobStats, setJobStats] = useState<any>(null);
   const [filters, setFilters] = useState<SearchFilters>({

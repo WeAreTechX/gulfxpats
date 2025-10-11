@@ -1,32 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getJobs, getJobStatistics } from '@/lib/data-service';
 
-// GET /api/jobs - Get all jobs (including Gulf jobs)
+// GET /api/companies - Get all companies
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const includeStats = searchParams.get('includeStats') === 'true';
-
-    // Get jobs from data service (includes Gulf jobs)
-    const jobs = await getJobs();
+    // const companies = await getCompanies();
     
-    let response: any = {
+    return NextResponse.json({
       success: true,
-      jobs,
-      totalJobs: jobs.length
-    };
-
-    // Include statistics if requested
-    if (includeStats) {
-      try {
-        const stats = await getJobStatistics();
-        response.statistics = stats;
-      } catch (error) {
-        console.log('Statistics not available:', error);
-      }
-    }
-
-    return NextResponse.json(response);
+      jobs: [],
+      totalJobs: 0
+    });
   } catch (error) {
     console.error('Error fetching jobs:', error);
     return NextResponse.json({

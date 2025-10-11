@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Job } from '@/types';
 import { formatSalary, getRelativeTime, truncateText } from '@/lib/utils';
-import { MapPin, Clock, DollarSign, Building2, Globe } from 'lucide-react';
+import { MapPin, Clock, DollarSign, Building2, Globe, ExternalLink } from 'lucide-react';
 
 interface JobCardProps {
   job: Job;
@@ -25,8 +25,16 @@ export default function JobCard({ job }: JobCardProps) {
     job.location.toLowerCase().includes('oman')
   );
 
+  // Determine the link destination - use sourceUrl for scraped jobs, internal route for others
+  const jobLink = job.sourceUrl || `/jobs/${job.uid}`;
+  const isExternalLink = !!job.sourceUrl;
+
   return (
-    <Link href={`/jobs/${job.uid}`}>
+    <Link 
+      href={jobLink}
+      target={isExternalLink ? '_blank' : '_self'}
+      rel={isExternalLink ? 'noopener noreferrer' : undefined}
+    >
       <div className={`bg-white border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer ${
         isGulfJob 
           ? 'border-blue-200 hover:border-blue-400 bg-gradient-to-br from-blue-50/30 to-white' 
@@ -51,6 +59,12 @@ export default function JobCard({ job }: JobCardProps) {
                 <span className="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1">
                   <Globe className="h-3 w-3" />
                   Gulf
+                </span>
+              )}
+              {isExternalLink && (
+                <span className="bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1">
+                  <ExternalLink className="h-3 w-3" />
+                  External
                 </span>
               )}
               {job.remote && (
