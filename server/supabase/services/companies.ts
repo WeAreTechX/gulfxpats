@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, Company, CompanyInsert, CompanyUpdate } from '@/types/supabase';
+import { Database, CompanyUpdate } from '@/types/supabase';
+import {Company, CompanyCreate} from '@/types/companies';
 
 export class CompaniesService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -50,7 +51,7 @@ export class CompaniesService {
     return data;
   }
 
-  async create(company: CompanyInsert): Promise<Company> {
+  async create(company: CompanyCreate): Promise<Company> {
     const { data, error } = await this.supabase
       .from('companies')
       .insert(company)
@@ -64,7 +65,7 @@ export class CompaniesService {
   async update(id: string, company: CompanyUpdate): Promise<Company> {
     const { data, error } = await this.supabase
       .from('companies')
-      .update({ ...company, modified_at: new Date().toISOString() })
+      .update(company)
       .eq('id', id)
       .select()
       .single();

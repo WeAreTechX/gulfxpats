@@ -52,7 +52,7 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
   const typeStyle = jobTypeConfig[job.type] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-100' };
 
   return (
-    <Link href={`/jobs/${job.uid}`} className="block group h-full">
+    <Link href={`/src/app/(app)/jobs/${job.uid}`} className="block group h-full">
       <div className="relative bg-white rounded-2xl border border-gray-100 p-5 transition-all duration-300 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 h-full flex flex-col">
         {/* New badge */}
         {isNew && (

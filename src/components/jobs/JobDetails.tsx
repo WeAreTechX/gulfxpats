@@ -39,7 +39,7 @@ export default function JobDetails({ job }: JobDetailsProps) {
               <div className="flex items-center text-gray-600 mb-4">
                 <Building2 className="h-5 w-5 mr-2" />
                 <Link 
-                  href={`/companies/${job.companyId}`}
+                  href={`/src/app/(app)/companies/${job.companyId}`}
                   className="text-lg font-medium hover:text-black"
                 >
                   {job.company}
@@ -188,7 +188,7 @@ export default function JobDetails({ job }: JobDetailsProps) {
                   Learn more about this company and their other opportunities.
                 </p>
                 <Link
-                  href={`/companies/${job.companyId}`}
+                  href={`/src/app/(app)/companies/${job.companyId}`}
                   className="text-black font-medium hover:underline inline-flex items-center"
                 >
                   View Company Profile

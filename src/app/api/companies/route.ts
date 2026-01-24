@@ -25,17 +25,7 @@ export async function GET(request: NextRequest) {
       companies.map(async (company) => {
         const jobCount = await companiesService.getJobCount(company.id);
         return {
-          uid: company.id,
-          name: company.name,
-          email: '',
-          website: company.website || '',
-          logo: company.logo_url || '',
-          location: company.location || '',
-          address: company.location || '',
-          rawAddress: company.location || '',
-          phone: '',
-          description: company.description || '',
-          linkedIn: (company.additional_data as any)?.social?.linkedin || '',
+          ...company,
           openJobs: jobCount,
         };
       })
@@ -64,12 +54,14 @@ export async function POST(request: NextRequest) {
     
     const company = await companiesService.create({
       name: body.name,
-      description: body.description,
-      website: body.website,
+      short_description: body.short_description,
+      long_description: body.long_description || "-",
+      website_url: body.website,
       logo_url: body.logoUrl,
       location: body.location,
-      contact_person: body.contactPerson,
-      additional_data: body.additionalData,
+      contact_person: body.contact_person,
+      metadata: body.metadata,
+      status_id: 11
     });
 
     return NextResponse.json({

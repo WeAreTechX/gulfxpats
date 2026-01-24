@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Company } from '@/types';
+import { Company } from '@/types/companies';
 import { MapPin, Globe, Briefcase, ArrowUpRight, Building2, Users, ExternalLink } from 'lucide-react';
 
 interface CompanyCardProps {
@@ -12,12 +12,12 @@ interface CompanyCardProps {
 export default function CompanyCard({ company, variant = 'default' }: CompanyCardProps) {
   if (variant === 'compact') {
     return (
-      <Link href={`/companies/${company.uid}`} className="block group">
+      <Link href={`/companies/${company.id}`} className="block group">
         <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-indigo-100 hover:shadow-lg transition-all">
           <div className="flex-shrink-0">
-            {company.logo ? (
+            {company.logo_url ? (
               <img 
-                src={company.logo} 
+                src={company.logo_url}
                 alt={company.name}
                 className="w-12 h-12 rounded-xl object-cover border border-gray-100"
               />
@@ -42,15 +42,15 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
   }
 
   return (
-    <Link href={`/companies/${company.uid}`} className="block group h-full">
+    <Link href={`/companies/${company.id}`} className="block group h-full">
       <div className="relative bg-white rounded-2xl border border-gray-100 p-6 transition-all duration-300 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 h-full flex flex-col">
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
           {/* Company logo */}
           <div className="flex-shrink-0">
-            {company.logo ? (
+            {company.logo_url ? (
               <img 
-                src={company.logo} 
+                src={company.logo_url}
                 alt={company.name}
                 className="w-16 h-16 rounded-2xl object-cover border border-gray-100 shadow-sm"
               />
@@ -75,23 +75,23 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
         </div>
 
         {/* Description */}
-        {company.description && (
+        {company.short_description && (
           <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 flex-1">
-            {company.description}
+            {company.short_description}
           </p>
         )}
 
         {/* Stats & Actions */}
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
           {/* Open jobs badge */}
-          {company.openJobs !== undefined && company.openJobs > 0 ? (
+          {company.jobs_count !== undefined && company.jobs_count > 0 ? (
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
                 <Briefcase className="h-4 w-4 text-emerald-600" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{company.openJobs}</p>
-                <p className="text-xs text-gray-500">{company.openJobs === 1 ? 'Open role' : 'Open roles'}</p>
+                <p className="text-sm font-semibold text-gray-900">{company.jobs_count}</p>
+                <p className="text-xs text-gray-500">{company.jobs_count === 1 ? 'Open role' : 'Open roles'}</p>
               </div>
             </div>
           ) : (
@@ -102,9 +102,9 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
           )}
           
           {/* Website link */}
-          {company.website && (
+          {company.website_url && (
             <a 
-              href={company.website}
+              href={company.website_url}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}

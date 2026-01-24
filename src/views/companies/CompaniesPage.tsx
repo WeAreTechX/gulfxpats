@@ -230,10 +230,10 @@ export default function CompaniesPage() {
 
           {/* Company Cards Grid */}
           {sortedCompanies.length > 0 ? (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
               {sortedCompanies.map((company, index) => (
                 <div key={company.uid} className="animate-fade-in" style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}>
-                  <CompanyCard company={company} />
+                  <CompanyCard company={company} variant="compact" />
                 </div>
               ))}
             </div>

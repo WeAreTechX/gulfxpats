@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, LogIn, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
-import { useToast } from '@/components/ui/Toast';
+import { useToast } from '@/components/custom/Toast';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');

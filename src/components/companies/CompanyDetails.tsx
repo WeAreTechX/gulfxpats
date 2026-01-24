@@ -137,7 +137,7 @@ export default function CompanyDetails({ company, jobs }: CompanyDetailsProps) {
                 <h2 className="text-2xl font-semibold text-black mb-4">About {company.name}</h2>
                 <div className="prose prose-gray max-w-none">
                   <p className="text-gray-700 leading-relaxed">
-                    {company.description}
+                    {company.short_description}
                   </p>
                 </div>
               </section>
@@ -155,7 +155,7 @@ export default function CompanyDetails({ company, jobs }: CompanyDetailsProps) {
                         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                           <div className="flex-1">
                             <Link 
-                              href={`/jobs/${job.id}`}
+                              href={`/src/app/(app)/jobs/${job.id}`}
                               className="text-xl font-semibold text-black hover:underline mb-2 block"
                             >
                               {job.title}
@@ -188,7 +188,7 @@ export default function CompanyDetails({ company, jobs }: CompanyDetailsProps) {
                           </div>
                           <div className="mt-4 lg:mt-0 lg:ml-6">
                             <Link
-                              href={`/jobs/${job.id}`}
+                              href={`/src/app/(app)/jobs/${job.id}`}
                               className="inline-flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
                             >
                               View Job

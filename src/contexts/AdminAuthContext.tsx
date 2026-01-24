@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
 
@@ -18,6 +18,7 @@ interface Admin {
 interface AdminAuthContextType {
   user: SupabaseUser | null;
   admin: Admin | null;
+  cachedAdmin: Admin | null;
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
@@ -30,16 +31,52 @@ interface AdminAuthContextType {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
+const ADMIN_STORAGE_KEY = '_jingu_admin';
+
+// LocalStorage utilities
+function setAdminStorage(admin: Admin) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(admin));
+  } catch (error) {
+    console.error('Error saving admin to localStorage:', error);
+  }
+}
+
+function getAdminFromStorage(): Admin | null {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    const stored = localStorage.getItem(ADMIN_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Error reading admin from localStorage:', error);
+  }
+  return null;
+}
+
+function clearAdminStorage() {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(ADMIN_STORAGE_KEY);
+  } catch (error) {
+    console.error('Error clearing admin from localStorage:', error);
+  }
+}
+
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [admin, setAdmin] = useState<Admin | null>(null);
+  const [cachedAdmin, setCachedAdmin] = useState<Admin | null>(() => getAdminFromStorage());
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
   
   const supabase = getSupabaseClient();
 
-  const fetchAdminProfile = useCallback(async (userId: string): Promise<Admin | null> => {
+  const fetchAdminProfile = async (userId: string): Promise<Admin | null> => {
     try {
       const { data, error } = await supabase
         .from('admins')
@@ -63,10 +100,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       console.error('Error fetching admin profile:', error);
       return null;
     }
-  }, [supabase]);
+  };
 
   useEffect(() => {
     let mounted = true;
+    let initializedLocal = false;
 
     // Get initial session
     const initSession = async () => {
@@ -82,7 +120,18 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           const adminData = await fetchAdminProfile(session.user.id);
           if (mounted) {
             setAdmin(adminData);
+            if (adminData) {
+              setAdminStorage(adminData);
+              setCachedAdmin(adminData);
+            } else {
+              clearAdminStorage();
+              setCachedAdmin(null);
+            }
           }
+        } else {
+          // No session, clear cached admin
+          clearAdminStorage();
+          setCachedAdmin(null);
         }
       } catch (error) {
         console.error('Error getting session:', error);
@@ -90,6 +139,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         if (mounted) {
           setLoading(false);
           setInitialized(true);
+          initializedLocal = true;
         }
       }
     };
@@ -105,13 +155,25 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       
       if (event === 'SIGNED_OUT') {
         setAdmin(null);
+        clearAdminStorage();
+        setCachedAdmin(null);
         setLoading(false);
-      } else if (session?.user && initialized) {
-        // Only fetch admin profile on auth change if already initialized
-        // This prevents double-fetching on initial load
-        const adminData = await fetchAdminProfile(session.user.id);
+      } else if (event === 'SIGNED_IN' && session?.user) {
+        // Only fetch on explicit sign in events after initialization
+        if (initializedLocal) {
+          const adminData = await fetchAdminProfile(session.user.id);
+          if (mounted) {
+            setAdmin(adminData);
+            if (adminData) {
+              setAdminStorage(adminData);
+              setCachedAdmin(adminData);
+            }
+            setLoading(false);
+          }
+        }
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        // On token refresh, just ensure loading is false
         if (mounted) {
-          setAdmin(adminData);
           setLoading(false);
         }
       }
@@ -121,7 +183,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [fetchAdminProfile, initialized, supabase.auth]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const signIn = async (email: string, password: string): Promise<{ error: Error | null; admin: Admin | null }> => {
     try {
@@ -162,6 +225,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       setUser(data.user);
       setSession(data.session);
       setAdmin(adminData);
+      // Save admin data to localStorage for fast initial load
+      setAdminStorage(adminData);
+      setCachedAdmin(adminData);
       setLoading(false);
       
       return { error: null, admin: adminData };
@@ -177,6 +243,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setAdmin(null);
     setSession(null);
+    // Clear localStorage on sign out
+    clearAdminStorage();
+    setCachedAdmin(null);
     setLoading(false);
   };
 
@@ -197,6 +266,13 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     if (user) {
       const adminData = await fetchAdminProfile(user.id);
       setAdmin(adminData);
+      if (adminData) {
+        setAdminStorage(adminData);
+        setCachedAdmin(adminData);
+      } else {
+        clearAdminStorage();
+        setCachedAdmin(null);
+      }
     }
   };
 
@@ -208,6 +284,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         admin,
+        cachedAdmin,
         session,
         loading,
         isAdmin,

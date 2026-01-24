@@ -34,7 +34,8 @@ export interface Company {
   location: string | null;
   address?: string;
   phone?: string;
-  description: string | null;
+  short_description: string | null;
+  long_description: string | null;
   linkedIn?: string;
   openJobs?: number;
   contactPerson?: Record<string, unknown> | null;
@@ -77,4 +78,17 @@ export interface SearchFilters {
 export interface SortOption {
   field: 'postedAt' | 'salary' | 'title' | 'company';
   direction: 'asc' | 'desc';
+}
+
+export interface Status {
+  id?: number;
+  name: string;
+  code: string;
+}
+
+export interface Pagination {
+  count: number;
+  current_page: number;
+  total_count: number;
+  total_pages: number;
 }

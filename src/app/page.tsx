@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import JobCard from '@/components/jobs/JobCard';
 import CompanyCard from '@/components/companies/CompanyCard';
-import { JobsEmptyState, CompaniesEmptyState } from '@/components/ui/EmptyStates';
+import { JobsEmptyState, CompaniesEmptyState } from '@/components/custom/EmptyStates';
 import { 
   ArrowRight, 
   Briefcase, 

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import CompaniesPage from './CompaniesPage';
+import CompaniesPage from '@/views/companies/CompaniesPage';
 
 export const metadata: Metadata = {
   title: 'Companies - Jingu',

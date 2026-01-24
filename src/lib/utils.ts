@@ -43,3 +43,12 @@ export function truncateText(text: string, maxLength: number): string {
   return text.slice(0, maxLength) + '...';
 }
 
+// Initials
+export const getInitials = (first_name: string, last_name: string) => {
+  return `${first_name.charAt(0)}${last_name.charAt(0)}`.toUpperCase();
+};
+
+// FullName
+export const getFullName = ({ first_name, last_name } : { first_name: string; last_name: string }) => {
+  return `${first_name} ${last_name}`;
+};

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/components/ui/Toast';
+import { useToast } from '@/components/custom/Toast';
 import { Mail, Loader2, ArrowLeft, Check } from 'lucide-react';
 
 interface ForgotPasswordFormProps {

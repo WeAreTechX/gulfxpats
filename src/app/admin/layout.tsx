@@ -32,23 +32,41 @@ const navigation = [
   { name: 'Admins', href: '/admin/admins', icon: Shield, superAdminOnly: true },
 ];
 
+// Content loader component for inner section
+function ContentLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="relative">
+          <div className="w-12 h-12 border-4 border-slate-200 rounded-full"></div>
+          <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
+        </div>
+        <p className="mt-4 text-slate-500 text-sm">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
 function AdminLayoutContent({ children }: AdminLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   
-  const { admin, loading, signOut, isSuperAdmin } = useAdminAuth();
+  const { admin, loading, signOut, isSuperAdmin, cachedAdmin } = useAdminAuth();
+
+  // Use cached admin data for immediate UI rendering
+  const displayAdmin = admin || cachedAdmin;
 
   // Check if we're on the login page
   const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
-    // If not on login page and not loading and not admin, redirect to login
-    if (!isLoginPage && !loading && !admin) {
+    // If not on login page and not loading and no admin (including cache), redirect to login
+    if (!isLoginPage && !loading && !admin && !cachedAdmin) {
       router.replace('/admin/login');
     }
-  }, [admin, loading, isLoginPage, router]);
+  }, [admin, cachedAdmin, loading, isLoginPage, router]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -65,26 +83,13 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
     return <>{children}</>;
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-950">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-slate-700 rounded-full animate-pulse"></div>
-            <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
-          </div>
-          <p className="mt-4 text-slate-400 text-sm">Loading...</p>
-        </div>
-      </div>
-    );
+  // If no admin data at all (not even cached), show nothing while redirecting
+  if (!loading && !admin && !cachedAdmin) {
+    return null;
   }
 
-  if (!admin) {
-    return null; // Will redirect to login
-  }
-
-  const adminName = `${admin.first_name} ${admin.last_name}`;
-  const adminInitials = `${admin.first_name[0]}${admin.last_name[0]}`.toUpperCase();
+  const adminName = displayAdmin ? `${displayAdmin.first_name} ${displayAdmin.last_name}` : '';
+  const adminInitials = displayAdmin ? `${displayAdmin.first_name[0]}${displayAdmin.last_name[0]}`.toUpperCase() : 'AD';
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -121,7 +126,8 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
         <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
           {navigation.map((item) => {
             // Only show Admins link to super admins
-            if (item.superAdminOnly && !isSuperAdmin) {
+            const isSuperAdminUser = displayAdmin?.role === 'super_admin';
+            if (item.superAdminOnly && !isSuperAdminUser) {
               return null;
             }
             
@@ -159,10 +165,10 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
             <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
               {adminInitials}
             </div>
-            {!sidebarCollapsed && (
+            {!sidebarCollapsed && displayAdmin && (
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-white truncate">{adminName}</p>
-                <p className="text-xs text-slate-500 capitalize">{admin.role.replace('_', ' ')}</p>
+                <p className="text-xs text-slate-500 capitalize">{displayAdmin.role.replace('_', ' ')}</p>
               </div>
             )}
           </div>
@@ -241,7 +247,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
         {/* Page Content */}
         <main className="p-4 lg:p-6">
           <div className="max-w-7xl mx-auto">
-            {children}
+            {loading ? <ContentLoader /> : children}
           </div>
         </main>
       </div>

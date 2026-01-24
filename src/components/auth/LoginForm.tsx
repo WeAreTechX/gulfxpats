@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/components/ui/Toast';
+import { useToast } from '@/components/custom/Toast';
 import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 
 interface LoginFormProps {

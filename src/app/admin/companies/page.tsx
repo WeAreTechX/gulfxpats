@@ -1,28 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Building2, MapPin, Globe, Phone, Mail, Users, Search, Filter } from 'lucide-react';
-
-interface Company {
-  uid: string;
-  name: string;
-  email: string;
-  website: string;
-  logo: string;
-  location: string;
-  address: string;
-  phone: string;
-  description: string;
-  linkedIn?: string;
-  openJobs?: number;
-}
+import { Building2, MapPin, Globe, Phone, Mail, Search, Filter, Plus, Upload, Pencil } from 'lucide-react';
+import { AddCompanyModal, BulkUploadCompanyModal } from '@/components/admin/companies';
+import CompaniesTable from "@/components/companies/Admin/CompaniesTable";
+import {Company} from "@/types/companies";
 
 export default function AdminCompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const pagination = { count: 1, current_page: 1, total_count: 1, total_pages: 1 }
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLocation, setFilterLocation] = useState('');
   const [error, setError] = useState<string | null>(null);
+  
+  // Modal states
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
   useEffect(() => {
     fetchCompanies();
@@ -47,6 +45,20 @@ export default function AdminCompaniesPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddSuccess = () => {
+    fetchCompanies();
+  };
+
+  const handleEditCompany = (company: Company) => {
+    setEditingCompany(company);
+    setIsAddModalOpen(true);
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
+    setEditingCompany(null);
   };
 
   const filteredCompanies = companies.filter(company => {
@@ -85,6 +97,19 @@ export default function AdminCompaniesPage() {
 
   return (
     <div className="space-y-6">
+      {/* Modals */}
+      <AddCompanyModal
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onSuccess={handleAddSuccess}
+        company={editingCompany}
+      />
+      <BulkUploadCompanyModal
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onSuccess={handleAddSuccess}
+      />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -93,8 +118,21 @@ export default function AdminCompaniesPage() {
             Manage and view all companies in the system
           </p>
         </div>
-        <div className="text-sm text-gray-500">
-          {filteredCompanies.length} of {companies.length} companies
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsBulkModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            <Upload className="h-4 w-4" />
+            Bulk Upload
+          </button>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add Company
+          </button>
         </div>
       </div>
 
@@ -108,7 +146,7 @@ export default function AdminCompaniesPage() {
               placeholder="Search companies..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#101418] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
             />
           </div>
           <div className="relative">
@@ -118,108 +156,35 @@ export default function AdminCompaniesPage() {
               placeholder="Filter by location..."
               value={filterLocation}
               onChange={(e) => setFilterLocation(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#101418] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
             />
           </div>
         </div>
-      </div>
-
-      {/* Companies Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCompanies.map((company) => (
-          <div key={company.uid} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                {company.logo ? (
-                  <img
-                    src={company.logo}
-                    alt={company.name}
-                    className="w-12 h-12 rounded-lg object-cover"
-                  />
-                ) : (
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <Building2 className="h-6 w-6 text-gray-400" />
-                  </div>
-                )}
-                <div>
-                  <h3 className="text-lg font-semibold text-[#101418]">{company.name}</h3>
-                  {company.openJobs && (
-                    <span className="text-sm text-blue-600 font-medium">
-                      {company.openJobs} open jobs
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center text-gray-600">
-                <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                <span className="text-sm">{company.location}</span>
-              </div>
-
-              {company.website && (
-                <div className="flex items-center text-gray-600">
-                  <Globe className="h-4 w-4 mr-2 text-gray-400" />
-                  <a
-                    href={company.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    {company.website}
-                  </a>
-                </div>
-              )}
-
-              {company.email && (
-                <div className="flex items-center text-gray-600">
-                  <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="text-sm">{company.email}</span>
-                </div>
-              )}
-
-              {company.phone && (
-                <div className="flex items-center text-gray-600">
-                  <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="text-sm">{company.phone}</span>
-                </div>
-              )}
-            </div>
-
-            {company.description && (
-              <div className="mt-4">
-                <p className="text-sm text-gray-600 line-clamp-3">
-                  {company.description}
-                </p>
-              </div>
-            )}
-
-            <div className="mt-4 flex space-x-2">
-              {company.linkedIn && (
-                <a
-                  href={company.linkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  LinkedIn
-                </a>
-              )}
-              {company.website && (
-                <a
-                  href={company.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Website
-                </a>
-              )}
-            </div>
+        {(searchTerm || filterLocation) && (
+          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+            <p className="text-sm text-gray-600">
+              Showing <span className="font-medium">{filteredCompanies.length}</span> of{' '}
+              <span className="font-medium">{companies.length}</span> companies
+            </p>
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setFilterLocation('');
+              }}
+              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            >
+              Clear filters
+            </button>
           </div>
-        ))}
+        )}
       </div>
+
+      <CompaniesTable
+        loading={loading}
+        companies={companies}
+        pageSize={pageSize}
+        pagination={pagination}
+        onPageChange={setCurrentPage} />
 
       {filteredCompanies.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
@@ -228,9 +193,27 @@ export default function AdminCompaniesPage() {
           <p className="text-gray-400 text-sm mt-2">
             {searchTerm || filterLocation 
               ? 'Try adjusting your search or filters'
-              : 'No companies available'
+              : 'Get started by adding your first company'
             }
           </p>
+          {!searchTerm && !filterLocation && (
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <button
+                onClick={() => setIsBulkModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                <Upload className="h-4 w-4" />
+                Bulk Upload
+              </button>
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Company
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

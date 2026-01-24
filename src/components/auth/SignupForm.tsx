@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/components/ui/Toast';
+import { useToast } from '@/components/custom/Toast';
 import { Mail, Lock, User, MapPin, Loader2, Eye, EyeOff, Check } from 'lucide-react';
 import { COUNTRIES } from '@/lib/countries';
 
