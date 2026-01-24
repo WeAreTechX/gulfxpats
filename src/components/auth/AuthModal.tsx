@@ -101,7 +101,7 @@ export default function AuthModal() {
                   )}
                   {authModalMode === 'signup' && (
                     <SignupForm 
-                      onSuccess={() => openAuthModal('login')}
+                      onSuccess={closeAuthModal}
                       onLogin={() => openAuthModal('login')}
                     />
                   )}

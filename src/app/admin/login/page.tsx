@@ -5,16 +5,17 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, LogIn, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import { useToast } from '@/components/ui/Toast';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const router = useRouter();
+  const toast = useToast();
   
   const { signIn, resetPassword, admin, loading } = useAdminAuth();
 
@@ -28,28 +29,27 @@ export default function AdminLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
 
     try {
       if (isForgotPassword) {
         const { error } = await resetPassword(email);
         if (error) {
-          setError(error.message);
+          toast.error('Request failed', error.message);
         } else {
           setResetEmailSent(true);
+          toast.success('Email sent!', 'Check your inbox for the password reset link.');
         }
       } else {
         const { error, admin: loggedInAdmin } = await signIn(email, password);
         if (error) {
-          setError(error.message);
+          toast.error('Login failed', error.message);
         } else if (loggedInAdmin) {
-          // Successfully logged in - redirect immediately
-          // Using replace to prevent back button from returning to login
+          toast.success('Welcome back!', `Signed in as ${loggedInAdmin.first_name}`);
           router.replace('/admin/overview');
         }
       }
     } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
+      toast.error('Error', 'An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -212,12 +212,6 @@ export default function AdminLogin() {
                 </div>
               )}
 
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-                  <p className="text-sm text-red-400">{error}</p>
-                </div>
-              )}
-
               <button
                 type="submit"
                 disabled={isLoading}
@@ -242,10 +236,7 @@ export default function AdminLogin() {
               <div className="text-center">
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsForgotPassword(!isForgotPassword);
-                    setError('');
-                  }}
+                  onClick={() => setIsForgotPassword(!isForgotPassword)}
                   className="text-sm text-slate-400 hover:text-indigo-400 font-medium transition-colors"
                 >
                   {isForgotPassword ? 'Back to login' : 'Forgot your password?'}

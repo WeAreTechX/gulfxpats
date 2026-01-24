@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/Toast';
 import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 
 interface LoginFormProps {
@@ -12,27 +13,27 @@ interface LoginFormProps {
 
 export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: LoginFormProps) {
   const { signIn } = useAuth();
+  const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
       const { error } = await signIn(email, password);
       
       if (error) {
-        setError(error.message);
+        toast.error('Login failed', error.message);
       } else {
+        toast.success('Welcome back!', 'You have successfully signed in.');
         onSuccess();
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      toast.error('Login failed', 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -40,12 +41,6 @@ export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: Log
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-100 rounded-xl">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
-      )}
-
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
           Email address

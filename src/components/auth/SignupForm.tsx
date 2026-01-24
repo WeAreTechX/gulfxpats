@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/Toast';
 import { Mail, Lock, User, MapPin, Loader2, Eye, EyeOff, Check } from 'lucide-react';
 import { COUNTRIES } from '@/lib/countries';
 
@@ -12,6 +13,7 @@ interface SignupFormProps {
 
 export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
   const { signUp } = useAuth();
+  const toast = useToast();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,7 +21,6 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
   const [location, setLocation] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   // Auto-detect location on mount
@@ -41,11 +42,10 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      toast.error('Validation error', 'Password must be at least 6 characters');
       setLoading(false);
       return;
     }
@@ -54,15 +54,16 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
       const { error } = await signUp(email, password, firstName, lastName, location);
       
       if (error) {
-        setError(error.message);
+        toast.error('Signup failed', error.message);
       } else {
         setSuccess(true);
+        toast.success('Account created!', 'Your account was created successfully.');
         setTimeout(() => {
           onSuccess();
         }, 2000);
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      toast.error('Signup failed', 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -75,22 +76,13 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
           <Check className="h-8 w-8 text-emerald-600" />
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Account created!</h3>
-        <p className="text-gray-600 mb-4">
-          Please check your email to verify your account.
-        </p>
-        <p className="text-sm text-gray-500">Redirecting to login...</p>
+        <p className="text-sm text-gray-600">Logging you in...</p>
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-100 rounded-xl">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
-      )}
-
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
