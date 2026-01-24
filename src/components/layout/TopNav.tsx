@@ -81,7 +81,7 @@ export default function TopNav() {
       <nav className={cn(
         "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
         scrolled 
-          ? "bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm" 
+          ? "bg-white/80 backdrop-blur-xl shadow-sm"
           : "bg-transparent"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

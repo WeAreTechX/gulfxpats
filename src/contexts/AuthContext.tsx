@@ -93,7 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     location: string
   ): Promise<{ error: Error | null }> => {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // Sign up with Supabase Auth
+      // The database trigger 'on_auth_user_created' automatically creates
+      // the user profile in public.users using the metadata below
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -106,23 +109,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (error) throw error;
-
-      // Create user profile in users table
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: data.user.id,
-            email: email,
-            first_name: firstName,
-            last_name: lastName || null,
-            location: location || null,
-            role: 'user',
-            status_id: 1, // Active status
-          });
-
-        if (profileError) throw profileError;
-      }
 
       return { error: null };
     } catch (error) {

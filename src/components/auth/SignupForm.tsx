@@ -31,8 +31,8 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
     try {
       const response = await fetch('https://ipapi.co/json/');
       const data = await response.json();
-      if (data.country_name) {
-        setLocation(data.country_name);
+      if (data.country_code_iso3) {
+        setLocation(data.country_code_iso3);
       }
     } catch (error) {
       console.log('Could not auto-detect location');
@@ -183,7 +183,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
           >
             <option value="">Select your country</option>
             {COUNTRIES.map((country) => (
-              <option key={country.code} value={country.name}>
+              <option key={country.code} value={country.iso3}>
                 {country.name}
               </option>
             ))}

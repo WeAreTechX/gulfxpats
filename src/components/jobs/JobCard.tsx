@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { JobN } from '@/types';
-import { MapPin, Clock, Banknote, Building2, ArrowUpRight, Zap } from 'lucide-react';
+import { MapPin, Clock, Banknote, Building2, ArrowUpRight, Zap, Bookmark } from 'lucide-react';
 
 interface JobCardProps {
   job: JobN;
+  variant?: 'default' | 'compact';
 }
 
-export default function JobCard({ job }: JobCardProps) {
+export default function JobCard({ job, variant = 'default' }: JobCardProps) {
   const formatSalary = (min: number, max: number, currency: string) => {
     if (!min && !max) return null;
     const formatter = new Intl.NumberFormat('en-US', {
@@ -32,67 +33,83 @@ export default function JobCard({ job }: JobCardProps) {
     
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
   const salary = formatSalary(job.salaryMin, job.salaryMax, job.currency);
-  const isNew = new Date(job.postedDate).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const isNew = new Date(job.postedDate).getTime() > Date.now() - 3 * 24 * 60 * 60 * 1000;
 
-  const jobTypeColors: Record<string, string> = {
-    'full-time': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    'part-time': 'bg-blue-50 text-blue-700 border-blue-200',
-    'contract': 'bg-amber-50 text-amber-700 border-amber-200',
-    'internship': 'bg-purple-50 text-purple-700 border-purple-200',
-    'freelance': 'bg-pink-50 text-pink-700 border-pink-200',
+  const jobTypeConfig: Record<string, { bg: string; text: string; border: string }> = {
+    'full-time': { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100' },
+    'part-time': { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-100' },
+    'contract': { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-100' },
+    'internship': { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-100' },
+    'freelance': { bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-100' },
   };
 
+  const typeStyle = jobTypeConfig[job.type] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-100' };
+
   return (
-    <Link href={`/jobs/${job.uid}`} className="block group">
-      <div className="relative bg-white rounded-2xl border border-gray-200/80 p-5 transition-all duration-300 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1">
+    <Link href={`/jobs/${job.uid}`} className="block group h-full">
+      <div className="relative bg-white rounded-2xl border border-gray-100 p-5 transition-all duration-300 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 h-full flex flex-col">
         {/* New badge */}
         {isNew && (
-          <div className="absolute -top-2.5 -right-2.5">
-            <div className="flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-medium rounded-full shadow-lg shadow-indigo-500/30">
+          <div className="absolute -top-2.5 left-5">
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-semibold rounded-full shadow-lg shadow-indigo-500/30">
               <Zap className="h-3 w-3" />
               New
             </div>
           </div>
         )}
 
-        <div className="flex items-start justify-between gap-4">
-          {/* Company logo placeholder */}
-          <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl flex items-center justify-center border border-gray-200/50">
-            <Building2 className="h-6 w-6 text-gray-400" />
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          {/* Company logo */}
+          <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden">
+            {job.companyLogo ? (
+              <img src={job.companyLogo} alt={job.companyName || job.company} className="w-full h-full object-cover" />
+            ) : (
+              <Building2 className="h-6 w-6 text-gray-400" />
+            )}
           </div>
 
-          {/* Remote badge */}
-          {job.remote && (
-            <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-full border border-indigo-100">
-              Remote
-            </span>
-          )}
+          {/* Badges */}
+          <div className="flex items-center gap-2">
+            {job.remote && (
+              <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-lg border border-indigo-100">
+                Remote
+              </span>
+            )}
+            <button 
+              onClick={(e) => { e.preventDefault(); }}
+              className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              title="Save job"
+            >
+              <Bookmark className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
-        <div className="mt-4">
-          <h3 className="font-semibold text-gray-900 text-lg group-hover:text-indigo-600 transition-colors line-clamp-1">
+        {/* Job info */}
+        <div className="flex-1">
+          <h3 className="font-semibold text-gray-900 text-lg group-hover:text-indigo-600 transition-colors line-clamp-2 mb-1">
             {job.title}
           </h3>
-          <p className="text-gray-600 text-sm mt-1 flex items-center">
-            <Building2 className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+          <p className="text-gray-500 text-sm flex items-center">
             {job.companyName || job.company}
           </p>
         </div>
 
         {/* Tags */}
         <div className="mt-4 flex flex-wrap gap-2">
-          <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg border ${jobTypeColors[job.type] || 'bg-gray-50 text-gray-700 border-gray-200'}`}>
+          <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg border ${typeStyle.bg} ${typeStyle.text} ${typeStyle.border}`}>
             {job.type?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Full Time'}
           </span>
           {job.location && (
-            <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 text-gray-600 text-xs font-medium rounded-lg border border-gray-200">
-              <MapPin className="h-3 w-3 mr-1" />
+            <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 text-gray-600 text-xs font-medium rounded-lg border border-gray-100">
+              <MapPin className="h-3 w-3 mr-1 text-gray-400" />
               {job.location}
             </span>
           )}
@@ -100,23 +117,25 @@ export default function JobCard({ job }: JobCardProps) {
 
         {/* Footer */}
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {salary && (
+          <div className="flex-1 min-w-0">
+            {salary ? (
               <span className="flex items-center text-sm font-semibold text-gray-900">
-                <Banknote className="h-4 w-4 mr-1.5 text-emerald-500" />
-                {salary}
+                <Banknote className="h-4 w-4 mr-1.5 text-emerald-500 flex-shrink-0" />
+                <span className="truncate">{salary}</span>
               </span>
+            ) : (
+              <span className="text-sm text-gray-400">Salary not disclosed</span>
             )}
           </div>
-          <span className="flex items-center text-xs text-gray-500">
+          <span className="flex items-center text-xs text-gray-400 flex-shrink-0 ml-3">
             <Clock className="h-3.5 w-3.5 mr-1" />
             {formatDate(job.postedDate)}
           </span>
         </div>
 
-        {/* Hover arrow */}
-        <div className="absolute bottom-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30">
+        {/* Hover effect arrow */}
+        <div className="absolute bottom-5 right-5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+          <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <ArrowUpRight className="h-4 w-4 text-white" />
           </div>
         </div>
