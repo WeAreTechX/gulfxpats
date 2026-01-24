@@ -1,111 +1,107 @@
+'use client';
+
 import { Resource } from '@/types';
-import { formatDate } from '@/lib/utils';
-import { 
-  Play, 
-  Headphones, 
-  FileText, 
-  ExternalLink, 
-  Clock,
-  User
-} from 'lucide-react';
+import { ExternalLink, BookOpen, Video, Headphones, FileText, Wrench, Clock } from 'lucide-react';
 
 interface ResourceCardProps {
   resource: Resource;
 }
 
-const getResourceIcon = (type: string) => {
-  switch (type) {
-    case 'video':
-      return <Play className="h-5 w-5" />;
-    case 'audio':
-      return <Headphones className="h-5 w-5" />;
-    case 'article':
-      return <FileText className="h-5 w-5" />;
-    default:
-      return <FileText className="h-5 w-5" />;
-  }
+const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  blog: FileText,
+  article: FileText,
+  video: Video,
+  course: BookOpen,
+  podcast: Headphones,
+  tool: Wrench,
+  ebook: BookOpen,
 };
 
-const getResourceTypeColor = (type: string) => {
-  switch (type) {
-    case 'video':
-      return 'bg-red-100 text-red-800';
-    case 'audio':
-      return 'bg-blue-100 text-blue-800';
-    case 'article':
-      return 'bg-green-100 text-green-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
-  }
+const typeColors: Record<string, string> = {
+  blog: 'bg-blue-100 text-blue-700',
+  article: 'bg-blue-100 text-blue-700',
+  video: 'bg-red-100 text-red-700',
+  course: 'bg-green-100 text-green-700',
+  podcast: 'bg-purple-100 text-purple-700',
+  tool: 'bg-orange-100 text-orange-700',
+  ebook: 'bg-teal-100 text-teal-700',
 };
 
 export default function ResourceCard({ resource }: ResourceCardProps) {
+  const IconComponent = typeIcons[resource.type] || BookOpen;
+  const colorClass = typeColors[resource.type] || 'bg-gray-100 text-gray-700';
+
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-200">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-gray-100 rounded-lg">
-            {getResourceIcon(resource.type)}
-          </div>
-          <div>
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getResourceTypeColor(resource.type)}`}>
-              {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
-            </span>
-          </div>
+    <a
+      href={resource.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg hover:border-gray-300 transition-all group"
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${colorClass}`}>
+          <IconComponent className="h-3 w-3 mr-1" />
+          {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
         </div>
-        {resource.duration && (
-          <div className="flex items-center text-gray-500 text-sm">
-            <Clock className="h-4 w-4 mr-1" />
-            <span>{resource.duration}</span>
-          </div>
-        )}
+        <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-[#101418] transition-colors" />
       </div>
 
-      <h3 className="text-lg font-semibold text-black mb-2 line-clamp-2">
+      <h3 className="font-semibold text-[#101418] mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
         {resource.title}
       </h3>
 
-      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-        {resource.description}
-      </p>
+      {resource.description && (
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          {resource.description}
+        </p>
+      )}
 
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center text-gray-500 text-sm">
-          <User className="h-4 w-4 mr-1" />
-          <span>{resource.author}</span>
+      <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center space-x-3">
+          {resource.author && (
+            <span>By {resource.author}</span>
+          )}
+          {resource.duration && (
+            <span className="flex items-center">
+              <Clock className="h-3 w-3 mr-1" />
+              {resource.duration}
+            </span>
+          )}
         </div>
-        <span className="text-gray-400 text-sm">
-          {formatDate(resource.publishedAt)}
-        </span>
-      </div>
-
-      <div className="flex flex-wrap gap-2 mb-4">
-        {resource.tags.slice(0, 3).map((tag) => (
-          <span
-            key={tag}
-            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
-          >
-            {tag}
-          </span>
-        ))}
-        {resource.tags.length > 3 && (
-          <span className="text-gray-500 text-xs px-2 py-1">
-            +{resource.tags.length - 3} more
-          </span>
+        {resource.publishedAt && (
+          <span>{formatDate(resource.publishedAt)}</span>
         )}
       </div>
 
-      <a
-        href={resource.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center text-black font-medium hover:underline"
-      >
-        {resource.type === 'video' ? 'Watch' : 
-         resource.type === 'audio' ? 'Listen' : 'Read'}
-        <ExternalLink className="h-4 w-4 ml-1" />
-      </a>
-    </div>
+      {resource.tags && resource.tags.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1">
+          {resource.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded"
+            >
+              {tag}
+            </span>
+          ))}
+          {resource.tags.length > 3 && (
+            <span className="text-xs text-gray-400">
+              +{resource.tags.length - 3} more
+            </span>
+          )}
+        </div>
+      )}
+    </a>
   );
 }
-

@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
-    // For sessionStorage, logout is handled on the client side
-    // This endpoint just confirms the logout
+    const supabase = await createServerSupabaseClient();
+    
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      return NextResponse.json({
+        success: false,
+        error: error.message
+      }, { status: 500 });
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Logged out successfully'

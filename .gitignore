@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/supabase
+PRD - Specification Document 2f23a8be4a4b8059945ef1d6424984ef.md
+SETUP.md

@@ -1,55 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Airtable configuration
-const AIRTABLE_BASE_ID = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
-const AIRTABLE_API_KEY = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
-const AIRTABLE_ADMIN_TABLE = 'Admins'; // Table name for admin users
-
-interface AdminUser {
-  id: string;
-  email: string;
-  name: string;
-  token: string;
-  isActive: boolean;
-}
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, token } = await request.json();
+    const { email, password } = await request.json();
 
-    if (!email || !token) {
+    if (!email || !password) {
       return NextResponse.json({
         success: false,
-        error: 'Email and token are required'
+        error: 'Email and password are required'
       }, { status: 400 });
     }
 
-    // Validate admin credentials against Airtable
-    const adminUser = await validateAdminCredentials(email, token);
+    const supabase = await createServerSupabaseClient();
 
-    if (!adminUser) {
+    // Authenticate with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError || !authData.user) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid credentials'
+        error: authError?.message || 'Invalid credentials'
       }, { status: 401 });
     }
 
-    if (!adminUser.isActive) {
+    // Check if user is an admin
+    const { data: adminData, error: adminError } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('id', authData.user.id)
+      .single();
+
+    if (adminError || !adminData) {
+      // User is not an admin, sign them out
+      await supabase.auth.signOut();
       return NextResponse.json({
         success: false,
-        error: 'Account is deactivated'
+        error: 'You do not have admin access'
       }, { status: 403 });
     }
 
-    // Return admin data for client-side sessionStorage
+    // Check if admin account is active (status_id = 1)
+    if (adminData.status_id !== 1) {
+      await supabase.auth.signOut();
+      return NextResponse.json({
+        success: false,
+        error: 'Your admin account is deactivated'
+      }, { status: 403 });
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Login successful',
       admin: {
-        id: adminUser.id,
-        email: adminUser.email,
-        name: adminUser.name,
-        loginTime: new Date().toISOString()
+        id: adminData.id,
+        email: adminData.email,
+        firstName: adminData.first_name,
+        lastName: adminData.last_name,
+        role: adminData.role,
       }
     });
 
@@ -60,55 +71,4 @@ export async function POST(request: NextRequest) {
       error: 'Internal server error'
     }, { status: 500 });
   }
-}
-
-async function validateAdminCredentials(email: string, token: string): Promise<AdminUser | null> {
-  try {
-    if (!AIRTABLE_BASE_ID || !AIRTABLE_API_KEY) {
-      console.error('Airtable configuration missing');
-      return null;
-    }
-
-    const response = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_ADMIN_TABLE}?filterByFormula=AND({Email}='${email}',{Token}='${token}')`,
-      {
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    if (!response.ok) {
-      console.error('Airtable API error:', response.status, response.statusText);
-      return null;
-    }
-
-    const data = await response.json();
-    
-    if (data.records && data.records.length > 0) {
-      const record = data.records[0];
-      return {
-        id: record.id,
-        email: record.fields.Email || '',
-        name: record.fields.Name || '',
-        token: record.fields.Token || '',
-        isActive: record.fields.Active !== false // Default to true if not specified
-      };
-    }
-
-    return null;
-  } catch (error) {
-    console.error('Error validating admin credentials:', error);
-    return null;
-  }
-}
-
-function generateSessionId(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
-
-// Extend global type for session storage
-declare global {
-  var adminSessions: Map<string, any>;
 }

@@ -1,96 +1,65 @@
-export interface Job {
-  title: string;
-  company: string;
-  role: string;
-  description: string;
-  salary?: string;
-  location: string;
-  postedDate?: string;
-  source: string;
-  directLink: string;
-}
-
-export interface ScrapedData {
-  datePulled: string;
-  period: string;
-  totalJobs: number;
-  jobs: Job[];
-}
-
-export interface ScraperConfig {
-  name: string;
-  baseUrl: string;
-  enabled: boolean;
-  scraper: (period: string) => Promise<Job[]>;
-}
-
 export type JobType = 'full-time' | 'contract' | 'part-time' | 'internship';
 export type JobStatus = 'open' | 'paused' | 'closed';
-export interface JobN {
-  uid: string;
+
+export interface Job {
+  id: string;
+  uid?: string;
   title: string;
-  description: string;
-  basicRequirements: string;
-  preferredRequirements: string;
-  status: 'open' | 'closed' | 'paused';
-  postedDate: string;
-  location: string;
-  type: JobType,
+  description: string | null;
+  location: string | null;
+  type: JobType;
   remote: boolean;
-  salaryMin: number;
-  salaryMax: number;
+  salaryMin: number | null;
+  salaryMax: number | null;
   currency: string;
+  currencySymbol?: string;
+  applyUrl: string;
   companyId: string;
-  companyName: string;
-  companyIndustry: string;
-  companySize: string;
-  hiringManager: string;
-  hiringManagerContact: string;
-  sourceUrl?: string;
-  company: string;
-  role: string;
-  source: string;
-  directLink: string;
+  companyName: string | null;
+  companyLogo?: string | null;
+  companyWebsite?: string | null;
+  companyDescription?: string | null;
+  postedDate: string;
+  status?: string;
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface Company {
-  uid: string;
+  id: string;
+  uid?: string;
   name: string;
-  email: string;
-  website: string;
-  logo: string;
-  location: string;
-  address: string;
-  rawAddress: string;
-  phone: string;
-  description: string;
+  email?: string;
+  website: string | null;
+  logo: string | null;
+  location: string | null;
+  address?: string;
+  phone?: string;
+  description: string | null;
   linkedIn?: string;
   openJobs?: number;
+  contactPerson?: Record<string, unknown> | null;
 }
 
 export interface User {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   avatar?: string;
-  resume?: string;
-  address: string;
+  location?: string;
   phone?: string;
-  preferences: {
-    jobTypes: string[];
-    locations: string[];
-    remote: boolean;
-  };
+  role: 'user' | 'admin';
+  statusId: number;
 }
 
 export interface Resource {
   id: string;
   title: string;
-  type: 'audio' | 'video' | 'article';
+  type: 'audio' | 'video' | 'article' | 'guide' | 'tutorial' | 'template' | 'ebook' | 'podcast';
   url: string;
-  description: string;
+  description: string | null;
   duration?: string;
-  author: string;
+  author?: string;
   publishedAt: string;
   tags: string[];
 }
@@ -109,4 +78,3 @@ export interface SortOption {
   field: 'postedAt' | 'salary' | 'title' | 'company';
   direction: 'asc' | 'desc';
 }
-

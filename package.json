@@ -4,22 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "init-gulf-jobs": "node scripts/init-gulf-jobs.js",
-    "setup-airtable-admin": "node scripts/setup-airtable-admin.js",
-    "debug-gulf-jobs": "node scripts/debug-gulf-jobs.js",
-    "test-gulf-jobs": "node scripts/test-gulf-jobs.js",
-    "test-jobs-api": "node scripts/test-jobs-api.js",
-    "trigger-gulf-jobs": "node scripts/trigger-gulf-jobs.js",
-    "scrape-gulf-jobs": "curl -X POST http://localhost:3000/api/gulf-jobs",
-    "start-scheduler": "curl -X POST http://localhost:3000/api/scheduler -H 'Content-Type: application/json' -d '{\"action\":\"start\"}'"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",
-    "airtable": "^0.12.2",
-    "cheerio": "^1.1.2",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.91.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.2",
     "lucide-react": "^0.542.0",
@@ -31,7 +23,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/cheerio": "^0.22.35",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -1,16 +1,57 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCompanyById, getJobs } from '@/lib/data-service';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import CompanyDetails from '@/components/companies/CompanyDetails';
 
 interface CompanyPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
+}
+
+async function getCompany(id: string) {
+  const supabase = await createServerSupabaseClient();
+  
+  const { data: company, error } = await supabase
+    .from('companies')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !company) {
+    return null;
+  }
+
+  return company;
+}
+
+async function getCompanyJobs(companyId: string) {
+  const supabase = await createServerSupabaseClient();
+  
+  const { data: jobs, error } = await supabase
+    .from('jobs')
+    .select(`
+      *,
+      company:companies(*),
+      job_type:job_types(*),
+      currency:currencies(*),
+      status:statuses(*)
+    `)
+    .eq('company_id', companyId)
+    .eq('status_id', 1) // Only active jobs
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching company jobs:', error);
+    return [];
+  }
+
+  return jobs || [];
 }
 
 export async function generateMetadata({ params }: CompanyPageProps): Promise<Metadata> {
-  const company = await getCompanyById(params.id);
+  const { id } = await params;
+  const company = await getCompany(id);
   
   if (!company) {
     return {
@@ -36,18 +77,42 @@ export async function generateMetadata({ params }: CompanyPageProps): Promise<Me
 }
 
 export default async function CompanyPage({ params }: CompanyPageProps) {
-  const company = await getCompanyById(params.id);
+  const { id } = await params;
+  const company = await getCompany(id);
   
   if (!company) {
     notFound();
   }
 
-  // Get jobs for this company
-  const allJobs = await getJobs();
-  const companyJobs = allJobs.filter(job => 
-    job.companyName === company.name || job.companyId === company.uid
-  );
+  const jobs = await getCompanyJobs(id);
 
-  return <CompanyDetails company={company} jobs={companyJobs} />;
+  // Transform to match expected format
+  const transformedCompany = {
+    id: company.id,
+    uid: company.id,
+    name: company.name,
+    description: company.description,
+    website: company.website,
+    logo: company.logo_url,
+    location: company.location,
+    contactPerson: company.contact_person,
+  };
+
+  const transformedJobs = jobs.map((job: any) => ({
+    id: job.id,
+    uid: job.id,
+    title: job.title,
+    description: job.description,
+    location: job.location,
+    type: job.job_type?.code || 'full-time',
+    salaryMin: job.salary_min,
+    salaryMax: job.salary_max,
+    currency: job.currency?.code || 'USD',
+    applyUrl: job.apply_url,
+    companyId: job.company_id,
+    companyName: job.company?.name,
+    postedDate: job.created_at,
+  }));
+
+  return <CompanyDetails company={transformedCompany} jobs={transformedJobs} />;
 }
-
