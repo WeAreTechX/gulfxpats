@@ -1,8 +1,8 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { getSupabaseClient } from '@/lib/supabase/client';
+import { getSupabaseClient } from '../../server/supabase/client';
 
 interface Admin {
   id: string;
@@ -22,9 +22,10 @@ interface AdminAuthContextType {
   loading: boolean;
   isAdmin: boolean;
   isSuperAdmin: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null; admin: Admin | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
+  refreshAdmin: () => Promise<void>;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
@@ -34,49 +35,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   
   const supabase = getSupabaseClient();
 
-  useEffect(() => {
-    // Get initial session
-    const initSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await fetchAdminProfile(session.user.id);
-        }
-      } catch (error) {
-        console.error('Error getting session:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        await fetchAdminProfile(session.user.id);
-      } else {
-        setAdmin(null);
-      }
-      
-      setLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const fetchAdminProfile = async (userId: string) => {
+  const fetchAdminProfile = useCallback(async (userId: string): Promise<Admin | null> => {
     try {
       const { data, error } = await supabase
         .from('admins')
@@ -85,28 +48,85 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (error) {
-        // User is not an admin
         console.log('User is not an admin:', error.message);
-        setAdmin(null);
-        return;
+        return null;
       }
       
       // Check if admin is active (status_id = 1)
       if (data.status_id !== 1) {
         console.log('Admin account is not active');
-        setAdmin(null);
-        return;
+        return null;
       }
       
-      setAdmin(data);
+      return data;
     } catch (error) {
       console.error('Error fetching admin profile:', error);
-      setAdmin(null);
+      return null;
     }
-  };
+  }, [supabase]);
 
-  const signIn = async (email: string, password: string): Promise<{ error: Error | null }> => {
+  useEffect(() => {
+    let mounted = true;
+
+    // Get initial session
+    const initSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          const adminData = await fetchAdminProfile(session.user.id);
+          if (mounted) {
+            setAdmin(adminData);
+          }
+        }
+      } catch (error) {
+        console.error('Error getting session:', error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+          setInitialized(true);
+        }
+      }
+    };
+
+    initSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (event === 'SIGNED_OUT') {
+        setAdmin(null);
+        setLoading(false);
+      } else if (session?.user && initialized) {
+        // Only fetch admin profile on auth change if already initialized
+        // This prevents double-fetching on initial load
+        const adminData = await fetchAdminProfile(session.user.id);
+        if (mounted) {
+          setAdmin(adminData);
+          setLoading(false);
+        }
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [fetchAdminProfile, initialized, supabase.auth]);
+
+  const signIn = async (email: string, password: string): Promise<{ error: Error | null; admin: Admin | null }> => {
     try {
+      setLoading(true);
+      
       // First, authenticate with Supabase Auth
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -138,18 +158,26 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         throw new Error('Your admin account is deactivated');
       }
 
+      // Set state immediately - this ensures the UI updates before redirect
+      setUser(data.user);
+      setSession(data.session);
       setAdmin(adminData);
-      return { error: null };
+      setLoading(false);
+      
+      return { error: null, admin: adminData };
     } catch (error) {
-      return { error: error as Error };
+      setLoading(false);
+      return { error: error as Error, admin: null };
     }
   };
 
   const signOut = async () => {
+    setLoading(true);
     await supabase.auth.signOut();
     setUser(null);
     setAdmin(null);
     setSession(null);
+    setLoading(false);
   };
 
   const resetPassword = async (email: string): Promise<{ error: Error | null }> => {
@@ -162,6 +190,13 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       return { error: null };
     } catch (error) {
       return { error: error as Error };
+    }
+  };
+
+  const refreshAdmin = async () => {
+    if (user) {
+      const adminData = await fetchAdminProfile(user.id);
+      setAdmin(adminData);
     }
   };
 
@@ -180,6 +215,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signOut,
         resetPassword,
+        refreshAdmin,
       }}
     >
       {children}

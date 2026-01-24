@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, Status, JobType, ResourceType, Currency } from '@/types/supabase';
+import { Database, Status, JobType, JobIndustry, ResourceType, Currency } from '@/types/supabase';
 
 export class LookupsService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -40,6 +40,28 @@ export class LookupsService {
   async getJobTypeByCode(code: string): Promise<JobType | null> {
     const { data, error } = await this.supabase
       .from('job_types')
+      .select('*')
+      .eq('code', code)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  // Job Industries
+  async getJobIndustries(): Promise<JobIndustry[]> {
+    const { data, error } = await this.supabase
+      .from('job_industries')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async getJobIndustryByCode(code: string): Promise<JobIndustry | null> {
+    const { data, error } = await this.supabase
+      .from('job_industries')
       .select('*')
       .eq('code', code)
       .single();

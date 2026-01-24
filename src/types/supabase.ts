@@ -24,6 +24,24 @@ export type UserRole = 'user' | 'admin';
 // Job type enum
 export type JobTypeCode = 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance';
 
+// Job industry enum
+export type JobIndustryCode = 
+  | 'it' 
+  | 'energy' 
+  | 'hospitality' 
+  | 'healthcare' 
+  | 'finance' 
+  | 'education' 
+  | 'manufacturing' 
+  | 'retail' 
+  | 'construction' 
+  | 'transportation' 
+  | 'real-estate' 
+  | 'media-entertainment' 
+  | 'telecommunications' 
+  | 'agriculture' 
+  | 'other';
+
 // Resource type enum  
 export type ResourceTypeCode = 'blog' | 'course' | 'tool' | 'video' | 'podcast' | 'ebook' | 'other';
 
@@ -184,6 +202,29 @@ export interface Database {
           modified_at?: string;
         };
       };
+      job_industries: {
+        Row: {
+          id: number;
+          name: string;
+          code: JobIndustryCode;
+          created_at: string;
+          modified_at: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+          code: JobIndustryCode;
+          created_at?: string;
+          modified_at?: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+          code?: JobIndustryCode;
+          created_at?: string;
+          modified_at?: string;
+        };
+      };
       currencies: {
         Row: {
           id: number;
@@ -217,6 +258,7 @@ export interface Database {
           description: string | null;
           company_id: string;
           job_type_id: number;
+          job_industry_id: number | null;
           location: string | null;
           salary_min: number | null;
           salary_max: number | null;
@@ -233,6 +275,7 @@ export interface Database {
           description?: string | null;
           company_id: string;
           job_type_id: number;
+          job_industry_id?: number | null;
           location?: string | null;
           salary_min?: number | null;
           salary_max?: number | null;
@@ -249,6 +292,7 @@ export interface Database {
           description?: string | null;
           company_id?: string;
           job_type_id?: number;
+          job_industry_id?: number | null;
           location?: string | null;
           salary_min?: number | null;
           salary_max?: number | null;
@@ -329,6 +373,7 @@ export interface Database {
       status_code: StatusCode;
       user_role: UserRole;
       job_type_code: JobTypeCode;
+      job_industry_code: JobIndustryCode;
       resource_type_code: ResourceTypeCode;
     };
   };
@@ -340,6 +385,7 @@ export type User = Database['public']['Tables']['users']['Row'];
 export type Admin = Database['public']['Tables']['admins']['Row'];
 export type Company = Database['public']['Tables']['companies']['Row'];
 export type JobType = Database['public']['Tables']['job_types']['Row'];
+export type JobIndustry = Database['public']['Tables']['job_industries']['Row'];
 export type Currency = Database['public']['Tables']['currencies']['Row'];
 export type Job = Database['public']['Tables']['jobs']['Row'];
 export type ResourceType = Database['public']['Tables']['resource_types']['Row'];
@@ -351,6 +397,7 @@ export type UserInsert = Database['public']['Tables']['users']['Insert'];
 export type AdminInsert = Database['public']['Tables']['admins']['Insert'];
 export type CompanyInsert = Database['public']['Tables']['companies']['Insert'];
 export type JobTypeInsert = Database['public']['Tables']['job_types']['Insert'];
+export type JobIndustryInsert = Database['public']['Tables']['job_industries']['Insert'];
 export type CurrencyInsert = Database['public']['Tables']['currencies']['Insert'];
 export type JobInsert = Database['public']['Tables']['jobs']['Insert'];
 export type ResourceTypeInsert = Database['public']['Tables']['resource_types']['Insert'];
@@ -362,6 +409,7 @@ export type UserUpdate = Database['public']['Tables']['users']['Update'];
 export type AdminUpdate = Database['public']['Tables']['admins']['Update'];
 export type CompanyUpdate = Database['public']['Tables']['companies']['Update'];
 export type JobTypeUpdate = Database['public']['Tables']['job_types']['Update'];
+export type JobIndustryUpdate = Database['public']['Tables']['job_industries']['Update'];
 export type CurrencyUpdate = Database['public']['Tables']['currencies']['Update'];
 export type JobUpdate = Database['public']['Tables']['jobs']['Update'];
 export type ResourceTypeUpdate = Database['public']['Tables']['resource_types']['Update'];
@@ -371,6 +419,7 @@ export type ResourceUpdate = Database['public']['Tables']['resources']['Update']
 export interface JobWithRelations extends Job {
   company?: Company;
   job_type?: JobType;
+  job_industry?: JobIndustry;
   currency?: Currency;
   status?: Status;
 }

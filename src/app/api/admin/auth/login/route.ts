@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient } from '../../../../../../server/supabase/server';
+import {PostgrestSingleResponse} from "@supabase/supabase-js";
+import {AdminData} from "@/types/admin";
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is an admin
-    const { data: adminData, error: adminError } = await supabase
+    const { data: adminData, error: adminError }: PostgrestSingleResponse<AdminData> = await supabase
       .from('admins')
       .select('*')
       .eq('id', authData.user.id)
@@ -55,12 +57,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Login successful',
-      admin: {
+      data: {
         id: adminData.id,
         email: adminData.email,
-        firstName: adminData.first_name,
-        lastName: adminData.last_name,
-        role: adminData.role,
+        first_name: adminData.first_name,
+        last_name: adminData.last_name
       }
     });
 

@@ -1,16 +1,20 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
+import { updateSession } from '../server/supabase/middleware';
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  // For sessionStorage-based auth, we'll handle redirects on the client side
-  // The middleware will just pass through and let the client handle authentication
-  return NextResponse.next();
+export async function middleware(request: NextRequest) {
+  // Update session to refresh auth tokens if needed
+  return await updateSession(request);
 }
 
 export const config = {
   matcher: [
-    '/admin/:path*',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files (images, etc.)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

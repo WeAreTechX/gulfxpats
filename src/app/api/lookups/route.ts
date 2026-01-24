@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { LookupsService } from '@/lib/supabase/services/lookups';
+import { createServerSupabaseClient } from '../../../../server/supabase/server';
+import { LookupsService } from '../../../../server/supabase/services/lookups';
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,6 +19,9 @@ export async function GET(request: NextRequest) {
       case 'job-types':
         data = await lookupsService.getJobTypes();
         break;
+      case 'job-industries':
+        data = await lookupsService.getJobIndustries();
+        break;
       case 'resource-types':
         data = await lookupsService.getResourceTypes();
         break;
@@ -33,22 +36,24 @@ export async function GET(request: NextRequest) {
         break;
       case 'all':
         // Get all lookups at once
-        const [statuses, jobTypes, resourceTypes, currencies] = await Promise.all([
+        const [statuses, jobTypes, jobIndustries, resourceTypes, currencies] = await Promise.all([
           lookupsService.getStatuses(),
           lookupsService.getJobTypes(),
+          lookupsService.getJobIndustries(),
           lookupsService.getResourceTypes(),
           lookupsService.getCurrencies(),
         ]);
         data = {
           statuses,
           jobTypes,
+          jobIndustries,
           resourceTypes,
           currencies,
         };
         break;
       default:
         return NextResponse.json(
-          { success: false, error: 'Invalid lookup type. Use: statuses, job-types, resource-types, currencies, job-locations, company-locations, or all' },
+          { success: false, error: 'Invalid lookup type. Use: statuses, job-types, job-industries, resource-types, currencies, job-locations, company-locations, or all' },
           { status: 400 }
         );
     }

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
-import Link from "next/link";
+import { Mail, Lock, LogIn, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 export default function AdminLogin() {
@@ -21,7 +21,7 @@ export default function AdminLogin() {
   useEffect(() => {
     // If already logged in as admin, redirect to overview
     if (!loading && admin) {
-      router.push('/admin/overview');
+      router.replace('/admin/overview');
     }
   }, [admin, loading, router]);
 
@@ -39,11 +39,13 @@ export default function AdminLogin() {
           setResetEmailSent(true);
         }
       } else {
-        const { error } = await signIn(email, password);
+        const { error, admin: loggedInAdmin } = await signIn(email, password);
         if (error) {
           setError(error.message);
-        } else {
-          router.push('/admin/overview');
+        } else if (loggedInAdmin) {
+          // Successfully logged in - redirect immediately
+          // Using replace to prevent back button from returning to login
+          router.replace('/admin/overview');
         }
       }
     } catch (error) {
@@ -56,8 +58,11 @@ export default function AdminLogin() {
   // Show loading state while checking auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-slate-700 rounded-full animate-pulse"></div>
+          <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
+        </div>
       </div>
     );
   }
@@ -68,42 +73,75 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="text-center">
-          {/* Logo */}
-          <Link href="/" className="inline-flex items-center space-x-2 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-lg">J</span>
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Jingu
-            </span>
+    <div className="min-h-screen bg-slate-950 flex">
+      {/* Left Side - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 p-12 flex-col justify-between relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="relative z-10">
+          <Link href="/" className="inline-flex items-center gap-3 text-white/90 hover:text-white transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+            <span className="text-sm font-medium">Back to website</span>
           </Link>
-          
-          <h2 className="text-3xl font-bold text-gray-900">
-            {isForgotPassword ? 'Reset Password' : 'Admin Login'}
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {isForgotPassword 
-              ? 'Enter your email to receive a password reset link'
-              : 'Enter your credentials to access the admin panel'}
+        </div>
+        
+        <div className="relative z-10 space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+              <span className="text-white font-bold text-2xl">J</span>
+            </div>
+            <h1 className="text-4xl font-bold text-white">Jingu</h1>
+          </div>
+          <p className="text-xl text-white/80 max-w-md leading-relaxed">
+            Access your admin dashboard to manage jobs, companies, and resources.
+          </p>
+        </div>
+        
+        <div className="relative z-10">
+          <p className="text-sm text-white/60">
+            &copy; {new Date().getFullYear()} Jingu. All rights reserved.
           </p>
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-2xl sm:px-10 border border-gray-100">
+      {/* Right Side - Login Form */}
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-md">
+          {/* Mobile Logo */}
+          <div className="lg:hidden text-center mb-10">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <span className="text-white font-bold text-xl">J</span>
+              </div>
+              <span className="text-2xl font-bold text-white">Jingu</span>
+            </Link>
+          </div>
+
+          <div className="text-center lg:text-left mb-8">
+            <h2 className="text-2xl font-bold text-white">
+              {isForgotPassword ? 'Reset Password' : 'Welcome back'}
+            </h2>
+            <p className="mt-2 text-slate-400">
+              {isForgotPassword 
+                ? 'Enter your email to receive a reset link'
+                : 'Sign in to your admin account'}
+            </p>
+          </div>
+
           {resetEmailSent ? (
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 text-center">
+              <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Check your email</h3>
-              <p className="text-gray-600 mb-6">
-                We've sent a password reset link to <strong>{email}</strong>
+              <h3 className="text-lg font-semibold text-white mb-2">Check your email</h3>
+              <p className="text-slate-400 mb-6">
+                We've sent a password reset link to <span className="text-white font-medium">{email}</span>
               </p>
               <button
                 onClick={() => {
@@ -111,20 +149,20 @@ export default function AdminLogin() {
                   setResetEmailSent(false);
                   setEmail('');
                 }}
-                className="text-indigo-600 hover:text-indigo-700 font-medium"
+                className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
               >
                 Back to login
               </button>
             </div>
           ) : (
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
                   Email Address
                 </label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-slate-500" />
                   </div>
                   <input
                     id="email"
@@ -134,7 +172,7 @@ export default function AdminLogin() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm"
+                    className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all"
                     placeholder="admin@example.com"
                   />
                 </div>
@@ -142,12 +180,12 @@ export default function AdminLogin() {
 
               {!isForgotPassword && (
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
                     Password
                   </label>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-slate-500" />
                     </div>
                     <input
                       id="password"
@@ -156,18 +194,18 @@ export default function AdminLogin() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="appearance-none block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm"
+                      className="w-full pl-12 pr-12 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all"
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <EyeOff className="h-5 w-5 text-slate-500 hover:text-slate-300 transition-colors" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <Eye className="h-5 w-5 text-slate-500 hover:text-slate-300 transition-colors" />
                       )}
                     </button>
                   </div>
@@ -175,25 +213,31 @@ export default function AdminLogin() {
               )}
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                  <p className="text-sm text-red-400">{error}</p>
                 </div>
               )}
 
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-500/25"
-                >
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <LogIn className="h-5 w-5 text-white/80" />
-                  </span>
-                  {isLoading 
-                    ? (isForgotPassword ? 'Sending...' : 'Signing in...') 
-                    : (isForgotPassword ? 'Send Reset Link' : 'Sign in')}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-medium rounded-xl transition-all duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>{isForgotPassword ? 'Sending...' : 'Signing in...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="h-5 w-5" />
+                    <span>{isForgotPassword ? 'Send Reset Link' : 'Sign in'}</span>
+                  </>
+                )}
+              </button>
 
               <div className="text-center">
                 <button
@@ -202,7 +246,7 @@ export default function AdminLogin() {
                     setIsForgotPassword(!isForgotPassword);
                     setError('');
                   }}
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                  className="text-sm text-slate-400 hover:text-indigo-400 font-medium transition-colors"
                 >
                   {isForgotPassword ? 'Back to login' : 'Forgot your password?'}
                 </button>
@@ -210,20 +254,12 @@ export default function AdminLogin() {
             </form>
           )}
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Admin Access Only</span>
-              </div>
-            </div>
-            
-            <p className="mt-4 text-center text-xs text-gray-500">
+          <div className="mt-8 pt-8 border-t border-slate-800">
+            <p className="text-center text-xs text-slate-500">
               This area is restricted to authorized administrators only.
-              <br />
-              <Link href="/" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            </p>
+            <p className="text-center mt-2">
+              <Link href="/" className="text-sm text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
                 Return to homepage
               </Link>
             </p>

@@ -3,16 +3,18 @@
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { 
-  Home, 
+  LayoutDashboard, 
   Briefcase, 
   Building2, 
   BookOpen,
   Users,
   Shield,
   LogOut, 
-  User,
-  Menu,
-  X
+  ChevronLeft,
+  ChevronRight,
+  Settings,
+  Bell,
+  Search
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { AdminAuthProvider, useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -22,20 +24,21 @@ interface AdminLayoutProps {
 }
 
 const navigation = [
-  { name: 'Overview', href: '/admin/overview', icon: Home },
+  { name: 'Overview', href: '/admin/overview', icon: LayoutDashboard },
   { name: 'Jobs', href: '/admin/jobs', icon: Briefcase },
   { name: 'Companies', href: '/admin/companies', icon: Building2 },
   { name: 'Resources', href: '/admin/resources', icon: BookOpen },
   { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Admins', href: '/admin/admins', icon: Shield },
+  { name: 'Admins', href: '/admin/admins', icon: Shield, superAdminOnly: true },
 ];
 
 function AdminLayoutContent({ children }: AdminLayoutProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   
-  const { admin, loading, signOut, isAdmin, isSuperAdmin } = useAdminAuth();
+  const { admin, loading, signOut, isSuperAdmin } = useAdminAuth();
 
   // Check if we're on the login page
   const isLoginPage = pathname === '/admin/login';
@@ -43,13 +46,18 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
   useEffect(() => {
     // If not on login page and not loading and not admin, redirect to login
     if (!isLoginPage && !loading && !admin) {
-      router.push('/admin/login');
+      router.replace('/admin/login');
     }
   }, [admin, loading, isLoginPage, router]);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   const handleLogout = async () => {
     await signOut();
-    router.push('/admin/login');
+    router.replace('/admin/login');
   };
 
   // If we're on the login page, just render children without auth check
@@ -59,10 +67,13 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-slate-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-slate-700 rounded-full animate-pulse"></div>
+            <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
+          </div>
+          <p className="mt-4 text-slate-400 text-sm">Loading...</p>
         </div>
       </div>
     );
@@ -73,137 +84,167 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
   }
 
   const adminName = `${admin.first_name} ${admin.last_name}`;
+  const adminInitials = `${admin.first_name[0]}${admin.last_name[0]}`.toUpperCase();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/admin/overview" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-sm">J</span>
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  Jingu Admin
-                </span>
-              </Link>
-            </div>
+    <div className="min-h-screen bg-slate-100">
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
-              {navigation.map((item) => {
-                // Only show Admins link to super admins
-                if (item.href === '/admin/admins' && !isSuperAdmin) {
-                  return null;
-                }
-                
-                const isActive = pathname === item.href || (pathname === '/admin' && item.href === '/admin/overview');
-                
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all text-sm ${
-                      isActive
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/25'
-                        : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
-                    }`}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
+      {/* Sidebar */}
+      <aside className={`
+        fixed top-0 left-0 z-50 h-full bg-slate-950 border-r border-slate-800
+        transition-all duration-300 ease-in-out
+        ${sidebarCollapsed ? 'w-20' : 'w-64'}
+        ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        {/* Logo Section */}
+        <div className={`h-16 flex items-center border-b border-slate-800 ${sidebarCollapsed ? 'justify-center px-4' : 'px-6'}`}>
+          <Link href="/admin/overview" className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <span className="text-white font-bold text-sm">J</span>
             </div>
-
-            {/* Admin Info & Logout */}
-            <div className="hidden md:flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-indigo-600" />
-                </div>
-                <div className="text-sm">
-                  <p className="font-medium text-gray-900">{adminName}</p>
-                  <p className="text-xs text-gray-500 capitalize">{admin.role.replace('_', ' ')}</p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors p-2 rounded-lg hover:bg-red-50"
-              >
-                <LogOut className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
+            {!sidebarCollapsed && (
+              <span className="text-lg font-semibold text-white">
+                Jingu
+              </span>
+            )}
+          </Link>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white">
-            <div className="px-4 py-4 space-y-2">
-              {navigation.map((item) => {
-                // Only show Admins link to super admins
-                if (item.href === '/admin/admins' && !isSuperAdmin) {
-                  return null;
-                }
-                
-                const isActive = pathname === item.href || (pathname === '/admin' && item.href === '/admin/overview');
-                
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`flex items-center space-x-2 px-3 py-3 rounded-lg transition-colors ${
-                      isActive
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
-                        : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
-              <hr className="my-2 border-gray-200" />
-              <div className="flex items-center justify-between px-3 py-2">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-indigo-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900 text-sm">{adminName}</p>
-                    <p className="text-xs text-gray-500 capitalize">{admin.role.replace('_', ' ')}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                >
-                  <LogOut className="h-5 w-5" />
-                  <span className="text-sm">Logout</span>
-                </button>
+        {/* Navigation */}
+        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+          {navigation.map((item) => {
+            // Only show Admins link to super admins
+            if (item.superAdminOnly && !isSuperAdmin) {
+              return null;
+            }
+            
+            const isActive = pathname === item.href || (pathname === '/admin' && item.href === '/admin/overview');
+            
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`
+                  flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                  ${sidebarCollapsed ? 'justify-center' : ''}
+                  ${isActive
+                    ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  }
+                `}
+                title={sidebarCollapsed ? item.name : undefined}
+              >
+                <item.icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : ''}`} />
+                {!sidebarCollapsed && (
+                  <span className="text-sm font-medium">{item.name}</span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* User Section */}
+        <div className="border-t border-slate-800 p-3">
+          <div className={`
+            flex items-center gap-3 p-3 rounded-xl bg-slate-900/50
+            ${sidebarCollapsed ? 'justify-center' : ''}
+          `}>
+            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+              {adminInitials}
+            </div>
+            {!sidebarCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">{adminName}</p>
+                <p className="text-xs text-slate-500 capitalize">{admin.role.replace('_', ' ')}</p>
+              </div>
+            )}
+          </div>
+          
+          <button
+            onClick={handleLogout}
+            className={`
+              mt-2 w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+              text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200
+              ${sidebarCollapsed ? 'justify-center' : ''}
+            `}
+            title={sidebarCollapsed ? 'Logout' : undefined}
+          >
+            <LogOut className="h-5 w-5 flex-shrink-0" />
+            {!sidebarCollapsed && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        </div>
+
+        {/* Collapse Toggle - Desktop Only */}
+        <button
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className="hidden lg:flex absolute -right-3 top-20 w-6 h-6 bg-slate-800 border border-slate-700 rounded-full items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+        >
+          {sidebarCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+        </button>
+      </aside>
+
+      {/* Main Content */}
+      <div className={`
+        transition-all duration-300 ease-in-out
+        ${sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'}
+      `}>
+        {/* Top Header */}
+        <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200">
+          <div className="h-full px-4 lg:px-6 flex items-center justify-between gap-4">
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="lg:hidden p-2 -ml-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            {/* Search Bar */}
+            <div className="flex-1 max-w-xl hidden sm:block">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full pl-10 pr-4 py-2 bg-slate-100 border-0 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-2">
+              <button className="p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors relative">
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full"></span>
+              </button>
+              <button className="p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                <Settings className="h-5 w-5" />
+              </button>
+              
+              {/* Mobile User Avatar */}
+              <div className="lg:hidden w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold">
+                {adminInitials}
               </div>
             </div>
           </div>
-        )}
-      </nav>
+        </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {children}
-      </main>
+        {/* Page Content */}
+        <main className="p-4 lg:p-6">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

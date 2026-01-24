@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { UsersService } from '@/lib/supabase/services/users';
+import { createServerSupabaseClient } from '../../../../server/supabase/server';
+import { UsersService } from '../../../../server/supabase/services/users';
 
 export async function GET(request: NextRequest) {
   try {
