@@ -3,17 +3,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
-
-interface Admin {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  role: 'admin' | 'super_admin';
-  status_id: number;
-  created_at: string;
-  modified_at: string;
-}
+import {USER_STORAGE_KEY} from "@/lib/constants";
+import {Admin} from "@/types";
 
 interface AdminAuthContextType {
   user: SupabaseUser | null;
@@ -31,15 +22,13 @@ interface AdminAuthContextType {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
-const ADMIN_STORAGE_KEY = '_jingu_admin';
-
 // LocalStorage utilities
 function setAdminStorage(admin: Admin) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(admin));
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(admin));
   } catch (error) {
-    console.error('Error saving admin to localStorage:', error);
+    console.error('Error saving user to localStorage:', error);
   }
 }
 
@@ -47,12 +36,12 @@ function getAdminFromStorage(): Admin | null {
   if (typeof window === 'undefined') return null;
   
   try {
-    const stored = localStorage.getItem(ADMIN_STORAGE_KEY);
+    const stored = localStorage.getItem(USER_STORAGE_KEY);
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.error('Error reading admin from localStorage:', error);
+    console.error('Error reading user from localStorage:', error);
   }
   return null;
 }
@@ -60,7 +49,7 @@ function getAdminFromStorage(): Admin | null {
 function clearAdminStorage() {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.removeItem(ADMIN_STORAGE_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
   } catch (error) {
     console.error('Error clearing admin from localStorage:', error);
   }
@@ -144,7 +133,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    initSession();
+    initSession().then();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {

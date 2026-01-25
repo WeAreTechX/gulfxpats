@@ -41,18 +41,6 @@ export interface Company {
   contactPerson?: Record<string, unknown> | null;
 }
 
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatar?: string;
-  location?: string;
-  phone?: string;
-  role: 'user' | 'admin';
-  statusId: number;
-}
-
 export interface Resource {
   id: string;
   title: string;
@@ -78,6 +66,19 @@ export interface SearchFilters {
 export interface SortOption {
   field: 'postedAt' | 'salary' | 'title' | 'company';
   direction: 'asc' | 'desc';
+}
+
+export interface User {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: "user";
+  status_id: number;
+}
+
+export type Admin = Omit<User, "role"> & {
+  role: "admin" | "super_admin";
 }
 
 export interface Status {

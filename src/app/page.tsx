@@ -148,7 +148,7 @@ export default function Home() {
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-12">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-gray-500 to-black-500 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity"></div>
               <div className="relative flex items-center bg-white border border-gray-200 rounded-2xl px-5 py-4 shadow-xl shadow-gray-200/30">
                 <Search className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
                 <input
