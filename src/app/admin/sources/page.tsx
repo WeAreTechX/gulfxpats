@@ -7,7 +7,7 @@ import {
   RefreshCw,
   Download,
 } from 'lucide-react';
-import { Source } from '@/types/supabase';
+import { Source } from '@/types/companies';
 import SourcesTable from '@/components/admin/sources/SourcesTable';
 import FetchesTable from '@/components/admin/sources/FetchesTable';
 
@@ -16,27 +16,30 @@ type TabType = 'sources' | 'fetches';
 export default function AdminSourcesPage() {
   const [activeTab, setActiveTab] = useState<TabType>('sources');
   const [sources, setSources] = useState<Source[]>([]);
+  const [stats, setStats] = useState<{ total: number; active: number; inactive: number }>({ total: 0, active: 0, inactive: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
-  const pagination = { count: 1, current_page: 1, total_count: 1, total_pages: 1 };
+  const [pagination, setPagination] = useState({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
 
   useEffect(() => {
     fetchSources();
-  }, []);
+  }, [currentPage]);
 
   const fetchSources = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/lookups?type=sources');
-      const data = await response.json();
+      const response = await fetch('/api/sources?includeStats=true');
+      const result = await response.json();
 
-      if (data.success) {
-        setSources(data.list || []);
+      if (result.success) {
+        const { list, stats, pagination } = result.data;
+        setSources(list || []);
+        setStats(stats || { total: 0, active: 0, inactive: 0 });
+        setPagination(pagination || { count: 1, current_page: 1, total_count: 1, total_pages: 1 });
       } else {
         setError('Failed to fetch sources');
       }
@@ -49,7 +52,7 @@ export default function AdminSourcesPage() {
   };
 
   const tabs = [
-    { id: 'sources' as TabType, label: 'Sources', count: sources.length },
+    { id: 'sources' as TabType, label: 'Sources', count: stats.total },
     { id: 'fetches' as TabType, label: 'Fetches', count: sources.length },
   ];
 
@@ -110,7 +113,7 @@ export default function AdminSourcesPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Sources</p>
-              <p className="text-xl font-bold text-gray-900">{sources.length}</p>
+              <p className="text-xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </div>
@@ -121,7 +124,7 @@ export default function AdminSourcesPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Active Sources</p>
-              <p className="text-xl font-bold text-gray-900">{sources.filter(s => s.is_active).length}</p>
+              <p className="text-xl font-bold text-gray-900">{stats.active}</p>
             </div>
           </div>
         </div>
@@ -173,21 +176,23 @@ export default function AdminSourcesPage() {
         <div className="p-0">
           {activeTab === 'sources' && (
             <SourcesTable
+              error={error}
               loading={loading}
               sources={sources}
-              pageSize={pageSize}
               pagination={pagination}
               onPageChange={setCurrentPage}
+              onRetryAction={fetchSources}
             />
           )}
 
           {activeTab === 'fetches' && (
             <FetchesTable
+              error={error}
               loading={loading}
               fetches={sources}
-              pageSize={pageSize}
               pagination={pagination}
               onPageChange={setCurrentPage}
+              onRetryAction={fetchSources}
             />
           )}
         </div>

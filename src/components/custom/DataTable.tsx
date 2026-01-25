@@ -11,7 +11,7 @@ import {Pagination} from "@/types";
 
 interface CustomDataTableProps {
   loading?: boolean;
-  loadingRows?: number;
+  error: string | null;
   headers: string[];
   rows: {
     cells: (string | ReactNode)[];
@@ -22,11 +22,12 @@ interface CustomDataTableProps {
   pagination: Pagination | undefined;
   hidePagination?: boolean,
   onPageChange?: (page: number) => void;
+  onRetryAction: () => void;
 }
 
 export default function DataTable({
     loading = false,
-    loadingRows = 10,
+    error = null,
     headers,
     rows,
     dropdownOptionsTrigger = 'icon',
@@ -34,7 +35,8 @@ export default function DataTable({
     onOptionClick,
     pagination,
     hidePagination = false,
-    onPageChange
+    onPageChange,
+    onRetryAction
   }: CustomDataTableProps) {
 
   const currentPage = pagination?.current_page || 1;
@@ -62,44 +64,40 @@ export default function DataTable({
 
   const hidePaginationSection = hidePagination || rows.length == 0;
 
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <h3 className="text-red-800 font-semibold mb-2">Error</h3>
+        <p className="text-red-600">{error}</p>
+        <button
+          onClick={onRetryAction}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
-          <tr>
-            {headers.map((header, idx) => (
-              <th key={header} className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">{header}</th>
-            ))}
-            {dropdownOptions && (
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-            )}
-          </tr>
+            <tr>
+              {headers.map((header) => (
+                <th key={header} className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">{header}</th>
+              ))}
+              {dropdownOptions && (
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+              )}
+            </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
           {loading ? (
-            Array.from({ length: loadingRows }).map((_, skeletonIndex) => {
-              const widthPatterns = [75, 85, 70, 90, 80, 65, 95, 75, 88, 72];
-              return (
-                <tr key={`skeleton-${skeletonIndex}`} className={"bg-white"}>
-                  {headers.map((_, cellIndex) => {
-                    const widthIndex = (skeletonIndex + cellIndex) % widthPatterns.length;
-                    return (
-                      <td key={cellIndex} className="px-6 py-3">
-                        <div className="h-4 bg-gray-200 rounded animate-pulse"
-                             style={{ width: `${widthPatterns[widthIndex]}%` }}
-                        />
-                      </td>
-                    );
-                  })}
-                  {dropdownOptions && dropdownOptions.length > 0 && (
-                    <td className="text-right px-6 py-3">
-                      <div className="h-8 w-24 bg-gray-200 rounded animate-pulse ml-auto" />
-                    </td>
-                  )}
-                </tr>
-              );
-            })
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            </div>
           ) : rows.length === 0 ? (
             <tr>
               <td
@@ -119,7 +117,7 @@ export default function DataTable({
             rows.map((row, rowIndex) => (
               <tr key={rowIndex} className="hover:bg-gray-50 transition-colors">
                 {row.cells.map((cell, cellIndex) => (
-                  <td key={cellIndex} className="px-5 py-4">
+                  <td key={cellIndex} className="px-5 py-4 text-sm">
                     {cell}
                   </td>
                 ))}

@@ -2,26 +2,20 @@ import { useMemo } from "react";
 import DataTable from "@/components/custom/DataTable";
 import { Pagination } from "@/types";
 import { formatDate } from "@/lib/date";
-import { Source } from "@/types/supabase";
+import { Source } from "@/types/companies";
 import { Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
 
-// Using Source type temporarily until Fetch type is created
 interface FetchesTableProps {
   loading: boolean;
-  fetches: Source[]; // Will be replaced with Fetch[] when the table exists
-  pageSize: number;
+  error: string | null;
+  fetches: Source[];
   pagination: Pagination | undefined;
   onPageChange: (page: number) => void;
+  onRetryAction: () => void;
 }
 
-export default function FetchesTable({
-  loading,
-  fetches,
-  pageSize,
-  pagination,
-  onPageChange,
-}: FetchesTableProps) {
-
+export default function FetchesTable(props: FetchesTableProps) {
+  const { loading, error, fetches, pagination, onPageChange, onRetryAction } = props;
   const headers = useMemo(() => {
     return ["Source", "Status", "Records", "Started At", "Duration"];
   }, []);
@@ -113,13 +107,14 @@ export default function FetchesTable({
   return (
     <DataTable
       loading={loading}
+      error={error}
       headers={headers}
       rows={rows}
       pagination={pagination}
-      pageSize={pageSize}
       onPageChange={onPageChange}
       dropdownOptions={dropdownOptions}
       onOptionClick={handleOptionClick}
+      onRetryAction={onRetryAction}
     />
   );
 }

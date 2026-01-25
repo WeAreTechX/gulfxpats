@@ -151,6 +151,17 @@ export class LookupsService {
     return data || [];
   }
 
+  // Companies
+  async getCompanies(): Promise<Source[]> {
+    const { data, error } = await this.supabase
+      .from('companies')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  }
+
   async getSourceByCode(code: string): Promise<Source | null> {
     const { data, error } = await this.supabase
       .from('sources')

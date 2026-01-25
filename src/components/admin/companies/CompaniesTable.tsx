@@ -29,19 +29,18 @@ export default function CompaniesTable({
       const cells = [
         <div key="title" className="max-w-[160px]">
           <p className="font-medium text-gray-900">{company.name}</p>
-          <p key="description" className="text-gray-700 text-sm truncate">{company.short_description || '-'}</p>
+          <p key="description" className="text-gray-700 truncate">{company.short_description || '-'}</p>
         </div>,
         <div key="location" className="max-w-[160px]">
           {company.location && <p className="font-medium text-gray-900">{getCountryByIso3(company.location)?.name}</p>}
           {company.address && (
-            <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">{company.address}</p>
+            <p className="text-gray-500 flex items-center gap-1 mt-1">{company.address}</p>
           )}
         </div>,
-        <span key="created_at" className="text-sm text-gray-600">{formatDate(company.created_at)}</span>,
-        <span key="modified_at" className="text-sm text-gray-600">{formatDate(company.modified_at)}</span>,
-        <Status key="status" {...company.status} />,
+        <p key="created_at" className="text-gray-600">{formatDate(company.created_at)}</p>,
+        <p key="modified_at" className="text-gray-600">{formatDate(company.modified_at)}</p>,
+        <Status key="status" {...company.status} />
       ];
-
       return { cells };
     });
   }, [companies]);

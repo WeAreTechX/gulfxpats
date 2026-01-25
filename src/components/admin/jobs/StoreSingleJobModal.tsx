@@ -27,7 +27,6 @@ const getInitialFormData = (): JobCreate => ({
   salary_frequency: 'monthly',
   currency_id: 0,
   apply_url: '',
-  status_id: 8,
   metadata: {}
 });
 
@@ -54,7 +53,7 @@ export default function StoreSingleJobModal({
 
       // Fetch companies and lookups in parallel
       const [companiesRes, jobTypesRes, jobIndustriesRes, currenciesRes] = await Promise.all([
-        fetch('/api/companies'),
+        fetch('/api/lookups?type=companies'),
         fetch('/api/lookups?type=job-types'),
         fetch('/api/lookups?type=job-industries'),
         fetch('/api/lookups?type=currencies'),
@@ -65,10 +64,10 @@ export default function StoreSingleJobModal({
       const jobIndustriesData = await jobIndustriesRes.json();
       const currenciesData = await currenciesRes.json();
 
-      if (companiesData.success) setCompanies(companiesData.companies || []);
-      if (jobTypesData.success) setJobTypes(jobTypesData.data || []);
-      if (jobIndustriesData.success) setJobIndustries(jobIndustriesData.data || []);
-      if (currenciesData.success) setCurrencies(currenciesData.data || []);
+      if (companiesData.success) setCompanies(companiesData.list || []);
+      if (jobTypesData.success) setJobTypes(jobTypesData.list || []);
+      if (jobIndustriesData.success) setJobIndustries(jobIndustriesData.list || []);
+      if (currenciesData.success) setCurrencies(currenciesData.list || []);
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -98,7 +97,6 @@ export default function StoreSingleJobModal({
           salary_frequency: job.salary_frequency,
           currency_id: job.currency_id,
           apply_url: job.apply_url || '',
-          status_id: job.status_id,
           metadata: job.metadata
         });
       } else {
@@ -133,7 +131,6 @@ export default function StoreSingleJobModal({
         salary_max: formData.salary_max,
         currency_id: formData.currency_id,
         apply_url: formData.apply_url,
-        status_id: formData.status_id,
       };
 
       const url = isEditMode ? `/api/jobs/${job.id}` : '/api/jobs';

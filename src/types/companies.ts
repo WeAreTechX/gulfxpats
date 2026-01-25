@@ -28,3 +28,26 @@ export interface Company extends CompanyCreate {
 export interface CompanyQuery extends Query {
   location?: string;
 }
+
+export interface SourceCreate {
+  name: string;
+  code: string;
+  base_url: string;
+}
+
+export interface Source extends SourceCreate{
+  id: string;
+  created_at: Date | string;
+  modified_at: Date | string;
+}
+
+export interface CompaniesSources {
+  id: number;
+  company_id: string;
+  source_id: number;
+  synced_at: Date | string;
+  created_at: Date | string;
+  modified_at: Date | string;
+  company: Company | null;
+  source: Source | null;
+}

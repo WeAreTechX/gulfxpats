@@ -37,6 +37,9 @@ export async function GET(request: NextRequest) {
       case 'sources':
         data = await lookupsService.getSources();
         break;
+      case 'companies':
+        data = await lookupsService.getCompanies();
+        break;
       case 'all':
         // Get all lookups at once
         const [statuses, jobTypes, jobIndustries, resourceTypes, currencies, sources] = await Promise.all([

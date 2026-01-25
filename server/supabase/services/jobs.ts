@@ -134,14 +134,14 @@ export class JobsService {
     const stats: QueryStats = {};
 
     const { count: total } = await this.supabase
-      .from('companies')
+      .from('jobs')
       .select('*', { count: 'exact', head: true });
     stats.total = total || 0;
 
     const publishedId = statusMap.get('published');
     if (publishedId) {
       const { count: published } = await this.supabase
-        .from('companies')
+        .from('jobs')
         .select('*', { count: 'exact', head: true })
         .eq('status_id', publishedId);
       stats.published = published || 0;
@@ -150,7 +150,7 @@ export class JobsService {
     const unpublishedId = statusMap.get('unpublished');
     if (unpublishedId) {
       const { count: unpublished } = await this.supabase
-        .from('companies')
+        .from('jobs')
         .select('*', { count: 'exact', head: true })
         .eq('status_id', unpublishedId);
       stats.unpublished = unpublished || 0;
@@ -159,7 +159,7 @@ export class JobsService {
     const pendingId = statusMap.get('pending');
     if (pendingId) {
       const { count: pending } = await this.supabase
-        .from('companies')
+        .from('jobs')
         .select('*', { count: 'exact', head: true })
         .eq('status_id', pendingId);
       stats.pending = pending || 0;
@@ -168,7 +168,7 @@ export class JobsService {
     const archivedId = statusMap.get('archived');
     if (archivedId) {
       const { count: archived } = await this.supabase
-        .from('companies')
+        .from('jobs')
         .select('*', { count: 'exact', head: true })
         .eq('status_id', archivedId);
       stats.archived = archived || 0;

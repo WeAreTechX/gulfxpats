@@ -22,13 +22,14 @@ export default function AdminCompaniesPage() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/companies?includeStats=true');
-      const data = await response.json();
+      const companiesRes = await fetch('/api/companies?includeStats=true');
+      const companiesData = await companiesRes.json();
 
-      if (data.success) {
-        setCompanies(data.list || []);
-        setStats(data.stats);
-        setPagination(data.pagination || {});
+      if (companiesData.success) {
+        const { list, stats, pagination } = companiesData.data;
+        setCompanies(list || []);
+        setStats(stats);
+        setPagination(pagination || {});
       } else {
         setError('Failed to fetch companies');
       }

@@ -3,12 +3,11 @@ import DataTable from "@/components/custom/DataTable";
 import Status from "@/components/ui/Status";
 import {Pagination} from "@/types";
 import {formatDate} from "@/lib/date";
-import {Job} from "@/types/jobs";
+import {Job, JobWithRelations} from "@/types/jobs";
 
 interface JobsTableProps {
   loading: boolean;
-  jobs: Job[];
-  pageSize: number;
+  jobs: JobWithRelations[];
   pagination: Pagination | undefined
   onPageChange: (page: number) => void;
   onRowChange: () => void;
@@ -18,7 +17,7 @@ export default function JobsTable(props: JobsTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
 
-  const { loading, jobs, pageSize, pagination, onPageChange, onRowChange } = props;
+  const { loading, jobs, pagination, onPageChange, onRowChange } = props;
 
   const headers = useMemo(() => {
     return ["Title", "Description", "Company", "Type", "Location", "Industry", "Added", "Updated", "Status"];
@@ -27,24 +26,24 @@ export default function JobsTable(props: JobsTableProps) {
   const rows = useMemo(() => {
     return jobs.map((job) => {
       const cells = [
-        <div key="title" className="min-w-[160px]">
+        <div key="title" className="min-w-[180px]">
           <p className="font-medium text-gray-900">{job.title}</p>
           {job.salary_min && (
-            <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+            <p className="text-gray-500 flex items-center gap-1 mt-1">
               {job.currency?.symbol}{job.salary_min.toLocaleString()}
               {job.salary_max && ` - ${job.currency?.symbol}${job.salary_max.toLocaleString()}`}
             </p>
           )}
         </div>,
         <p key="description" className="text-gray-700  truncate max-w-[100px]">{job.description || '-'}</p>,
-        <p key="company" className="text-gray-700 max-w-[100px]">{job.company?.name || '-'}</p>,
+        <p key="company" className="text-gray-700 max-w-[160px]">{job.company?.name || '-'}</p>,
         <span key="job_type" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
           {job.job_type?.name || '-'}
         </span>,
         <span key="location" className="text-gray-700">{job.location || '-'}</span>,
         <p key="industry" className="text-gray-700 max-w-[100px]">{job.job_industry?.name || '-'}</p>,
-        <span key="created_at" className="text-gray-700 w-[170px]">{formatDate(job.created_at, 'medium', '-')}</span>,
-        <span key="modified_at" className="text-gray-700 w-[170px]">{formatDate(job.modified_at, 'medium', '-')}</span>,
+        <p key="created_at" className="text-gray-700 w-[170px]">{formatDate(job.created_at, 'medium', '-')}</p>,
+        <p key="modified_at" className="text-gray-700 w-[170px]">{formatDate(job.modified_at, 'medium', '-')}</p>,
         <Status key="status" {...job.status!} />
       ];
 
@@ -115,7 +114,6 @@ export default function JobsTable(props: JobsTableProps) {
       headers={headers}
       rows={rows}
       pagination={pagination}
-      pageSize={pageSize}
       onPageChange={onPageChange}
       dropdownOptions={dropdownOptions}
       onOptionClick={handleOptionClick}

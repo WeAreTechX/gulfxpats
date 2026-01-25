@@ -17,7 +17,6 @@ export interface JobCreate {
   metadata: {
     [key: string]: string | undefined;
   };
-  status_id: number;
 }
 
 export interface JobType {
@@ -36,6 +35,7 @@ export interface Job extends JobCreate {
   id: string;
   created_at: Date | string;
   modified_at: Date | string;
+  status_id: number;
 }
 
 export interface JobWithRelations extends Job {

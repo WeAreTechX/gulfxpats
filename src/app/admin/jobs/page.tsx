@@ -5,20 +5,21 @@ import {
   Plus,
   Search,
   Building2,
-  MapPin,
-  Briefcase, Clock,
+  Briefcase, Clock, Archive,
 } from 'lucide-react';
 import { StoreSingleJobModal } from '@/components/admin';
 import {Job} from "@/types/jobs";
 import JobsTable from "@/components/admin/jobs/JobsTable";
+import {QueryStats} from "@/types/api";
 
 export default function AdminJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [stats, setJobsStats] = useState<{ [key: string] : number}>({});
+  const [stats, setStats] = useState<QueryStats>({ total: 0, published: 0, unpublished: 0, archived: 0 });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
-  const pagination = { count: 1, current_page: 1, total_count: 1, total_pages: 1 }
+  const [pagination, setPagination] = useState({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,19 +27,21 @@ export default function AdminJobsPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      
-      // Fetch jobs, companies, and lookups in parallel
+      setError(null);
+
       const jobsRes= await fetch('/api/jobs?includeStats=true')
       const jobsData = await jobsRes.json();
 
       if (jobsData.success) {
-        setJobs(jobsData.list || []);
-        setJobsStats(jobsData.stats || {});
+        const { list, stats, pagination } = jobsData.data;
+        setJobs(list || []);
+        setStats(stats || {});
+        setPagination(pagination ||  { count: 1, current_page: 1, total_count: 1, total_pages: 1 })
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -145,7 +148,7 @@ export default function AdminJobsPage() {
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
+            <div className="p-2 bg-gray-100 rounded-lg">
               <Clock className="h-5 w-5 text-gray-600" />
             </div>
             <div>
@@ -156,8 +159,8 @@ export default function AdminJobsPage() {
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <MapPin className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Archive className="h-5 w-5 text-gray-900" />
             </div>
             <div>
               <p className="text-sm text-gray-600">Archived</p>
@@ -171,7 +174,7 @@ export default function AdminJobsPage() {
       <JobsTable
         loading={loading}
         jobs={jobs}
-        pageSize={pageSize} pagination={pagination} onPageChange={fetchData} onRowChange={fetchData} />
+        pagination={pagination} onPageChange={setCurrentPage} onRowChange={fetchData} />
 
       {/* Job Modal */}
       <StoreSingleJobModal
