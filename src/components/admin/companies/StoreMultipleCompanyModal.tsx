@@ -71,6 +71,11 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
     onClose();
   };
 
+  const handleDone = () => {
+    handleClose();
+    onSuccess();
+  }
+
   const validateCompany = (company: Partial<ParsedCompany>): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
     
@@ -364,12 +369,9 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       setUploadProgress(Math.round(((batchIndex + 1) / batches.length) * 100));
     }
 
+
     setUploadResult(result);
     setStep('complete');
-    
-    if (result.success > 0) {
-      onSuccess();
-    }
   };
 
   const headersRequired = ['name', 'short_description', 'website_url', 'location', 'address'];
@@ -569,12 +571,25 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                                         <Check className="h-3.5 w-3.5 text-emerald-600" />
                                       </span>
                                     ) : (
-                                      <span 
-                                        className="flex items-center justify-center w-6 h-6 bg-red-100 rounded-full cursor-help"
-                                        title={company.errors.join(', ')}
-                                      >
-                                        <AlertCircle className="h-3.5 w-3.5 text-red-600" />
-                                      </span>
+                                      <div className="relative group">
+                                        <span className="flex items-center justify-center w-6 h-6 bg-red-100 rounded-full cursor-help">
+                                          <AlertCircle className="h-3.5 w-3.5 text-red-600" />
+                                        </span>
+                                        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 z-50 hidden group-hover:block">
+                                          <div className="bg-slate-900 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-lg">
+                                            <div className="font-medium mb-1">Validation Errors:</div>
+                                            <ul className="space-y-0.5">
+                                              {company.errors.map((error, i) => (
+                                                <li key={i} className="flex items-start gap-1.5">
+                                                  <span className="text-red-400 mt-0.5">•</span>
+                                                  <span>{error}</span>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                            <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-slate-900" />
+                                          </div>
+                                        </div>
+                                      </div>
                                     )}
                                   </td>
                                   <td className="px-4 py-3 font-medium text-slate-900">
@@ -743,7 +758,7 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                         Upload More
                       </button>
                       <button
-                        onClick={handleClose}
+                        onClick={handleDone}
                         className="px-5 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-colors"
                       >
                         Done

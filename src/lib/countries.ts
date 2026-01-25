@@ -192,7 +192,7 @@ export const COUNTRIES: Country[] = [
   { code: 'TV', iso3: 'TUV', name: 'Tuvalu' },
   { code: 'UG', iso3: 'UGA', name: 'Uganda' },
   { code: 'UA', iso3: 'UKR', name: 'Ukraine' },
-  { code: 'AE', iso3: 'ARE', name: 'United Arab Emirates' },
+  { code: 'AE', iso3: 'UAE', name: 'United Arab Emirates' },
   { code: 'GB', iso3: 'GBR', name: 'United Kingdom' },
   { code: 'US', iso3: 'USA', name: 'United States' },
   { code: 'UY', iso3: 'URY', name: 'Uruguay' },

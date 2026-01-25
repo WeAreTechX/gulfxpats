@@ -49,7 +49,6 @@ export default function AdminCompaniesPage() {
 
   const handleAddSuccess = () => {
     fetchCompanies();
-    handleCloseAddModal();
   };
 
   const handleEditCompany = (company: Company) => {
