@@ -1,12 +1,14 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database, CompanyUpdate } from '@/types/supabase';
 import {Company, CompanyCreate} from '@/types/companies';
-import {CompanyQuery} from "@/types/api";
+import {QueryResponse, QueryStats} from "@/types/api";
+import {CompanyQuery} from "@/types/companies";
+import {Status} from "@/types";
 
 export class CompaniesService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async index(options?: CompanyQuery): Promise<{ data: Company[]; count: number }> {
+  async index(options?: CompanyQuery): Promise<QueryResponse<Company>> {
     let query = this.supabase
       .from('companies')
       .select(`*, status:statuses(*)`);
@@ -25,7 +27,10 @@ export class CompaniesService {
     const { data, error, count } = await query;
 
     if (error) throw error;
-    return { data: data || [], count: count || 0 };
+    return {
+      pagination: { count: count || 0, current_page: 1, total_count: count || 0, total_pages: 1 },
+      list: data || []
+    };
   }
 
   async show(id: string): Promise<Company | null> {
@@ -90,5 +95,38 @@ export class CompaniesService {
 
     if (error) throw error;
     return count || 0;
+  }
+
+  async getStats(): Promise<QueryStats> {
+    const { data: statuses } = await this.supabase
+      .from('statuses')
+      .select('id, code');
+
+    const statusMap = new Map(statuses?.map((s: Status) => [s.code, s.id]) || []);
+    const stats: QueryStats = {};
+
+    const { count: total } = await this.supabase
+      .from('companies')
+      .select('*', { count: 'exact', head: true });
+    stats.total = total || 0;
+
+    const publishedId = statusMap.get('published');
+    if (publishedId) {
+      const { count: published } = await this.supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true })
+        .eq('status_id', publishedId);
+      stats.published = published || 0;
+    }
+
+    const unpublishedId = statusMap.get('unpublished');
+    if (unpublishedId) {
+      const { count: unpublished } = await this.supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true })
+        .eq('status_id', unpublishedId);
+      stats.unpublished = unpublished || 0;
+    }
+    return stats;
   }
 }

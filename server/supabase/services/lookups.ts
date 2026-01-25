@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, Status, JobType, JobIndustry, ResourceType, Currency } from '@/types/supabase';
+import { Database, Status, JobType, JobIndustry, ResourceType, Currency, Source } from '@/types/supabase';
 
 export class LookupsService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -138,5 +138,38 @@ export class LookupsService {
     
     const locations = [...new Set(data?.map(c => c.location).filter(Boolean) as string[])];
     return locations.sort();
+  }
+
+  // Sources
+  async getSources(): Promise<Source[]> {
+    const { data, error } = await this.supabase
+      .from('sources')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async getSourceByCode(code: string): Promise<Source | null> {
+    const { data, error } = await this.supabase
+      .from('sources')
+      .select('*')
+      .eq('code', code)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  async getSourceById(id: number): Promise<Source | null> {
+    const { data, error } = await this.supabase
+      .from('sources')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
   }
 }

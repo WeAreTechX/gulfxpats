@@ -21,7 +21,6 @@ interface CustomDataTableProps {
   onOptionClick?: (action: string, rowIndex: number) => void;
   pagination: Pagination | undefined;
   hidePagination?: boolean,
-  pageSize: number;
   onPageChange?: (page: number) => void;
 }
 
@@ -35,7 +34,6 @@ export default function DataTable({
     onOptionClick,
     pagination,
     hidePagination = false,
-    pageSize,
     onPageChange
   }: CustomDataTableProps) {
 
@@ -59,8 +57,8 @@ export default function DataTable({
     return range;
   }, [currentPage, totalPages]);
 
-  const startCount = (currentPage - 1) * pageSize + 1;
-  const endCount = Math.min(currentPage * pageSize, totalCount);
+  const startCount = pagination ? ((currentPage - 1) * (pagination.count) + 1) : 1
+  const endCount = pagination ? (Math.min(currentPage * pagination.count, totalCount)) : 1
 
   const hidePaginationSection = hidePagination || rows.length == 0;
 

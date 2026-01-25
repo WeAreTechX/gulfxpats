@@ -1,41 +1,34 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Building2, MapPin, Globe, Phone, Mail, Search, Filter, Plus, Upload, Pencil } from 'lucide-react';
+import {Clock, CheckCircle, Plus, Upload, Building2} from 'lucide-react';
 import { StoreSingleCompanyModal, StoreMultipleCompanyModal } from '@/components/admin';
 import CompaniesTable from "@/components/admin/companies/CompaniesTable";
 import {Company} from "@/types/companies";
 
 export default function AdminCompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [stats, setStats] = useState<{ [key: string]: number }>({ total: 0, published: 0, unpublished: 0 });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
-  const pagination = { count: 1, current_page: 1, total_count: 1, total_pages: 1 }
+  const [pagination, setPagination] = useState({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLocation, setFilterLocation] = useState('');
   const [error, setError] = useState<string | null>(null);
-  
-  // Modal states
-  const [isSingleModalOpen, setisSingleModalOpen] = useState(false);
-  const [isMultipleModalOpen, setisMultipleModalOpen] = useState(false);
-  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
-
-  useEffect(() => {
-    fetchCompanies();
-  }, []);
 
   const fetchCompanies = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/companies');
+      const response = await fetch('/api/companies?includeStats=true');
       const data = await response.json();
 
       if (data.success) {
-        setCompanies(data.companies || []);
+        setCompanies(data.list || []);
+        setStats(data.stats);
+        setPagination(data.pagination || {});
       } else {
         setError('Failed to fetch companies');
       }
@@ -46,6 +39,15 @@ export default function AdminCompaniesPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchCompanies().then();
+  }, []);
+
+  // Modal states
+  const [isSingleModalOpen, setisSingleModalOpen] = useState(false);
+  const [isMultipleModalOpen, setisMultipleModalOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
   const handleAddSuccess = () => {
     fetchCompanies();
@@ -60,17 +62,6 @@ export default function AdminCompaniesPage() {
     setisSingleModalOpen(false);
     setEditingCompany(null);
   };
-
-  const filteredCompanies = companies.filter(company => {
-    const matchesSearch = !searchTerm || 
-      company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesLocation = !filterLocation || 
-      company.location.toLowerCase().includes(filterLocation.toLowerCase());
-
-    return matchesSearch && matchesLocation;
-  });
 
   if (loading) {
     return (
@@ -111,12 +102,10 @@ export default function AdminCompaniesPage() {
       />
 
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#101418]">Companies</h1>
-          <p className="text-gray-600 mt-2">
-            Manage and view all companies in the system
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Companies Management</h1>
+          <p className="text-gray-600 mt-1">Manage and view all companies in the system</p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -128,18 +117,54 @@ export default function AdminCompaniesPage() {
           </button>
           <button
             onClick={() => setisSingleModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg shadow-indigo-500/25"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-5 w-5" />
             Add Company
           </button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-100 rounded-lg">
+              <Building2 className="h-5 w-5 text-indigo-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Total Companies</p>
+              <p className="text-xl font-bold text-gray-900">{stats?.total || companies.length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Published</p>
+              <p className="text-xl font-bold text-gray-900">{stats?.published || 0}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Clock className="h-5 w-5 text-gray-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Unpublished</p>
+              <p className="text-xl font-bold text-gray-900">{stats?.unpublished || 0}</p>
+            </div>
+          </div>
         </div>
       </div>
 
       <CompaniesTable
         loading={loading}
         companies={companies}
-        pageSize={pageSize}
         pagination={pagination}
         onPageChange={setCurrentPage} />
     </div>

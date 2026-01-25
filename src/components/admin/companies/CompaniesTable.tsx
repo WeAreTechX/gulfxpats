@@ -9,7 +9,6 @@ import {getCountryByIso3} from "@/lib/countries";
 interface CompaniesTableProps {
   loading: boolean;
   companies: Company[];
-  pageSize: number;
   pagination: Pagination | undefined
   onPageChange: (page: number) => void;
 }
@@ -17,7 +16,6 @@ interface CompaniesTableProps {
 export default function CompaniesTable({
    loading,
    companies,
-   pageSize,
    pagination,
    onPageChange,
  }: CompaniesTableProps) {
@@ -29,11 +27,11 @@ export default function CompaniesTable({
   const rows = useMemo(() => {
     return companies.map((company) => {
       const cells = [
-        <div key="title" className="max-w-[140px]">
+        <div key="title" className="max-w-[160px]">
           <p className="font-medium text-gray-900">{company.name}</p>
           <p key="description" className="text-gray-700 text-sm truncate">{company.short_description || '-'}</p>
         </div>,
-        <div key="location" className="max-w-[120px]">
+        <div key="location" className="max-w-[160px]">
           {company.location && <p className="font-medium text-gray-900">{getCountryByIso3(company.location)?.name}</p>}
           {company.address && (
             <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">{company.address}</p>
@@ -77,7 +75,6 @@ export default function CompaniesTable({
       headers={headers}
       rows={rows}
       pagination={pagination}
-      pageSize={pageSize}
       onPageChange={onPageChange}
       dropdownOptions={dropdownOptions}
       onOptionClick={handleOptionClick}

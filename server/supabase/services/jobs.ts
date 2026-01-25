@@ -1,12 +1,14 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, JobUpdate, JobWithRelations } from '@/types/supabase';
+import { Database, JobUpdate } from '@/types/supabase';
 import {Job, JobCreate} from "@/types/jobs";
-import {JobQuery, QueryStats} from "@/types/api";
+import {QueryResponse, QueryStats} from "@/types/api";
+import {JobQuery, JobWithRelations} from "@/types/jobs";
+import {Status} from "@/types";
 
 export class JobsService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async index(options?: JobQuery): Promise<{ data: JobWithRelations[]; count: number }> {
+  async index(options?: JobQuery): Promise<QueryResponse<JobWithRelations>> {
     let query = this.supabase
       .from('jobs')
       .select(`
@@ -28,28 +30,15 @@ export class JobsService {
     if (options?.limit) query = query.limit(options.limit);
     if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
 
-    // Order by created_at desc
-    query = query.order('created_at', { ascending: false });
+    query = query.order('modified_at', { ascending: false });
 
     const { data, error, count } = await query;
 
     if (error) throw error;
-    return { data: data as JobWithRelations[], count: count || 0 };
-  }
-
-  async stats(): Promise<{ data: QueryStats; }> {
-    const query = this.supabase
-      .from('jobs')
-      .select(`*`, { count: 'exact' });
-
-    const { data, error, count } = await query;
-    const total = count || 0;
-    const published = data ? data.filter((job: Job) => job.status_id === 7) : []
-    const unpublished = data ? data.filter((job: Job) => job.status_id === 8) : []
-    const archived = data ? data.filter((job: Job) => job.status_id === 12) : []
-
-    if (error) throw error;
-    return { data: { total, published: published.length, unpublished: unpublished.length, archived: archived.length } };
+    return {
+      pagination: { count: count || 0, current_page: 1, total_count: count || 0, total_pages: 1 },
+      list: data || []
+    };
   }
 
   async getById(id: string): Promise<JobWithRelations | null> {
@@ -134,5 +123,57 @@ export class JobsService {
 
     if (error) throw error;
     return data as JobWithRelations[];
+  }
+
+  async getStats(): Promise<QueryStats> {
+    const { data: statuses } = await this.supabase
+      .from('statuses')
+      .select('id, code');
+
+    const statusMap = new Map(statuses?.map((s: Status) => [s.code, s.id]) || []);
+    const stats: QueryStats = {};
+
+    const { count: total } = await this.supabase
+      .from('companies')
+      .select('*', { count: 'exact', head: true });
+    stats.total = total || 0;
+
+    const publishedId = statusMap.get('published');
+    if (publishedId) {
+      const { count: published } = await this.supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true })
+        .eq('status_id', publishedId);
+      stats.published = published || 0;
+    }
+
+    const unpublishedId = statusMap.get('unpublished');
+    if (unpublishedId) {
+      const { count: unpublished } = await this.supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true })
+        .eq('status_id', unpublishedId);
+      stats.unpublished = unpublished || 0;
+    }
+
+    const pendingId = statusMap.get('pending');
+    if (pendingId) {
+      const { count: pending } = await this.supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true })
+        .eq('status_id', pendingId);
+      stats.pending = pending || 0;
+    }
+
+    const archivedId = statusMap.get('archived');
+    if (archivedId) {
+      const { count: archived } = await this.supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true })
+        .eq('status_id', archivedId);
+      stats.archived = archived || 0;
+    }
+
+    return stats;
   }
 }

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createServerSupabaseClient();
     const jobsService = new JobsService(supabase);
     
-    const { data: jobs, count } = await jobsService.index({
+    const { list, pagination } = await jobsService.index({
       job_type_id,
       job_industry_id,
       location,
@@ -28,15 +28,12 @@ export async function GET(request: NextRequest) {
     // Calculate statistics if requested
     let stats = null;
     if (includeStats) {
-      const { data: statistics } = await jobsService.stats();
-      stats = statistics;
+      stats = await jobsService.getStats();
     }
 
     return NextResponse.json({
       success: true,
-      list: jobs,
-      stats: stats ?? null,
-      count: count || jobs.length
+      data: { list, pagination, ...(stats && { stats }) },
     });
   } catch (error) {
     console.error('Error fetching jobs:', error);

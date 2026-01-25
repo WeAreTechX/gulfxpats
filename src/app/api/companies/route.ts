@@ -9,32 +9,27 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || undefined;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
+    const includeStats = searchParams.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
-    const { data: companies, count } = await companiesService.index({
+    const { list, pagination } = await companiesService.index({
       location,
       search,
       limit,
       offset,
     });
 
-    // Get job counts for each company
-    const companiesWithJobCounts = await Promise.all(
-      companies.map(async (company) => {
-        const jobCount = await companiesService.getJobCount(company.id);
-        return {
-          ...company,
-          openJobs: jobCount,
-        };
-      })
-    );
+    // Optionally include stats
+    let stats = null;
+    if (includeStats) {
+      stats = await companiesService.getStats();
+    }
 
     return NextResponse.json({
       success: true,
-      companies: companiesWithJobCounts,
-      count: count || companiesWithJobCounts.length,
+      data: { list, pagination, ...(stats && { stats }) }
     });
   } catch (error) {
     console.error('Error fetching companies:', error);

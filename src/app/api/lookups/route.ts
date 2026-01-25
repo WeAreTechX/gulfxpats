@@ -34,14 +34,18 @@ export async function GET(request: NextRequest) {
       case 'company-locations':
         data = await lookupsService.getCompanyLocations();
         break;
+      case 'sources':
+        data = await lookupsService.getSources();
+        break;
       case 'all':
         // Get all lookups at once
-        const [statuses, jobTypes, jobIndustries, resourceTypes, currencies] = await Promise.all([
+        const [statuses, jobTypes, jobIndustries, resourceTypes, currencies, sources] = await Promise.all([
           lookupsService.getStatuses(),
           lookupsService.getJobTypes(),
           lookupsService.getJobIndustries(),
           lookupsService.getResourceTypes(),
           lookupsService.getCurrencies(),
+          lookupsService.getSources(),
         ]);
         data = {
           statuses,
@@ -49,11 +53,12 @@ export async function GET(request: NextRequest) {
           jobIndustries,
           resourceTypes,
           currencies,
+          sources,
         };
         break;
       default:
         return NextResponse.json(
-          { success: false, error: 'Invalid lookup type. Use: statuses, job-types, job-industries, resource-types, currencies, job-locations, company-locations, or all' },
+          { success: false, error: 'Invalid lookup type. Use: statuses, job-types, job-industries, resource-types, currencies, job-locations, company-locations, sources, or all' },
           { status: 400 }
         );
     }

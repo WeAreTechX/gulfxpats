@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Plus, 
+import {
+  Plus,
   Search,
   Building2,
   MapPin,
-  Briefcase,
+  Briefcase, Clock,
 } from 'lucide-react';
 import { StoreSingleJobModal } from '@/components/admin';
 import {Job} from "@/types/jobs";
@@ -146,7 +146,7 @@ export default function AdminJobsPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-100 rounded-lg">
-              <Building2 className="h-5 w-5 text-green-600" />
+              <Clock className="h-5 w-5 text-gray-600" />
             </div>
             <div>
               <p className="text-sm text-gray-600">Unpublished</p>

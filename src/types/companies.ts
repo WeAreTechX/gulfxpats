@@ -1,4 +1,5 @@
-import {Status} from "@/types/index";
+import {Query } from "@/types/api";
+import {Status } from "@/types/index";
 
 export interface CompanyCreate {
   name: string;
@@ -22,4 +23,8 @@ export interface Company extends CompanyCreate {
   modified_at: Date | string;
   status_id: number;
   status: Status
+}
+
+export interface CompanyQuery extends Query {
+  location?: string;
 }

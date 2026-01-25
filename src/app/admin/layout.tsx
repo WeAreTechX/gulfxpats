@@ -9,6 +9,7 @@ import {
   BookOpen,
   Users,
   Shield,
+  Database,
   LogOut, 
   ChevronLeft,
   ChevronRight,
@@ -25,6 +26,7 @@ interface AdminLayoutProps {
 
 const navigation = [
   { name: 'Overview', href: '/admin/overview', icon: LayoutDashboard },
+  { name: 'Sources', href: '/admin/sources', icon: Database },
   { name: 'Jobs', href: '/admin/jobs', icon: Briefcase },
   { name: 'Companies', href: '/admin/companies', icon: Building2 },
   { name: 'Resources', href: '/admin/resources', icon: BookOpen },
@@ -53,7 +55,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   
-  const { admin, loading, signOut, isSuperAdmin, cachedAdmin } = useAdminAuth();
+  const { admin, loading, signOut, cachedAdmin } = useAdminAuth();
 
   // Use cached admin data for immediate UI rendering
   const displayAdmin = admin || cachedAdmin;

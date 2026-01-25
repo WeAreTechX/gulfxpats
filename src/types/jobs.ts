@@ -1,5 +1,6 @@
 import {Currency, Status} from "@/types";
 import  { Company } from "@/types/companies";
+import {Query} from "@/types/api";
 
 export interface JobCreate {
   title: string;
@@ -35,9 +36,18 @@ export interface Job extends JobCreate {
   id: string;
   created_at: Date | string;
   modified_at: Date | string;
+}
+
+export interface JobWithRelations extends Job {
+  company?: Company;
   job_type?: JobType;
   job_industry?: JobIndustry;
-  company?: Company;
-  status?: Status;
   currency?: Currency;
+  status?: Status;
+}
+
+export interface JobQuery extends Query {
+  location?: string;
+  job_type_id?: string | number;
+  job_industry_id?: string | number;
 }
