@@ -65,7 +65,7 @@ export default function AuthModal() {
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-2xl transition-all">
                 {/* Header with gradient */}
-                <div className="relative bg-gradient-to-br from-[#04724D] via-teal-600 to-teal-700 px-6 py-8 text-white">
+                <div className="relative bg-teal-700 px-6 py-8 text-white">
                   {/* Close button */}
                   <button
                     onClick={closeAuthModal}

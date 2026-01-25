@@ -111,7 +111,7 @@ export default function HomePage() {
                 />
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-[#04724D] to-teal-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40 hover:from-[#035E3F] hover:to-teal-700 transition-all ml-3"
+                  className="bg-teal-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40 hover:from-[#035E3F] hover:to-teal-700 transition-all ml-3"
                 >
                   Search Jobs
                 </button>

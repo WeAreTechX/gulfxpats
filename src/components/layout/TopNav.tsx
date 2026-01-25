@@ -181,7 +181,7 @@ export default function TopNav() {
                   </button>
                   <button
                     onClick={() => openAuthModal('signup')}
-                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#04724D] to-teal-600 hover:from-[#035E3F] hover:to-teal-700 rounded-lg transition-all shadow-md shadow-[#04724D]/25 hover:shadow-lg hover:shadow-[#04724D]/30"
+                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-teal-700 hover:from-[#035E3F] hover:to-teal-700 rounded-lg transition-all shadow-md shadow-[#04724D]/25 hover:shadow-lg hover:shadow-[#04724D]/30"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     Sign up
