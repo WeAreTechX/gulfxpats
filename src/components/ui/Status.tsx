@@ -2,23 +2,7 @@ import { Ban, CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Status } from "@/types";
 
-export default function Status({ status, id } : { status?: Status, id: number }) {
-  const ids: { [key: number]: string } = {
-    1: 'active',
-    2: 'inactive',
-    3: 'disabled',
-    4: 'enabled',
-    5: 'pending',
-    6: 'deleted',
-    7: 'published',
-    8: 'unpublished',
-    9: 'removed',
-    10: 'verified',
-    11: 'unverified'
-  }
-
-  status = { name: ids[id], code: ids[id] }
-
+export default function Status(status: Status) {
   if (!status) {
     return <span>-</span>
   }

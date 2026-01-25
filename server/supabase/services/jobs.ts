@@ -1,52 +1,32 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, Job, JobInsert, JobUpdate, JobWithRelations } from '@/types/supabase';
+import { Database, JobUpdate, JobWithRelations } from '@/types/supabase';
+import {Job, JobCreate} from "@/types/jobs";
+import {JobQuery, QueryStats} from "@/types/api";
 
 export class JobsService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async getAll(options?: {
-    status?: string;
-    companyId?: string;
-    jobTypeId?: string;
-    location?: string;
-    search?: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<{ data: JobWithRelations[]; count: number }> {
+  async index(options?: JobQuery): Promise<{ data: JobWithRelations[]; count: number }> {
     let query = this.supabase
       .from('jobs')
       .select(`
         *,
         company:companies(*),
         job_type:job_types(*),
+        job_industry:job_industries(*),
         currency:currencies(*),
         status:statuses(*)
       `, { count: 'exact' });
 
-    // Apply filters
-    if (options?.status) {
-      query = query.eq('status.code', options.status);
-    }
-    if (options?.companyId) {
-      query = query.eq('company_id', options.companyId);
-    }
-    if (options?.jobTypeId) {
-      query = query.eq('job_type_id', options.jobTypeId);
-    }
-    if (options?.location) {
-      query = query.ilike('location', `%${options.location}%`);
-    }
-    if (options?.search) {
-      query = query.or(`title.ilike.%${options.search}%,description.ilike.%${options.search}%`);
-    }
+    if (options?.job_type_id) query = query.eq('job_type_id', options.job_type_id);
+    if (options?.job_industry_id) query = query.eq('job_industry_id', options.job_industry_id);
+
+    if (options?.location) query = query.ilike('location', `%${options.location}%`);
+    if (options?.search) query = query.or(`title.ilike.%${options.search}%,description.ilike.%${options.search}%`);
 
     // Apply pagination
-    if (options?.limit) {
-      query = query.limit(options.limit);
-    }
-    if (options?.offset) {
-      query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
-    }
+    if (options?.limit) query = query.limit(options.limit);
+    if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
 
     // Order by created_at desc
     query = query.order('created_at', { ascending: false });
@@ -55,6 +35,21 @@ export class JobsService {
 
     if (error) throw error;
     return { data: data as JobWithRelations[], count: count || 0 };
+  }
+
+  async stats(): Promise<{ data: QueryStats; }> {
+    const query = this.supabase
+      .from('jobs')
+      .select(`*`, { count: 'exact' });
+
+    const { data, error, count } = await query;
+    const total = count || 0;
+    const published = data ? data.filter((job: Job) => job.status_id === 7) : []
+    const unpublished = data ? data.filter((job: Job) => job.status_id === 8) : []
+    const archived = data ? data.filter((job: Job) => job.status_id === 12) : []
+
+    if (error) throw error;
+    return { data: { total, published: published.length, unpublished: unpublished.length, archived: archived.length } };
   }
 
   async getById(id: string): Promise<JobWithRelations | null> {
@@ -74,7 +69,7 @@ export class JobsService {
     return data as JobWithRelations;
   }
 
-  async create(job: JobInsert): Promise<Job> {
+  async store(job: JobCreate): Promise<Job> {
     const { data, error } = await this.supabase
       .from('jobs')
       .insert(job)
@@ -88,7 +83,7 @@ export class JobsService {
   async update(id: string, job: JobUpdate): Promise<Job> {
     const { data, error } = await this.supabase
       .from('jobs')
-      .update({ ...job, modified_at: new Date().toISOString() })
+      .update(job)
       .eq('id', id)
       .select()
       .single();

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { JobN } from '@/types';
+import { Job } from '@/types/jobs';
 import JobCard from '@/components/jobs/JobCard';
 import JobFilters from '@/components/jobs/JobFilters';
 import { Search, SlidersHorizontal, X, Briefcase, Sparkles } from 'lucide-react';
@@ -42,7 +42,7 @@ export default function JobsPage() {
         const data = await response.json();
         
         if (data.success) {
-          setJobs(data.jobs);
+          setJobs(data.list);
         }
       } catch (error) {
         console.error('Error fetching jobs:', error);

@@ -10,7 +10,7 @@ export async function GET(
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
-    const company = await companiesService.getById(params.id);
+    const company = await companiesService.show(params.id);
     
     if (!company) {
       return NextResponse.json(
@@ -43,7 +43,7 @@ export async function PUT(
     const companiesService = new CompaniesService(supabase);
     
     // Check if company exists
-    const existingCompany = await companiesService.getById(params.id);
+    const existingCompany = await companiesService.show(params.id);
     if (!existingCompany) {
       return NextResponse.json(
         { success: false, error: 'Company not found' },
@@ -94,7 +94,7 @@ export async function DELETE(
     const companiesService = new CompaniesService(supabase);
     
     // Check if company exists
-    const existingCompany = await companiesService.getById(params.id);
+    const existingCompany = await companiesService.show(params.id);
     if (!existingCompany) {
       return NextResponse.json(
         { success: false, error: 'Company not found' },

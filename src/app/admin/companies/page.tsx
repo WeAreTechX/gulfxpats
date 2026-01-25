@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Building2, MapPin, Globe, Phone, Mail, Search, Filter, Plus, Upload, Pencil } from 'lucide-react';
-import { AddCompanyModal, BulkUploadCompanyModal } from '@/components/admin/companies';
-import CompaniesTable from "@/components/companies/Admin/CompaniesTable";
+import { StoreSingleCompanyModal, StoreMultipleCompanyModal } from '@/components/admin';
+import CompaniesTable from "@/components/admin/companies/CompaniesTable";
 import {Company} from "@/types/companies";
 
 export default function AdminCompaniesPage() {
@@ -18,8 +18,8 @@ export default function AdminCompaniesPage() {
   const [error, setError] = useState<string | null>(null);
   
   // Modal states
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [isSingleModalOpen, setisSingleModalOpen] = useState(false);
+  const [isMultipleModalOpen, setisMultipleModalOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
   useEffect(() => {
@@ -49,15 +49,16 @@ export default function AdminCompaniesPage() {
 
   const handleAddSuccess = () => {
     fetchCompanies();
+    handleCloseAddModal();
   };
 
   const handleEditCompany = (company: Company) => {
     setEditingCompany(company);
-    setIsAddModalOpen(true);
+    setisSingleModalOpen(true);
   };
 
   const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
+    setisSingleModalOpen(false);
     setEditingCompany(null);
   };
 
@@ -98,15 +99,15 @@ export default function AdminCompaniesPage() {
   return (
     <div className="space-y-6">
       {/* Modals */}
-      <AddCompanyModal
-        isOpen={isAddModalOpen}
+      <StoreSingleCompanyModal
+        isOpen={isSingleModalOpen}
         onClose={handleCloseAddModal}
         onSuccess={handleAddSuccess}
         company={editingCompany}
       />
-      <BulkUploadCompanyModal
-        isOpen={isBulkModalOpen}
-        onClose={() => setIsBulkModalOpen(false)}
+      <StoreMultipleCompanyModal
+        isOpen={isMultipleModalOpen}
+        onClose={() => setisMultipleModalOpen(false)}
         onSuccess={handleAddSuccess}
       />
 
@@ -120,14 +121,14 @@ export default function AdminCompaniesPage() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setIsBulkModalOpen(true)}
+            onClick={() => setisMultipleModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
           >
             <Upload className="h-4 w-4" />
             Bulk Upload
           </button>
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => setisSingleModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors"
           >
             <Plus className="h-4 w-4" />
@@ -199,14 +200,14 @@ export default function AdminCompaniesPage() {
           {!searchTerm && !filterLocation && (
             <div className="mt-6 flex items-center justify-center gap-3">
               <button
-                onClick={() => setIsBulkModalOpen(true)}
+                onClick={() => setisMultipleModalOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 <Upload className="h-4 w-4" />
                 Bulk Upload
               </button>
               <button
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => setisSingleModalOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 <Plus className="h-4 w-4" />

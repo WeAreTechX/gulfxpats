@@ -49,7 +49,7 @@ interface UploadResult {
 
 type UploadStep = 'upload' | 'preview' | 'uploading' | 'complete';
 
-export default function BulkUploadCompanyModal({ isOpen, onClose, onSuccess }: BulkUploadCompanyModalProps) {
+export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }: BulkUploadCompanyModalProps) {
   const [step, setStep] = useState<UploadStep>('upload');
   const [parsedData, setParsedData] = useState<ParsedCompany[]>([]);
   const [fileName, setFileName] = useState<string>('');

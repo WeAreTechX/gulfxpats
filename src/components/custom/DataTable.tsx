@@ -1,12 +1,4 @@
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -73,56 +65,46 @@ export default function DataTable({
   const hidePaginationSection = hidePagination || rows.length == 0;
 
   return (
-    <div className="border border-gray-300 rounded-xl overflow-hidden">
-      <Table>
-        <TableHeader className="bg-white">
-          <TableRow>
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
+          <tr>
             {headers.map((header, idx) => (
-              <TableHead key={idx} className="text-left px-6 py-4">
-                {header}
-              </TableHead>
+              <th key={header} className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">{header}</th>
             ))}
             {dropdownOptions && (
-              <TableHead className="text-left px-6 py-6"></TableHead>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
             )}
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
+          </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
           {loading ? (
-            // Skeleton loader rows
             Array.from({ length: loadingRows }).map((_, skeletonIndex) => {
-              // Create a pattern for skeleton widths to avoid random values
               const widthPatterns = [75, 85, 70, 90, 80, 65, 95, 75, 88, 72];
               return (
-                <TableRow
-                  key={`skeleton-${skeletonIndex}`}
-                  className={skeletonIndex % 2 === 0 ? "bg-[#F9FAFB]" : "bg-white"}
-                >
+                <tr key={`skeleton-${skeletonIndex}`} className={"bg-white"}>
                   {headers.map((_, cellIndex) => {
                     const widthIndex = (skeletonIndex + cellIndex) % widthPatterns.length;
                     return (
-                      <TableCell key={cellIndex} className="px-6 py-3">
-                        <div
-                          className="h-4 bg-gray-200 rounded animate-pulse"
-                          style={{
-                            width: `${widthPatterns[widthIndex]}%`
-                          }}
+                      <td key={cellIndex} className="px-6 py-3">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse"
+                             style={{ width: `${widthPatterns[widthIndex]}%` }}
                         />
-                      </TableCell>
+                      </td>
                     );
                   })}
                   {dropdownOptions && dropdownOptions.length > 0 && (
-                    <TableCell className="text-right px-6 py-3">
+                    <td className="text-right px-6 py-3">
                       <div className="h-8 w-24 bg-gray-200 rounded animate-pulse ml-auto" />
-                    </TableCell>
+                    </td>
                   )}
-                </TableRow>
+                </tr>
               );
             })
           ) : rows.length === 0 ? (
-            <TableRow>
-              <TableCell
+            <tr>
+              <td
                 colSpan={headers.length + (dropdownOptions ? 1 : 0)}
                 className="px-6 py-12"
               >
@@ -137,21 +119,18 @@ export default function DataTable({
                     There are no items to display at this time.
                   </p>
                 </div>
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           ) : (
             rows.map((row, rowIndex) => (
-              <TableRow
-                key={rowIndex}
-                className={rowIndex % 2 === 0 ? "bg-[#F9FAFB]" : "bg-white"}
-              >
+              <tr key={rowIndex} className="hover:bg-gray-50 transition-colors">
                 {row.cells.map((cell, cellIndex) => (
-                  <TableCell key={cellIndex} className="px-5 py-3">
+                  <td key={cellIndex} className="px-5 py-4">
                     {cell}
-                  </TableCell>
+                  </td>
                 ))}
                 {dropdownOptions && dropdownOptions.length > 0 && (
-                  <TableCell className="text-right px-4 py-3">
+                  <td className="text-right px-6 py-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         {dropdownOptionsTrigger === 'icon' ? (
@@ -184,13 +163,14 @@ export default function DataTable({
                         ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell>
+                  </td>
                 )}
-              </TableRow>
+              </tr>
             ))
           )}
-        </TableBody>
-      </Table>
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination Footer */}
       {!hidePaginationSection && (

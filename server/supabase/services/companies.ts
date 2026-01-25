@@ -1,35 +1,23 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database, CompanyUpdate } from '@/types/supabase';
 import {Company, CompanyCreate} from '@/types/companies';
+import {CompanyQuery} from "@/types/api";
 
 export class CompaniesService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async getAll(options?: {
-    location?: string;
-    search?: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<{ data: Company[]; count: number }> {
+  async index(options?: CompanyQuery): Promise<{ data: Company[]; count: number }> {
     let query = this.supabase
       .from('companies')
-      .select('*', { count: 'exact' });
+      .select('*');
 
     // Apply filters
-    if (options?.location) {
-      query = query.ilike('location', `%${options.location}%`);
-    }
-    if (options?.search) {
-      query = query.or(`name.ilike.%${options.search}%,description.ilike.%${options.search}%`);
-    }
+    if (options?.location) query = query.ilike('location', `%${options.location}%`);
+    if (options?.search) query = query.or(`name.ilike.%${options.search}%,description.ilike.%${options.search}%`);
 
     // Apply pagination
-    if (options?.limit) {
-      query = query.limit(options.limit);
-    }
-    if (options?.offset) {
-      query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
-    }
+    if (options?.limit) query = query.limit(options.limit);
+    if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
 
     // Order by name
     query = query.order('name', { ascending: true });
@@ -40,7 +28,7 @@ export class CompaniesService {
     return { data: data || [], count: count || 0 };
   }
 
-  async getById(id: string): Promise<Company | null> {
+  async show(id: string): Promise<Company | null> {
     const { data, error } = await this.supabase
       .from('companies')
       .select('*')
@@ -51,7 +39,7 @@ export class CompaniesService {
     return data;
   }
 
-  async create(company: CompanyCreate): Promise<Company> {
+  async store(company: CompanyCreate): Promise<Company> {
     const { data, error } = await this.supabase
       .from('companies')
       .insert(company)

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
-    const { data: companies, count } = await companiesService.getAll({
+    const { data: companies, count } = await companiesService.index({
       location,
       search,
       limit,
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
-    const company = await companiesService.create({
+    const company = await companiesService.store({
       name: body.name,
       short_description: body.short_description,
       long_description: body.long_description || "-",

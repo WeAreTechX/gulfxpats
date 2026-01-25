@@ -3,8 +3,6 @@ import { createServerSupabaseClient } from '../../../../../server/supabase/serve
 import { CompaniesService } from '../../../../../server/supabase/services/companies';
 import { CompanyCreate } from "@/types/companies";
 
-
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -40,7 +38,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Create company
-        await companiesService.create({
+        await companiesService.store({
           name: company.name.trim(),
           short_description: company.short_description,
           long_description: company.long_description,

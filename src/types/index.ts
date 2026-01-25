@@ -93,3 +93,10 @@ export interface Pagination {
   total_count: number;
   total_pages: number;
 }
+
+export interface Currency {
+  id: number;
+  code: string;
+  symbol: string;
+  name: string;
+}

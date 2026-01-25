@@ -31,12 +31,13 @@ const INDUSTRIES = [
   'Other',
 ];
 
-export default function AddCompanyModal({ isOpen, onClose, onSuccess, company }: AddCompanyModalProps) {
+export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, company }: AddCompanyModalProps) {
   const isEditMode = !!company;
   
   const [formData, setFormData] = useState<CompanyCreate>({
     name: '',
     short_description: '',
+    long_description: '',
     website_url: '',
     logo_url: '',
     location: '',
@@ -51,6 +52,7 @@ export default function AddCompanyModal({ isOpen, onClose, onSuccess, company }:
       email: '',
       linkedin: '',
     },
+    status_id: 8
   });
 
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,7 @@ export default function AddCompanyModal({ isOpen, onClose, onSuccess, company }:
   const getInitialFormData = (): CompanyCreate => ({
     name: '',
     short_description: '',
+    long_description: '',
     website_url: '',
     logo_url: '',
     location: '',
@@ -73,6 +76,7 @@ export default function AddCompanyModal({ isOpen, onClose, onSuccess, company }:
       email: '',
       linkedin: '',
     },
+    status_id: 8
   });
 
   // Reset form when modal opens/closes or company changes
@@ -98,6 +102,7 @@ export default function AddCompanyModal({ isOpen, onClose, onSuccess, company }:
             email: company.contact_person?.email || '',
             linkedin: company.contact_person?.linkedin || '',
           },
+          status_id: 8
         });
       } else {
         // Reset form for add mode

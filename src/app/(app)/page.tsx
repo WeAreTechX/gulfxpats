@@ -20,7 +20,8 @@ import {
   Star,
   ChevronRight
 } from 'lucide-react';
-import { Job, Company } from '@/types';
+import { Job } from '@/types';
+import { Company } from '@/types/companies';
 
 export default function HomePage() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -316,11 +317,11 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {featuredCompanies.map((company, index) => (
               <div 
-                key={company.uid}
+                key={company.id}
                 className="opacity-0 animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
               >
-                <CompanyCard company={company} />
+                <CompanyCard key={company.id} company={company} />
               </div>
             ))}
           </div>
