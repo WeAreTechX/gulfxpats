@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Job } from '@/types/jobs';
-import JobCard from '@/components/jobs/JobCard';
-import JobFilters from '@/components/jobs/JobFilters';
+import JobCard from '@/components/app/jobs/JobCard';
+import JobFilters from '@/components/app/jobs/JobFilters';
 import { Search, SlidersHorizontal, X, Briefcase, Sparkles } from 'lucide-react';
 
 const DEFAULT_JOB_TYPES = [

@@ -1,45 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { JobN } from '@/types';
+import { Job } from '@/types/jobs';
 import { MapPin, Clock, Banknote, Building2, ArrowUpRight, Zap, Bookmark } from 'lucide-react';
+import {formatDate} from "@/lib/date";
+import {formatSalary} from "@/lib/utils";
 
 interface JobCardProps {
-  job: JobN;
-  variant?: 'default' | 'compact';
+  job: Job
 }
 
-export default function JobCard({ job, variant = 'default' }: JobCardProps) {
-  const formatSalary = (min: number, max: number, currency: string) => {
-    if (!min && !max) return null;
-    const formatter = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD',
-      maximumFractionDigits: 0,
-    });
-    if (min && max) {
-      return `${formatter.format(min)} - ${formatter.format(max)}`;
-    }
-    if (min) return `From ${formatter.format(min)}`;
-    if (max) return `Up to ${formatter.format(max)}`;
-    return null;
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays}d ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  const salary = formatSalary(job.salaryMin, job.salaryMax, job.currency);
-  const isNew = new Date(job.postedDate).getTime() > Date.now() - 3 * 24 * 60 * 60 * 1000;
+export default function JobCard({ job }: JobCardProps) {
+  const salary = formatSalary(job.salary_min, job.salary_max, job.currency!.code);
+  const isNew = new Date(job.created_at).getTime() > Date.now() - 3 * 24 * 60 * 60 * 1000;
 
   const jobTypeConfig: Record<string, { bg: string; text: string; border: string }> = {
     'full-time': { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100' },
@@ -49,10 +22,10 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
     'freelance': { bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-100' },
   };
 
-  const typeStyle = jobTypeConfig[job.type] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-100' };
+  const typeStyle = jobTypeConfig[job.job_type!.code] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-100' };
 
   return (
-    <Link href={`/src/app/(app)/jobs/${job.uid}`} className="block group h-full">
+    <Link href={`/jobs/${job.id}`} className="block group h-full">
       <div className="relative bg-white rounded-2xl border border-gray-100 p-5 transition-all duration-300 hover:border-[#04724D]/20 hover:shadow-xl hover:shadow-[#04724D]/5 h-full flex flex-col">
         {/* New badge */}
         {isNew && (
@@ -68,8 +41,8 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
         <div className="flex items-start justify-between gap-3 mb-4">
           {/* Company logo */}
           <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden">
-            {job.companyLogo ? (
-              <img src={job.companyLogo} alt={job.companyName || job.company} className="w-full h-full object-cover" />
+            {job.company?.logo_url ? (
+              <img src={job.company.logo_url} alt={job.company.name} className="w-full h-full object-cover" />
             ) : (
               <Building2 className="h-6 w-6 text-gray-400" />
             )}
@@ -77,7 +50,7 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
 
           {/* Badges */}
           <div className="flex items-center gap-2">
-            {job.remote && (
+            {job.job_type?.code.includes('remote') && (
               <span className="px-2.5 py-1 bg-[#E6F4F0] text-[#04724D] text-xs font-medium rounded-lg border border-[#04724D]/20">
                 Remote
               </span>
@@ -98,14 +71,14 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
             {job.title}
           </h3>
           <p className="text-gray-500 text-sm flex items-center">
-            {job.companyName || job.company}
+            {job.company?.name}
           </p>
         </div>
 
         {/* Tags */}
         <div className="mt-4 flex flex-wrap gap-2">
           <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg border ${typeStyle.bg} ${typeStyle.text} ${typeStyle.border}`}>
-            {job.type?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Full Time'}
+            {job.job_type?.name?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Full Time'}
           </span>
           {job.location && (
             <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 text-gray-600 text-xs font-medium rounded-lg border border-gray-100">
@@ -129,7 +102,7 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
           </div>
           <span className="flex items-center text-xs text-gray-400 flex-shrink-0 ml-3">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            {formatDate(job.postedDate)}
+            {formatDate(job.created_at, 'medium')}
           </span>
         </div>
 

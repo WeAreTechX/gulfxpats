@@ -36,9 +36,6 @@ export interface Job extends JobCreate {
   created_at: Date | string;
   modified_at: Date | string;
   status_id: number;
-}
-
-export interface JobWithRelations extends Job {
   company?: Company;
   job_type?: JobType;
   job_industry?: JobIndustry;

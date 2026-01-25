@@ -23,11 +23,16 @@ export const formatDate = (date: string | Date, style: 'y-m-d' | 'short' | 'medi
   }
 };
 
-export const formatAmount = (amount: number, currency: string = '₦'): string => {
-  if (amount) amount = parseFloat(`${amount}`);
-  return `${currency}${amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-};
+export function getRelativeTime(date: string): string {
+  const now = new Date();
+  const posted = new Date(date);
+  const diffInMs = now.getTime() - posted.getTime();
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-export const calculateProgress = (contributed: number, target: number): number => {
-  return Math.min((contributed / target) * 100, 100);
-};
+  if (diffInDays === 0) return 'Today';
+  if (diffInDays === 1) return 'Yesterday';
+  if (diffInDays < 7) return `${diffInDays} days ago`;
+  if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
+  if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
+  return `${Math.floor(diffInDays / 365)} years ago`;
+}

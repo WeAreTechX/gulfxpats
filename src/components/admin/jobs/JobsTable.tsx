@@ -3,11 +3,11 @@ import DataTable from "@/components/custom/DataTable";
 import Status from "@/components/ui/Status";
 import {Pagination} from "@/types";
 import {formatDate} from "@/lib/date";
-import {Job, JobWithRelations} from "@/types/jobs";
+import {Job} from "@/types/jobs";
 
 interface JobsTableProps {
   loading: boolean;
-  jobs: JobWithRelations[];
+  jobs: Job[];
   pagination: Pagination | undefined
   onPageChange: (page: number) => void;
   onRowChange: () => void;

@@ -1,5 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database, Status, JobType, JobIndustry, ResourceType, Currency, Source } from '@/types/supabase';
+import {Job} from "@/types/jobs";
+import {Company} from "@/types/companies";
 
 export class LookupsService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -123,7 +125,7 @@ export class LookupsService {
 
     if (error) throw error;
     
-    const locations = [...new Set(data?.map(j => j.location).filter(Boolean) as string[])];
+    const locations = [...new Set(data?.map((j: Job) => j.location).filter(Boolean) as string[])];
     return locations.sort();
   }
 
@@ -136,7 +138,7 @@ export class LookupsService {
 
     if (error) throw error;
     
-    const locations = [...new Set(data?.map(c => c.location).filter(Boolean) as string[])];
+    const locations = [...new Set(data?.map((c: Company) => c.location).filter(Boolean) as string[])];
     return locations.sort();
   }
 

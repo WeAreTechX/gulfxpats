@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Job } from '@/types';
-import { formatSalary, formatDate, getRelativeTime } from '@/lib/utils';
-import { 
+import { formatSalary } from '@/lib/utils';
+import { formatDate, getRelativeTime } from '@/lib/date';
+import {
   MapPin, 
   Clock, 
   DollarSign, 
@@ -21,7 +22,7 @@ export default function JobDetails({ job }: JobDetailsProps) {
     <div className="max-w-4xl mx-auto">
       {/* Back Button */}
       <Link 
-        href="/"
+        href="/public"
         className="inline-flex items-center text-gray-600 hover:text-black mb-6"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />

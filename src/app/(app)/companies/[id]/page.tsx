@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '../../../../../server/supabase/server';
-import CompanyDetails from '@/components/companies/CompanyDetails';
+import CompanyDetails from '@/components/app/companies/CompanyDetails';
 
 interface CompanyPageProps {
   params: Promise<{

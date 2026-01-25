@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Company } from '@/types';
-import CompanyCard from '@/components/companies/CompanyCard';
-import CompanyFilters from '@/components/companies/CompanyFilters';
+import CompanyCard from '@/components/app/companies/CompanyCard';
+import CompanyFilters from '@/components/app/companies/CompanyFilters';
 import { Search, SlidersHorizontal, X, Building2, Sparkles } from 'lucide-react';
 
 export default function CompaniesPage() {

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '../../../../../server/supabase/server';
-import JobDetails from '@/components/jobs/JobDetails';
+import JobDetails from '@/components/app/jobs/JobDetails';
 
 interface JobPageProps {
   params: Promise<{

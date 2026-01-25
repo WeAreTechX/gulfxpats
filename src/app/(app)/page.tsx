@@ -1,12 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import JobCard from '@/components/jobs/JobCard';
-import CompanyCard from '@/components/companies/CompanyCard';
-import { JobsEmptyState, CompaniesEmptyState } from '@/components/custom/EmptyStates';
-import { 
-  ArrowRight, 
+import {
   Briefcase, 
   Building2, 
   Search, 
@@ -20,44 +16,11 @@ import {
   Star,
   ChevronRight
 } from 'lucide-react';
-import { Job } from '@/types';
-import { Company } from '@/types/companies';
+import FeaturedJobs from "@/components/app/jobs/FeaturedJobs";
+import FeaturedCompanies from "@/components/app/companies/FeaturedCompanies";
 
 export default function HomePage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const featuredJobs = jobs.slice(0, 6);
-  const featuredCompanies = companies.slice(0, 4);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [jobsRes, companiesRes] = await Promise.all([
-          fetch('/api/jobs?limit=6'),
-          fetch('/api/companies?limit=4'),
-        ]);
-        
-        const jobsData = await jobsRes.json();
-        const companiesData = await companiesRes.json();
-        
-        if (jobsData.success) {
-          setJobs(jobsData.jobs);
-        }
-        if (companiesData.success) {
-          setCompanies(companiesData.companies);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,20 +28,6 @@ export default function HomePage() {
       window.location.href = `/jobs?search=${encodeURIComponent(searchQuery)}`;
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-[#E6F4F0] rounded-full"></div>
-            <div className="w-16 h-16 border-4 border-transparent border-t-[#04724D] rounded-full animate-spin absolute top-0 left-0"></div>
-          </div>
-          <p className="text-gray-500 text-sm animate-pulse">Discovering opportunities...</p>
-        </div>
-      </div>
-    );
-  }
 
   const features = [
     {
@@ -191,7 +140,7 @@ export default function HomePage() {
                 <Briefcase className="h-6 w-6 text-[#04724D]" />
               </div>
               <div className="text-left">
-                <p className="text-2xl font-bold text-gray-900">{jobs.length > 0 ? `${jobs.length}+` : '500+'}</p>
+                <p className="text-2xl font-bold text-gray-900">500+</p>
                 <p className="text-sm text-gray-500">Active Jobs</p>
               </div>
             </div>
@@ -200,7 +149,7 @@ export default function HomePage() {
                 <Building2 className="h-6 w-6 text-emerald-600" />
               </div>
               <div className="text-left">
-                <p className="text-2xl font-bold text-gray-900">{companies.length > 0 ? `${companies.length}+` : '100+'}</p>
+                <p className="text-2xl font-bold text-gray-900">100+</p>
                 <p className="text-sm text-gray-500">Companies</p>
               </div>
             </div>
@@ -241,104 +190,10 @@ export default function HomePage() {
       </section>
 
       {/* Featured Jobs Section */}
-      <section className="py-20">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/20">
-                <Zap className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-[#04724D] uppercase tracking-wider">Latest Opportunities</span>
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Featured Jobs</h2>
-            <p className="text-gray-600 mt-2">Handpicked opportunities from top employers</p>
-          </div>
-          <Link
-            href="/jobs"
-            className="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition-colors group"
-          >
-            View All Jobs
-            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-        
-        {featuredJobs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {featuredJobs.map((job, index) => (
-              <div 
-                key={job.uid} 
-                className="opacity-0 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
-              >
-                <JobCard job={job} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl border border-gray-100">
-            <JobsEmptyState 
-              action={
-                <Link
-                  href="/jobs"
-                  className="inline-flex items-center px-6 py-3 bg-[#04724D] text-white rounded-xl font-medium hover:bg-[#035E3F] transition-colors"
-                >
-                  Browse All Jobs
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              }
-            />
-          </div>
-        )}
-      </section>
+      <FeaturedJobs />
 
       {/* Trusted Companies Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white rounded-3xl border border-gray-100 -mx-4 px-4 sm:mx-0 sm:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <Building2 className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-emerald-600 uppercase tracking-wider">Top Employers</span>
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Trusted Companies</h2>
-            <p className="text-gray-600 mt-2">Join teams at these amazing organizations</p>
-          </div>
-          <Link
-            href="/companies"
-            className="inline-flex items-center px-5 py-2.5 bg-white text-gray-700 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors group shadow-sm"
-          >
-            View All Companies
-            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-        
-        {featuredCompanies.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {featuredCompanies.map((company, index) => (
-              <div 
-                key={company.id}
-                className="opacity-0 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
-              >
-                <CompanyCard key={company.id} company={company} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <CompaniesEmptyState 
-            action={
-              <Link
-                href="/companies"
-                className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors"
-              >
-                Explore Companies
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Link>
-            }
-          />
-        )}
-      </section>
+      <FeaturedCompanies />
 
       {/* Testimonial Section */}
       <section className="py-20">

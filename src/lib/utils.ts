@@ -16,27 +16,10 @@ export function formatSalary(min: number, max: number, currency: string = 'USD')
   return `${formatter.format(min)} - ${formatter.format(max)}`;
 }
 
-export function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
-
-export function getRelativeTime(date: string): string {
-  const now = new Date();
-  const posted = new Date(date);
-  const diffInMs = now.getTime() - posted.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-  
-  if (diffInDays === 0) return 'Today';
-  if (diffInDays === 1) return 'Yesterday';
-  if (diffInDays < 7) return `${diffInDays} days ago`;
-  if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-  if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
-  return `${Math.floor(diffInDays / 365)} years ago`;
-}
+export const formatAmount = (amount: number, currency: string = '$'): string => {
+  if (amount) amount = parseFloat(`${amount}`);
+  return `${currency}${amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
 
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;

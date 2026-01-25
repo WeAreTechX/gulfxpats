@@ -1,14 +1,13 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database, JobUpdate } from '@/types/supabase';
-import {Job, JobCreate} from "@/types/jobs";
 import {QueryResponse, QueryStats} from "@/types/api";
-import {JobQuery, JobWithRelations} from "@/types/jobs";
+import {JobQuery, Job, JobCreate} from "@/types/jobs";
 import {Status} from "@/types";
 
 export class JobsService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async index(options?: JobQuery): Promise<QueryResponse<JobWithRelations>> {
+  async index(options?: JobQuery): Promise<QueryResponse<Job>> {
     let query = this.supabase
       .from('jobs')
       .select(`
@@ -41,7 +40,7 @@ export class JobsService {
     };
   }
 
-  async getById(id: string): Promise<JobWithRelations | null> {
+  async getById(id: string): Promise<Job | null> {
     const { data, error } = await this.supabase
       .from('jobs')
       .select(`
@@ -55,7 +54,7 @@ export class JobsService {
       .single();
 
     if (error) throw error;
-    return data as JobWithRelations;
+    return data as Job;
   }
 
   async store(job: JobCreate): Promise<Job> {
@@ -90,7 +89,7 @@ export class JobsService {
     if (error) throw error;
   }
 
-  async getByCompany(companyId: string): Promise<JobWithRelations[]> {
+  async getByCompany(companyId: string): Promise<Job[]> {
     const { data, error } = await this.supabase
       .from('jobs')
       .select(`
@@ -104,10 +103,10 @@ export class JobsService {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data as JobWithRelations[];
+    return data as Job[];
   }
 
-  async getFeatured(limit: number = 6): Promise<JobWithRelations[]> {
+  async getFeatured(limit: number = 6): Promise<Job[]> {
     const { data, error } = await this.supabase
       .from('jobs')
       .select(`
@@ -122,7 +121,7 @@ export class JobsService {
       .limit(limit);
 
     if (error) throw error;
-    return data as JobWithRelations[];
+    return data as Job[];
   }
 
   async getStats(): Promise<QueryStats> {

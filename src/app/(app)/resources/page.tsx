@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Resource } from '@/types';
-import ResourceCard from '@/components/resources/ResourceCard';
-import ResourceFilters from '@/components/resources/ResourceFilters';
+import ResourceCard from '@/components/app/resources/ResourceCard';
+import ResourceFilters from '@/components/app/resources/ResourceFilters';
 import { Search, SlidersHorizontal, X, BookOpen, ExternalLink } from 'lucide-react';
 
 // Default resource types

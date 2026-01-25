@@ -23,6 +23,7 @@ export interface Company extends CompanyCreate {
   modified_at: Date | string;
   status_id: number;
   status: Status
+  jobs_count?: number;
 }
 
 export interface CompanyQuery extends Query {

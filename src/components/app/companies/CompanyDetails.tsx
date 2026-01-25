@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Company, Job } from '@/types';
-import { formatSalary, getRelativeTime } from '@/lib/utils';
-import { 
+import { getRelativeTime } from '@/lib/date';
+import { formatSalary } from '@/lib/utils';
+import {
   MapPin, 
   Users, 
   Calendar, 
@@ -256,7 +257,7 @@ export default function CompanyDetails({ company, jobs }: CompanyDetailsProps) {
                     </a>
                   )}
                   <Link
-                    href="/"
+                    href="/public"
                     className="block text-black font-medium hover:underline"
                   >
                     View All Jobs
