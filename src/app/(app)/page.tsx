@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { Job, Company } from '@/types';
 
-export default function Home() {
+export default function HomePage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
@@ -157,7 +157,7 @@ export default function Home() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Job title, keyword, or company..."
-                  className="flex-1 text-gray-900 placeholder-gray-400 focus-visible:outline-none! focus:outline-none text-base"
+                  className="flex-1 text-gray-900 placeholder-gray-400 focus-visible:outline-none focus:outline-none text-base"
                 />
                 <button
                   type="submit"
@@ -220,11 +220,11 @@ export default function Home() {
       <section className="py-20 border-t border-gray-100">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Jingu?</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">We're committed to helping you find the perfect opportunity with tools and features designed for your success.</p>
+          <p className="text-gray-600 max-w-2xl mx-auto">We&apos;re committed to helping you find the perfect opportunity with tools and features designed for your success.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <div 
               key={feature.title}
               className="group relative bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-xl hover:shadow-gray-100/50 transition-all duration-300"
@@ -376,7 +376,7 @@ export default function Home() {
                   <Star key={i} className="h-5 w-5 text-amber-400 fill-amber-400" />
                 ))}
               </div>
-              <p className="text-gray-700 mb-6 leading-relaxed">"{testimonial.quote}"</p>
+              <p className="text-gray-700 mb-6 leading-relaxed">&quot;{testimonial.quote}&quot;</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-medium text-sm">{testimonial.author[0]}</span>
