@@ -26,10 +26,10 @@ interface ParsedCompany {
   website_url?: string;
   logo_url?: string;
   location?: string;
+  address?: string;
   // Metadata fields
   metadata_industry?: string;
   metadata_email?: string;
-  metadata_address?: string;
   metadata_phone?: string;
   metadata_linkedin?: string;
   // Contact person fields
@@ -91,6 +91,10 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       errors.push('Location is required');
     }
 
+    if (!company.address || company.address.trim() === '') {
+      errors.push('Address is required');
+    }
+
     // URL validations
     if (company.website_url && company.website_url.trim() && !isValidUrl(company.website_url)) {
       errors.push('Invalid website URL');
@@ -148,10 +152,10 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       'website_url': 'website_url',
       'logo_url': 'logo_url',
       'location': 'location',
+      'address': 'address',
       // Metadata fields (with dot notation)
       'metadata.industry': 'metadata_industry',
       'metadata.email': 'metadata_email',
-      'metadata.address': 'metadata_address',
       'metadata.phone': 'metadata_phone',
       'metadata.linkedin': 'metadata_linkedin',
       // Contact person fields (with dot notation)
@@ -190,9 +194,9 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
         website_url: company.website_url,
         logo_url: company.logo_url,
         location: company.location,
+        address: company.address,
         metadata_industry: company.metadata_industry,
         metadata_email: company.metadata_email,
-        metadata_address: company.metadata_address,
         metadata_phone: company.metadata_phone,
         metadata_linkedin: company.metadata_linkedin,
         contact_first_name: company.contact_first_name,
@@ -324,7 +328,6 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
               metadata: {
                 industry: c.metadata_industry || null,
                 email: c.metadata_email || null,
-                address: c.metadata_address || null,
                 phone: c.metadata_phone || null,
                 linkedin: c.metadata_linkedin || null,
               },
@@ -378,7 +381,8 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
     }
   };
 
-  const headers = ['name', 'short_description', 'long_description', 'website_url', 'logo_url', 'location', 'metadata.industry', 'metadata.email', 'metadata.address', 'metadata.phone', 'metadata.linkedin', 'contact.first_name', 'contact.last_name', 'contact.email', 'contact.linkedin'];
+  const headersRequired = ['name', 'short_description', 'website_url', 'location', 'address'];
+  const headers = ['name', 'short_description', 'long_description', 'website_url', 'logo_url', 'location', 'address', 'metadata.industry', 'metadata.email', 'metadata.phone', 'metadata.linkedin', 'contact.first_name', 'contact.last_name', 'contact.email', 'contact.linkedin'];
   const downloadTemplate = () => {
     const sampleRow = ['Acme Corp', 'A technology company', 'A long description ',  'https://acme.com', 'https://acme.com/logo.png', 'USA', 'Technology', 'hello@acme.com', 'Delaware, USA', '123456789', 'https://linkedin.com/company/acme', 'John', 'Doe', 'john@doe.com', 'www.linkedin.com/in/johndoe'];
 
@@ -423,7 +427,7 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
             >
               <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
                 {/* Header */}
-                <div className="relative bg-gradient-to-br from-emerald-600 to-emerald-700 px-6 py-6 text-white">
+                <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 px-6 py-6 text-white">
                   <button
                     onClick={handleClose}
                     className="absolute right-4 top-4 p-2 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-colors"
@@ -506,7 +510,7 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                             <span
                               key={col}
                               className={`px-2 py-1 text-xs rounded-md ${
-                                ['name', 'short_description', 'website_url', 'location'].includes(col) 
+                                headersRequired.includes(col) 
                                   ? 'bg-red-100 text-red-700' 
                                   : 'bg-slate-200 text-slate-700'
                               }`}

@@ -25,8 +25,9 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
     location: '',
     address: '',
     metadata: {
-      industry_id: '',
-      address: '',
+      industry: '',
+      phone: '',
+      email: '',
       linkedin: ''
     },
     contact: {
@@ -49,7 +50,9 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
     location: '',
     address: '',
     metadata: {
-      address: '',
+      industry: '',
+      phone: '',
+      email: '',
       linkedin: ''
     },
     contact: {
@@ -73,16 +76,8 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
           logo_url: company.logo_url || '',
           location: company.location || '',
           address: company.address || '',
-          metadata: {
-            address: company.metadata?.address || '',
-            linkedin: company.metadata?.linkedin || '',
-          },
-          contact: {
-            first_name: company.contact?.first_name || '',
-            last_name: company.contact?.last_name || '',
-            email: company.contact?.email || '',
-            linkedin: company.contact?.linkedin || '',
-          }
+          metadata: company.metadata,
+          contact: company.contact,
         });
       } else {
         // Reset form for add mode

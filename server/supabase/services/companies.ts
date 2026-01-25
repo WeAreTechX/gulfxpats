@@ -9,7 +9,7 @@ export class CompaniesService {
   async index(options?: CompanyQuery): Promise<{ data: Company[]; count: number }> {
     let query = this.supabase
       .from('companies')
-      .select('*');
+      .select(`*, status:statuses(*)`);
 
     // Apply filters
     if (options?.location) query = query.ilike('location', `%${options.location}%`);

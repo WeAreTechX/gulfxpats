@@ -59,9 +59,9 @@ export async function POST(request: NextRequest) {
       website_url: body.website,
       logo_url: body.logoUrl,
       location: body.location,
+      address: body.address,
       contact: body.contact,
-      metadata: body.metadata,
-      status_id: 11
+      metadata: body.metadata
     });
 
     return NextResponse.json({

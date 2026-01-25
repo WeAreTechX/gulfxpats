@@ -8,12 +8,14 @@ export default function Status(status: Status) {
   }
 
   const getStatusGroup = () => {
-    if (['active'].includes(status.name)) {
+    if (['active', 'published', 'verified', 'enabled'].includes(status.code)) {
       return 'green'
-    } else if (['inactive', 'removed'].includes(status.name)) {
+    } else if (['inactive', 'disabled', 'deleted'].includes(status.code)) {
       return 'red'
-    } else if (['pending', 'incomplete'].includes(status.name)) {
+    } else if (['pending', 'unverified'].includes(status.code)) {
       return 'yellow'
+    } else if (['unpublished'].includes(status.code)) {
+      return 'blue'
     } else {
       return 'gray'
     }
@@ -26,6 +28,8 @@ export default function Status(status: Status) {
         return "bg-red-100 text-red-800";
       case "yellow":
         return "bg-yellow-100 text-yellow-800";
+      case "blue":
+        return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -48,10 +52,10 @@ export default function Status(status: Status) {
 
   return (
     <span key="status"
-          className={cn(
-            "px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 w-fit",
-            getStatusColor()
-          )}
+      className={cn(
+        "px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 w-fit",
+        getStatusColor()
+      )}
     >
       <StatusIcon className="w-4 h-4 hidden" />
       {status.name === 'Incomplete' ? 'Pending' : status.name}

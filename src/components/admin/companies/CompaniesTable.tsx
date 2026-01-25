@@ -4,6 +4,7 @@ import Status from "@/components/ui/Status";
 import {Pagination} from "@/types";
 import {formatDate} from "@/lib/date";
 import {Company} from "@/types/companies";
+import {getCountryByIso3} from "@/lib/countries";
 
 interface CompaniesTableProps {
   loading: boolean;
@@ -22,35 +23,25 @@ export default function CompaniesTable({
  }: CompaniesTableProps) {
 
   const headers = useMemo(() => {
-    return ["Name", "Location", "Industry", "Short Description", "Date Added"];
+    return ["Name", "Location", "Created on", "Updated on", "Status"];
   }, []);
 
   const rows = useMemo(() => {
     return companies.map((company) => {
       const cells = [
-        <Status key="status" {...company.status} />,
-        <div key="company" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#00A558] flex items-center justify-center text-white font-medium text-sm">
-            {company.name.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className="font-medium text-gray-900">
-              {company.name}
-            </p>
-          </div>
+        <div key="title" className="max-w-[140px]">
+          <p className="font-medium text-gray-900">{company.name}</p>
+          <p key="description" className="text-gray-700 text-sm truncate">{company.short_description || '-'}</p>
         </div>,
-        <p key="location" className="text-sm text-gray-600">
-          {company.location}
-        </p>,
-        <p key="industry" className="text-sm text-gray-600">
-          {company.metadata.industry}
-        </p>,
-        <p key="short_description" className="text-sm text-gray-600">
-          {company.short_description}
-        </p>,
-        <p key="date" className="text-sm text-gray-600">
-          {formatDate(company.created_at)}
-        </p>
+        <div key="location" className="max-w-[120px]">
+          {company.location && <p className="font-medium text-gray-900">{getCountryByIso3(company.location)?.name}</p>}
+          {company.address && (
+            <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">{company.address}</p>
+          )}
+        </div>,
+        <span key="created_at" className="text-sm text-gray-600">{formatDate(company.created_at)}</span>,
+        <span key="modified_at" className="text-sm text-gray-600">{formatDate(company.modified_at)}</span>,
+        <Status key="status" {...company.status} />,
       ];
 
       return { cells };
@@ -58,9 +49,9 @@ export default function CompaniesTable({
   }, [companies]);
 
   const dropdownOptions = [
-    { label: "Edit company", action: "edit" },
+    { label: "Edit information", action: "edit" },
     { label: "Change status", action: "change-status" },
-    { label: "Remove company", action: "remove" },
+    { label: "Remove", action: "remove" },
   ]
 
   const handleOptionClick = (action: string, rowIndex: number) => {

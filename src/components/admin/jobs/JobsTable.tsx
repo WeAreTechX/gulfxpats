@@ -43,8 +43,8 @@ export default function JobsTable(props: JobsTableProps) {
         </span>,
         <span key="location" className="text-gray-700">{job.location || '-'}</span>,
         <p key="industry" className="text-gray-700 max-w-[100px]">{job.job_industry?.name || '-'}</p>,
-        <p key="created_at" className="text-gray-700 w-[170px]">{formatDate(job.created_at, 'medium', '-')}</p>,
-        <p key="modified_at" className="text-gray-700 w-[170px]">{formatDate(job.modified_at, 'medium', '-')}</p>,
+        <span key="created_at" className="text-gray-700 w-[170px]">{formatDate(job.created_at, 'medium', '-')}</span>,
+        <span key="modified_at" className="text-gray-700 w-[170px]">{formatDate(job.modified_at, 'medium', '-')}</span>,
         <Status key="status" {...job.status!} />
       ];
 
