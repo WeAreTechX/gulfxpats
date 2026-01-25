@@ -61,7 +61,7 @@ export default function AdminLogin() {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="relative">
           <div className="w-16 h-16 border-4 border-slate-700 rounded-full animate-pulse"></div>
-          <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
+          <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-[#04724D] rounded-full animate-spin"></div>
         </div>
       </div>
     );
@@ -75,11 +75,11 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-slate-950 flex">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#04724D] via-[#035E3F] to-teal-800 p-12 flex-col justify-between relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-teal-300 rounded-full blur-3xl"></div>
         </div>
         
         <div className="relative z-10">
@@ -114,7 +114,7 @@ export default function AdminLogin() {
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-10">
             <Link href="/" className="inline-flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#04724D] to-teal-600 rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/20">
                 <span className="text-white font-bold text-xl">J</span>
               </div>
               <span className="text-2xl font-bold text-white">Jingu</span>
@@ -149,7 +149,7 @@ export default function AdminLogin() {
                   setResetEmailSent(false);
                   setEmail('');
                 }}
-                className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                className="text-[#04724D] hover:text-teal-400 font-medium transition-colors"
               >
                 Back to login
               </button>
@@ -172,7 +172,7 @@ export default function AdminLogin() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#04724D]/40 focus:border-[#04724D] transition-all"
                     placeholder="admin@example.com"
                   />
                 </div>
@@ -194,7 +194,7 @@ export default function AdminLogin() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-12 pr-12 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all"
+                      className="w-full pl-12 pr-12 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#04724D]/40 focus:border-[#04724D] transition-all"
                       placeholder="Enter your password"
                     />
                     <button
@@ -215,7 +215,7 @@ export default function AdminLogin() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-medium rounded-xl transition-all duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-[#04724D] to-teal-600 hover:from-teal-600 hover:to-teal-500 text-white font-medium rounded-xl transition-all duration-200 shadow-lg shadow-[#04724D]/25 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
@@ -237,7 +237,7 @@ export default function AdminLogin() {
                 <button
                   type="button"
                   onClick={() => setIsForgotPassword(!isForgotPassword)}
-                  className="text-sm text-slate-400 hover:text-indigo-400 font-medium transition-colors"
+                  className="text-sm text-slate-400 hover:text-[#04724D] font-medium transition-colors"
                 >
                   {isForgotPassword ? 'Back to login' : 'Forgot your password?'}
                 </button>
@@ -250,7 +250,7 @@ export default function AdminLogin() {
               This area is restricted to authorized administrators only.
             </p>
             <p className="text-center mt-2">
-              <Link href="/" className="text-sm text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+              <Link href="/" className="text-sm text-[#04724D] hover:text-teal-400 font-medium transition-colors">
                 Return to homepage
               </Link>
             </p>

@@ -50,7 +50,7 @@ export default function ForgotPasswordForm({ onSuccess, onBack }: ForgotPassword
         <button
           type="button"
           onClick={onSuccess}
-          className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3.5 px-4 rounded-xl hover:from-indigo-700 hover:to-violet-700 transition-all font-medium shadow-lg shadow-indigo-500/25"
+          className="w-full bg-gradient-to-r from-[#04724D] to-teal-600 text-white py-3.5 px-4 rounded-xl hover:from-[#035E3F] hover:to-teal-700 transition-all font-medium shadow-lg shadow-[#04724D]/25"
         >
           Back to login
         </button>
@@ -63,7 +63,7 @@ export default function ForgotPasswordForm({ onSuccess, onBack }: ForgotPassword
       <button
         type="button"
         onClick={onBack}
-        className="flex items-center text-sm text-gray-600 hover:text-indigo-600 mb-2 transition-colors"
+        className="flex items-center text-sm text-gray-600 hover:text-[#04724D] mb-2 transition-colors"
       >
         <ArrowLeft className="h-4 w-4 mr-1" />
         Back to login
@@ -82,7 +82,7 @@ export default function ForgotPasswordForm({ onSuccess, onBack }: ForgotPassword
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+            className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
           />
         </div>
       </div>
@@ -90,7 +90,7 @@ export default function ForgotPasswordForm({ onSuccess, onBack }: ForgotPassword
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3.5 px-4 rounded-xl hover:from-indigo-700 hover:to-violet-700 transition-all flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
+        className="w-full bg-gradient-to-r from-[#04724D] to-teal-600 text-white py-3.5 px-4 rounded-xl hover:from-[#035E3F] hover:to-teal-700 transition-all flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40"
       >
         {loading ? (
           <>

@@ -93,12 +93,12 @@ export default function JobFilters({
       <div className="p-5 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <SlidersHorizontal className="h-4 w-4 text-indigo-600" />
+            <div className="w-8 h-8 bg-[#E6F4F0] rounded-lg flex items-center justify-center">
+              <SlidersHorizontal className="h-4 w-4 text-[#04724D]" />
             </div>
             <h3 className="font-semibold text-gray-900">Filters</h3>
             {activeFilterCount > 0 && (
-              <span className="px-2 py-0.5 bg-indigo-600 text-white text-xs font-medium rounded-full">
+              <span className="px-2 py-0.5 bg-[#04724D] text-white text-xs font-medium rounded-full">
                 {activeFilterCount}
               </span>
             )}
@@ -106,7 +106,7 @@ export default function JobFilters({
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="text-sm text-gray-500 hover:text-indigo-600 flex items-center gap-1 transition-colors"
+              className="text-sm text-gray-500 hover:text-[#04724D] flex items-center gap-1 transition-colors"
             >
               <X className="h-3.5 w-3.5" />
               Clear
@@ -119,7 +119,7 @@ export default function JobFilters({
       <div className="p-5 border-b border-gray-100">
         <label className="flex items-center justify-between cursor-pointer group">
           <div className="flex items-center gap-2">
-            <Wifi className="h-4 w-4 text-gray-400 group-hover:text-indigo-500 transition-colors" />
+            <Wifi className="h-4 w-4 text-gray-400 group-hover:text-[#04724D] transition-colors" />
             <span className="text-sm font-medium text-gray-700">Remote only</span>
           </div>
           <div className="relative">
@@ -131,7 +131,7 @@ export default function JobFilters({
             />
             <div className={cn(
               "w-11 h-6 rounded-full transition-colors",
-              filters.remote ? "bg-indigo-600" : "bg-gray-200"
+              filters.remote ? "bg-[#04724D]" : "bg-gray-200"
             )}>
               <div className={cn(
                 "w-5 h-5 bg-white rounded-full shadow-sm transition-transform absolute top-0.5",
@@ -169,8 +169,8 @@ export default function JobFilters({
                   <div className={cn(
                     "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
                     filters.jobTypes.includes(type.code)
-                      ? "bg-indigo-600 border-indigo-600"
-                      : "border-gray-300 group-hover:border-indigo-400"
+                      ? "bg-[#04724D] border-[#04724D]"
+                      : "border-gray-300 group-hover:border-[#04724D]"
                   )}>
                     {filters.jobTypes.includes(type.code) && (
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 12 12">
@@ -214,8 +214,8 @@ export default function JobFilters({
                     <div className={cn(
                       "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
                       filters.locations.includes(location)
-                        ? "bg-indigo-600 border-indigo-600"
-                        : "border-gray-300 group-hover:border-indigo-400"
+                        ? "bg-[#04724D] border-[#04724D]"
+                        : "border-gray-300 group-hover:border-[#04724D]"
                     )}>
                       {filters.locations.includes(location) && (
                         <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 12 12">
@@ -262,11 +262,11 @@ export default function JobFilters({
                   <div className={cn(
                     "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
                     filters.salaryMin === range.min && filters.salaryMax === range.max
-                      ? "border-indigo-600"
-                      : "border-gray-300 group-hover:border-indigo-400"
+                      ? "border-[#04724D]"
+                      : "border-gray-300 group-hover:border-[#04724D]"
                   )}>
                     {filters.salaryMin === range.min && filters.salaryMax === range.max && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-indigo-600" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#04724D]" />
                     )}
                   </div>
                 </div>

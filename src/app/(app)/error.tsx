@@ -33,7 +33,7 @@ export default function Error({ error, reset }: ErrorProps) {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}
-            className="inline-flex items-center justify-center px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center justify-center px-5 py-2.5 bg-[#04724D] text-white rounded-xl font-medium hover:bg-[#035E3F] transition-colors"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Try again

@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="text-center max-w-lg">
         {/* 404 Illustration */}
         <div className="mb-8">
-          <span className="text-9xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="text-9xl font-bold bg-gradient-to-r from-[#04724D] to-teal-600 bg-clip-text text-transparent">
             404
           </span>
         </div>
@@ -24,7 +24,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/"
-            className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/25"
+            className="inline-flex items-center justify-center px-6 py-3 bg-[#04724D] text-white rounded-xl font-medium hover:bg-[#035E3F] transition-colors shadow-lg shadow-[#04724D]/25"
           >
             <Home className="h-5 w-5 mr-2" />
             Go home
@@ -43,13 +43,13 @@ export default function NotFound() {
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500 mb-4">Looking for something specific?</p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link href="/jobs" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link href="/jobs" className="text-[#04724D] hover:text-[#035E3F] font-medium">
               Jobs
             </Link>
-            <Link href="/companies" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link href="/companies" className="text-[#04724D] hover:text-[#035E3F] font-medium">
               Companies
             </Link>
-            <Link href="/resources" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link href="/resources" className="text-[#04724D] hover:text-[#035E3F] font-medium">
               Resources
             </Link>
           </div>

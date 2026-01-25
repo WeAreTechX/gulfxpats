@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand & Description */}
           <div className="lg:col-span-4">
             <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/30 transition-shadow">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/20 group-hover:shadow-[#04724D]/30 transition-shadow">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <span className="text-2xl font-bold text-gray-900">Jingu</span>
@@ -26,11 +26,11 @@ export default function Footer() {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#04724D]/20 focus:border-[#04724D]"
                 />
                 <button 
                   type="submit"
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm"
+                  className="px-5 py-2.5 bg-[#04724D] hover:bg-[#035E3F] text-white text-sm font-medium rounded-xl transition-colors shadow-sm"
                 >
                   Subscribe
                 </button>
@@ -43,21 +43,21 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Platform</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/jobs" className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors group">
+                <Link href="/jobs" className="flex items-center gap-2 text-gray-600 hover:text-[#04724D] transition-colors group">
                   <Briefcase className="h-4 w-4" />
                   <span>Browse Jobs</span>
                   <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
               <li>
-                <Link href="/companies" className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors group">
+                <Link href="/companies" className="flex items-center gap-2 text-gray-600 hover:text-[#04724D] transition-colors group">
                   <Building2 className="h-4 w-4" />
                   <span>Companies</span>
                   <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
               <li>
-                <Link href="/resources" className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors group">
+                <Link href="/resources" className="flex items-center gap-2 text-gray-600 hover:text-[#04724D] transition-colors group">
                   <BookOpen className="h-4 w-4" />
                   <span>Resources</span>
                   <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -71,22 +71,22 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Company</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/about" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                <Link href="/about" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                <Link href="/contact" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                <Link href="/careers" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                <Link href="/blog" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Blog
                 </Link>
               </li>
@@ -98,17 +98,17 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/privacy" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                <Link href="/privacy" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                <Link href="/terms" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                <Link href="/cookies" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Cookie Policy
                 </Link>
               </li>
@@ -120,7 +120,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Contact</h3>
             <ul className="space-y-3">
               <li>
-                <a href="mailto:hello@jingu.com" className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors">
+                <a href="mailto:hello@jingu.com" className="flex items-center gap-2 text-gray-600 hover:text-[#04724D] transition-colors">
                   <Mail className="h-4 w-4" />
                   <span>hello@jingu.com</span>
                 </a>
@@ -177,7 +177,7 @@ export default function Footer() {
                 href="https://wearetechx.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-900 hover:text-indigo-600 transition-colors font-medium"
+                className="text-gray-900 hover:text-[#04724D] transition-colors font-medium"
               >
                 TechX
               </a>

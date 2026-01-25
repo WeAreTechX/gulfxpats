@@ -89,7 +89,7 @@ export default function TopNav() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-2.5 group">
-                <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow">
+                <div className="w-9 h-9 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/20 group-hover:shadow-[#04724D]/40 transition-shadow">
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
@@ -130,7 +130,7 @@ export default function TopNav() {
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className="flex items-center space-x-2 px-3 py-2 rounded-full hover:bg-gray-100 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center ring-2 ring-white">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-full flex items-center justify-center ring-2 ring-white">
                       <span className="text-white font-medium text-sm">
                         {getUserDisplayName().charAt(0).toUpperCase()}
                       </span>
@@ -181,7 +181,7 @@ export default function TopNav() {
                   </button>
                   <button
                     onClick={() => openAuthModal('signup')}
-                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-lg transition-all shadow-md shadow-indigo-500/25 hover:shadow-lg hover:shadow-indigo-500/30"
+                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#04724D] to-teal-600 hover:from-[#035E3F] hover:to-teal-700 rounded-lg transition-all shadow-md shadow-[#04724D]/25 hover:shadow-lg hover:shadow-[#04724D]/30"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     Sign up
@@ -216,7 +216,7 @@ export default function TopNav() {
                     className={cn(
                       "flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors",
                       isActive
-                        ? "bg-indigo-50 text-indigo-700"
+                        ? "bg-[#E6F4F0] text-[#04724D]"
                         : "text-gray-600 hover:bg-gray-50"
                     )}
                   >
@@ -231,7 +231,7 @@ export default function TopNav() {
                 {user ? (
                   <div className="space-y-2">
                     <div className="flex items-center px-4 py-3 bg-gray-50 rounded-xl">
-                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-full flex items-center justify-center">
                         <span className="text-white font-medium">
                           {getUserDisplayName().charAt(0).toUpperCase()}
                         </span>
@@ -277,7 +277,7 @@ export default function TopNav() {
                         openAuthModal('signup');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl"
+                      className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white bg-gradient-to-r from-[#04724D] to-teal-600 rounded-xl"
                     >
                       <UserPlus className="mr-2 h-5 w-5" />
                       Sign up

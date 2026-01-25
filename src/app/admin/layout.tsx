@@ -41,7 +41,7 @@ function ContentLoader() {
       <div className="text-center">
         <div className="relative">
           <div className="w-12 h-12 border-4 border-slate-200 rounded-full"></div>
-          <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
+          <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent border-t-[#04724D] rounded-full animate-spin"></div>
         </div>
         <p className="mt-4 text-slate-500 text-sm">Loading...</p>
       </div>
@@ -113,7 +113,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
         {/* Logo Section */}
         <div className={`h-16 flex items-center border-b border-slate-800 ${sidebarCollapsed ? 'justify-center px-4' : 'px-6'}`}>
           <Link href="/admin/overview" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div className="w-9 h-9 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/20">
               <span className="text-white font-bold text-sm">J</span>
             </div>
             {!sidebarCollapsed && (
@@ -143,7 +143,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
                   flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
                   ${sidebarCollapsed ? 'justify-center' : ''}
                   ${isActive
-                    ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+                    ? 'bg-gradient-to-r from-[#04724D] to-teal-600 text-white shadow-lg shadow-[#04724D]/25'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                   }
                 `}
@@ -164,7 +164,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
             flex items-center gap-3 p-3 rounded-xl bg-slate-900/50
             ${sidebarCollapsed ? 'justify-center' : ''}
           `}>
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+            <div className="w-9 h-9 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
               {adminInitials}
             </div>
             {!sidebarCollapsed && displayAdmin && (
@@ -223,7 +223,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-2 bg-slate-100 border-0 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-100 border-0 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#04724D]/20 focus:bg-white transition-all"
                 />
               </div>
             </div>
@@ -232,14 +232,14 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
             <div className="flex items-center gap-2">
               <button className="p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors relative">
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#04724D] rounded-full"></span>
               </button>
               <button className="p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
                 <Settings className="h-5 w-5" />
               </button>
               
               {/* Mobile User Avatar */}
-              <div className="lg:hidden w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold">
+              <div className="lg:hidden w-9 h-9 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold">
                 {adminInitials}
               </div>
             </div>

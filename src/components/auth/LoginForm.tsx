@@ -54,7 +54,7 @@ export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: Log
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+            className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
           />
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: Log
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
             required
-            className="w-full pl-12 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+            className="w-full pl-12 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
           />
           <button
             type="button"
@@ -88,7 +88,7 @@ export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: Log
         <button
           type="button"
           onClick={onForgotPassword}
-          className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+          className="text-sm text-[#04724D] hover:text-[#035E3F] font-medium"
         >
           Forgot password?
         </button>
@@ -97,7 +97,7 @@ export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: Log
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3.5 px-4 rounded-xl hover:from-indigo-700 hover:to-violet-700 transition-all flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
+        className="w-full bg-gradient-to-r from-[#04724D] to-teal-600 text-white py-3.5 px-4 rounded-xl hover:from-[#035E3F] hover:to-teal-700 transition-all flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40"
       >
         {loading ? (
           <>
@@ -114,7 +114,7 @@ export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: Log
         <button
           type="button"
           onClick={onSignup}
-          className="text-indigo-600 font-medium hover:text-indigo-700"
+          className="text-[#04724D] font-medium hover:text-[#035E3F]"
         >
           Sign up
         </button>

@@ -71,8 +71,8 @@ export default function HomePage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <div className="w-16 h-16 border-4 border-indigo-100 rounded-full"></div>
-            <div className="w-16 h-16 border-4 border-transparent border-t-indigo-600 rounded-full animate-spin absolute top-0 left-0"></div>
+            <div className="w-16 h-16 border-4 border-[#E6F4F0] rounded-full"></div>
+            <div className="w-16 h-16 border-4 border-transparent border-t-[#04724D] rounded-full animate-spin absolute top-0 left-0"></div>
           </div>
           <p className="text-gray-500 text-sm animate-pulse">Discovering opportunities...</p>
         </div>
@@ -85,7 +85,7 @@ export default function HomePage() {
       icon: Target,
       title: 'Smart Matching',
       description: 'Find jobs that match your skills and career goals perfectly.',
-      color: 'indigo'
+      color: 'teal'
     },
     {
       icon: Shield,
@@ -97,7 +97,7 @@ export default function HomePage() {
       icon: Globe,
       title: 'Remote & Global',
       description: 'Access opportunities worldwide, including remote positions.',
-      color: 'violet'
+      color: 'cyan'
     },
     {
       icon: Zap,
@@ -113,8 +113,8 @@ export default function HomePage() {
       <section className="relative pt-8 pb-20 lg:pt-16 lg:pb-32 overflow-hidden">
         {/* Background decorations */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-indigo-100 rounded-full blur-3xl opacity-60"></div>
-          <div className="absolute bottom-10 left-10 w-96 h-96 bg-violet-100 rounded-full blur-3xl opacity-40"></div>
+          <div className="absolute top-20 right-10 w-72 h-72 bg-[#E6F4F0] rounded-full blur-3xl opacity-60"></div>
+          <div className="absolute bottom-10 left-10 w-96 h-96 bg-teal-100 rounded-full blur-3xl opacity-40"></div>
           <div className="absolute top-40 left-1/4 w-64 h-64 bg-emerald-100 rounded-full blur-3xl opacity-30"></div>
         </div>
 
@@ -125,18 +125,18 @@ export default function HomePage() {
 
         <div className="text-center px-4">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100/50 mb-8 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#E6F4F0] to-teal-50 border border-[#04724D]/20 mb-8 shadow-sm">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#04724D] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#04724D]"></span>
             </span>
-            <span className="text-sm font-medium text-indigo-700">New jobs added daily</span>
+            <span className="text-sm font-medium text-[#04724D]">New jobs added daily</span>
           </div>
           
           {/* Main heading */}
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 tracking-tight">
             <span className="block">Find Your Perfect</span>
-            <span className="block mt-2 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="block mt-2 bg-gradient-to-r from-[#04724D] via-teal-600 to-teal-500 bg-clip-text text-transparent">
               Career Match
             </span>
           </h1>
@@ -162,7 +162,7 @@ export default function HomePage() {
                 />
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:from-indigo-700 hover:to-violet-700 transition-all ml-3"
+                  className="bg-gradient-to-r from-[#04724D] to-teal-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40 hover:from-[#035E3F] hover:to-teal-700 transition-all ml-3"
                 >
                   Search Jobs
                 </button>
@@ -187,8 +187,8 @@ export default function HomePage() {
           {/* Quick Stats */}
           <div className="flex flex-wrap justify-center gap-8 lg:gap-16">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
-                <Briefcase className="h-6 w-6 text-indigo-600" />
+              <div className="w-12 h-12 bg-[#E6F4F0] rounded-2xl flex items-center justify-center">
+                <Briefcase className="h-6 w-6 text-[#04724D]" />
               </div>
               <div className="text-left">
                 <p className="text-2xl font-bold text-gray-900">{jobs.length > 0 ? `${jobs.length}+` : '500+'}</p>
@@ -205,8 +205,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center">
-                <Users className="h-6 w-6 text-violet-600" />
+              <div className="w-12 h-12 bg-teal-100 rounded-2xl flex items-center justify-center">
+                <Users className="h-6 w-6 text-teal-600" />
               </div>
               <div className="text-left">
                 <p className="text-2xl font-bold text-gray-900">10K+</p>
@@ -245,10 +245,10 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/20">
                 <Zap className="h-5 w-5 text-white" />
               </div>
-              <span className="text-sm font-semibold text-indigo-600 uppercase tracking-wider">Latest Opportunities</span>
+              <span className="text-sm font-semibold text-[#04724D] uppercase tracking-wider">Latest Opportunities</span>
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Featured Jobs</h2>
             <p className="text-gray-600 mt-2">Handpicked opportunities from top employers</p>
@@ -280,7 +280,7 @@ export default function HomePage() {
               action={
                 <Link
                   href="/jobs"
-                  className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+                  className="inline-flex items-center px-6 py-3 bg-[#04724D] text-white rounded-xl font-medium hover:bg-[#035E3F] transition-colors"
                 >
                   Browse All Jobs
                   <ArrowRight className="h-4 w-4 ml-2" />
@@ -379,7 +379,7 @@ export default function HomePage() {
               </div>
               <p className="text-gray-700 mb-6 leading-relaxed">&quot;{testimonial.quote}&quot;</p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-medium text-sm">{testimonial.author[0]}</span>
                 </div>
                 <div>
@@ -394,10 +394,10 @@ export default function HomePage() {
 
       {/* CTA Section */}
       <section className="py-16 mb-8">
-        <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 rounded-3xl p-10 lg:p-16">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#04724D] via-teal-600 to-teal-700 rounded-3xl p-10 lg:p-16">
           {/* Background decorations */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl"></div>
           
           {/* Grid pattern */}
           <div className="absolute inset-0 opacity-10">
@@ -421,14 +421,14 @@ export default function HomePage() {
               Ready to Find Your
               <span className="block">Dream Job?</span>
             </h2>
-            <p className="text-lg text-indigo-100 mb-10 max-w-2xl mx-auto">
+            <p className="text-lg text-teal-100 mb-10 max-w-2xl mx-auto">
               Join thousands of professionals who have already found their perfect career match. Your next opportunity is just a click away.
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 href="/jobs"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-indigo-600 rounded-xl font-semibold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#04724D] rounded-xl font-semibold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
               >
                 <Briefcase className="h-5 w-5 mr-2" />
                 Browse Jobs

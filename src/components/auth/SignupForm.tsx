@@ -97,7 +97,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="John"
               required
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
             />
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Doe"
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
           />
         </div>
       </div>
@@ -129,7 +129,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
           />
         </div>
       </div>
@@ -148,7 +148,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
             placeholder="Min. 6 characters"
             required
             minLength={6}
-            className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+            className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
           />
           <button
             type="button"
@@ -171,7 +171,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             required
-            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 appearance-none"
+            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 appearance-none"
           >
             <option value="">Select your country</option>
             {COUNTRIES.map((country) => (
@@ -189,7 +189,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3.5 px-4 rounded-xl hover:from-indigo-700 hover:to-violet-700 transition-all flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 mt-6"
+        className="w-full bg-gradient-to-r from-[#04724D] to-teal-600 text-white py-3.5 px-4 rounded-xl hover:from-[#035E3F] hover:to-teal-700 transition-all flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40 mt-6"
       >
         {loading ? (
           <>
@@ -206,7 +206,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
         <button
           type="button"
           onClick={onLogin}
-          className="text-indigo-600 font-medium hover:text-indigo-700"
+          className="text-[#04724D] font-medium hover:text-[#035E3F]"
         >
           Sign in
         </button>

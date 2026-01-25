@@ -7,18 +7,19 @@
   --background: #FAFBFC;
   --foreground: #0F172A;
   
-  /* Primary - Deep Indigo */
-  --primary: #4F46E5;
-  --primary-hover: #4338CA;
-  --primary-light: #EEF2FF;
+  /* Primary - Forest Green */
+  --primary: #04724D;
+  --primary-hover: #035E3F;
+  --primary-light: #E6F4F0;
+  --primary-dark: #023D2A;
   
   /* Secondary - Slate */
   --secondary: #64748B;
   --secondary-hover: #475569;
   
-  /* Accent - Emerald */
-  --accent: #10B981;
-  --accent-light: #D1FAE5;
+  /* Accent - Teal */
+  --accent: #0D9488;
+  --accent-light: #CCFBF1;
   
   /* Warm accent - Amber */
   --warm: #F59E0B;
@@ -202,7 +203,7 @@ body {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, var(--primary) 0%, #7C3AED 50%, #EC4899 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #0D9488 50%, #059669 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -227,7 +228,7 @@ body {
 
 /* Gradient backgrounds */
 .bg-gradient-primary {
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, #04724D 0%, #0D9488 100%);
 }
 
 .bg-gradient-warm {
@@ -239,18 +240,18 @@ body {
 }
 
 .bg-gradient-success {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(135deg, #04724D 0%, #059669 100%);
 }
 
 /* Mesh gradient background */
 .bg-mesh {
   background-color: #FAFBFC;
   background-image: 
-    radial-gradient(at 40% 20%, rgba(79, 70, 229, 0.08) 0px, transparent 50%),
-    radial-gradient(at 80% 0%, rgba(124, 58, 237, 0.06) 0px, transparent 50%),
-    radial-gradient(at 0% 50%, rgba(16, 185, 129, 0.06) 0px, transparent 50%),
+    radial-gradient(at 40% 20%, rgba(4, 114, 77, 0.08) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(13, 148, 136, 0.06) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, rgba(5, 150, 105, 0.06) 0px, transparent 50%),
     radial-gradient(at 80% 50%, rgba(245, 158, 11, 0.04) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.06) 0px, transparent 50%);
+    radial-gradient(at 0% 100%, rgba(20, 184, 166, 0.06) 0px, transparent 50%);
 }
 
 /* Input styles */
@@ -310,7 +311,7 @@ textarea::placeholder {
 .btn-primary:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 12px rgba(4, 114, 77, 0.3);
 }
 
 .btn-secondary {

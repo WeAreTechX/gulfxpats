@@ -92,7 +92,7 @@ export default function JobsPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-[#E6F4F0] border-t-[#04724D] rounded-full animate-spin" />
           <p className="text-gray-500 text-sm">Loading jobs...</p>
         </div>
       </div>
@@ -104,10 +104,10 @@ export default function JobsPage() {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-indigo-600" />
+          <div className="w-8 h-8 bg-[#E6F4F0] rounded-lg flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-[#04724D]" />
           </div>
-          <span className="text-sm font-medium text-indigo-600">Explore Opportunities</span>
+          <span className="text-sm font-medium text-[#04724D]">Explore Opportunities</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Find Your Perfect Job
@@ -127,7 +127,7 @@ export default function JobsPage() {
               placeholder="Search jobs, companies, or keywords..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-gray-900 shadow-sm placeholder-gray-400"
+              className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none text-gray-900 shadow-sm placeholder-gray-400"
             />
             {searchQuery && (
               <button
@@ -142,12 +142,12 @@ export default function JobsPage() {
           {/* Mobile Filter Toggle */}
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="lg:hidden flex items-center justify-center px-5 py-3.5 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 transition-colors shadow-sm"
+            className="lg:hidden flex items-center justify-center px-5 py-3.5 bg-white border border-gray-200 rounded-xl hover:border-[#04724D]/30 hover:bg-[#E6F4F0] transition-colors shadow-sm"
           >
             <SlidersHorizontal className="h-5 w-5 mr-2 text-gray-600" />
             <span className="font-medium text-gray-700">Filters</span>
             {activeFilterCount > 0 && (
-              <span className="ml-2 px-2 py-0.5 bg-indigo-600 text-white text-xs font-medium rounded-full">
+              <span className="ml-2 px-2 py-0.5 bg-[#04724D] text-white text-xs font-medium rounded-full">
                 {activeFilterCount}
               </span>
             )}
@@ -193,7 +193,7 @@ export default function JobsPage() {
               <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4">
                 <button
                   onClick={() => setShowMobileFilters(false)}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3.5 rounded-xl font-medium shadow-lg shadow-indigo-500/25"
+                  className="w-full bg-gradient-to-r from-[#04724D] to-teal-600 text-white py-3.5 rounded-xl font-medium shadow-lg shadow-[#04724D]/25"
                 >
                   Show {sortedJobs.length} results
                 </button>
@@ -208,44 +208,44 @@ export default function JobsPage() {
           {activeFilterCount > 0 && (
             <div className="mb-5 flex flex-wrap gap-2">
               {filters.remote && (
-                <span className="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-sm text-indigo-700 rounded-lg font-medium">
+                <span className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   Remote
                   <button
                     onClick={() => setFilters({ ...filters, remote: false })}
-                    className="ml-2 hover:text-indigo-900"
+                    className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </span>
               )}
               {filters.jobTypes.map(type => (
-                <span key={type} className="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-sm text-indigo-700 rounded-lg font-medium">
+                <span key={type} className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   {DEFAULT_JOB_TYPES.find(t => t.code === type)?.name || type}
                   <button
                     onClick={() => setFilters({ ...filters, jobTypes: filters.jobTypes.filter(t => t !== type) })}
-                    className="ml-2 hover:text-indigo-900"
+                    className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </span>
               ))}
               {filters.locations.map(location => (
-                <span key={location} className="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-sm text-indigo-700 rounded-lg font-medium">
+                <span key={location} className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   {location}
                   <button
                     onClick={() => setFilters({ ...filters, locations: filters.locations.filter(l => l !== location) })}
-                    className="ml-2 hover:text-indigo-900"
+                    className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </span>
               ))}
               {filters.salaryMin > 0 && (
-                <span className="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-sm text-indigo-700 rounded-lg font-medium">
+                <span className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   ${(filters.salaryMin / 1000).toFixed(0)}k+
                   <button
                     onClick={() => setFilters({ ...filters, salaryMin: 0, salaryMax: 0 })}
-                    className="ml-2 hover:text-indigo-900"
+                    className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -260,7 +260,7 @@ export default function JobsPage() {
                   salaryMin: 0,
                   salaryMax: 0,
                 })}
-                className="text-sm text-gray-500 hover:text-indigo-600 font-medium"
+                className="text-sm text-gray-500 hover:text-[#04724D] font-medium"
               >
                 Clear all
               </button>
@@ -302,7 +302,7 @@ export default function JobsPage() {
                     salaryMax: 0,
                   });
                 }}
-                className="text-indigo-600 font-medium hover:text-indigo-700"
+                className="text-[#04724D] font-medium hover:text-[#035E3F]"
               >
                 Clear all filters
               </button>

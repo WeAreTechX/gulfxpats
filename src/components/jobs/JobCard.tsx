@@ -53,11 +53,11 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
 
   return (
     <Link href={`/src/app/(app)/jobs/${job.uid}`} className="block group h-full">
-      <div className="relative bg-white rounded-2xl border border-gray-100 p-5 transition-all duration-300 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 h-full flex flex-col">
+      <div className="relative bg-white rounded-2xl border border-gray-100 p-5 transition-all duration-300 hover:border-[#04724D]/20 hover:shadow-xl hover:shadow-[#04724D]/5 h-full flex flex-col">
         {/* New badge */}
         {isNew && (
           <div className="absolute -top-2.5 left-5">
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-semibold rounded-full shadow-lg shadow-indigo-500/30">
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-[#04724D] to-teal-600 text-white text-xs font-semibold rounded-full shadow-lg shadow-[#04724D]/30">
               <Zap className="h-3 w-3" />
               New
             </div>
@@ -78,13 +78,13 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
           {/* Badges */}
           <div className="flex items-center gap-2">
             {job.remote && (
-              <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-lg border border-indigo-100">
+              <span className="px-2.5 py-1 bg-[#E6F4F0] text-[#04724D] text-xs font-medium rounded-lg border border-[#04724D]/20">
                 Remote
               </span>
             )}
             <button 
               onClick={(e) => { e.preventDefault(); }}
-              className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              className="p-1.5 text-gray-400 hover:text-[#04724D] hover:bg-[#E6F4F0] rounded-lg transition-colors"
               title="Save job"
             >
               <Bookmark className="h-4 w-4" />
@@ -94,7 +94,7 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
 
         {/* Job info */}
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 text-lg group-hover:text-indigo-600 transition-colors line-clamp-2 mb-1">
+          <h3 className="font-semibold text-gray-900 text-lg group-hover:text-[#04724D] transition-colors line-clamp-2 mb-1">
             {job.title}
           </h3>
           <p className="text-gray-500 text-sm flex items-center">
@@ -135,7 +135,7 @@ export default function JobCard({ job, variant = 'default' }: JobCardProps) {
 
         {/* Hover effect arrow */}
         <div className="absolute bottom-5 right-5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-          <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <div className="w-9 h-9 bg-[#04724D] rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/30">
             <ArrowUpRight className="h-4 w-4 text-white" />
           </div>
         </div>

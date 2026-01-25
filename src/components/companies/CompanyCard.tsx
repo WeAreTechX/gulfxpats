@@ -13,7 +13,7 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
   if (variant === 'compact') {
     return (
       <Link href={`/companies/${company.id}`} className="block group">
-        <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-indigo-100 hover:shadow-lg transition-all">
+        <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-[#04724D]/20 hover:shadow-lg transition-all">
           <div className="flex-shrink-0">
             {company.logo_url ? (
               <img 
@@ -22,20 +22,20 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
                 className="w-12 h-12 rounded-xl object-cover border border-gray-100"
               />
             ) : (
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-violet-100 rounded-xl flex items-center justify-center border border-indigo-100">
-                <Building2 className="h-6 w-6 text-indigo-500" />
+              <div className="w-12 h-12 bg-gradient-to-br from-[#E6F4F0] to-teal-100 rounded-xl flex items-center justify-center border border-[#04724D]/20">
+                <Building2 className="h-6 w-6 text-[#04724D]" />
               </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors truncate">
+            <h3 className="font-semibold text-gray-900 group-hover:text-[#04724D] transition-colors truncate">
               {company.name}
             </h3>
             {company.location && (
               <p className="text-sm text-gray-500 truncate">{company.location}</p>
             )}
           </div>
-          <ArrowUpRight className="h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+          <ArrowUpRight className="h-5 w-5 text-gray-400 group-hover:text-[#04724D] transition-colors" />
         </div>
       </Link>
     );
@@ -43,7 +43,7 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
 
   return (
     <Link href={`/companies/${company.id}`} className="block group h-full">
-      <div className="relative bg-white rounded-2xl border border-gray-100 p-6 transition-all duration-300 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 h-full flex flex-col">
+      <div className="relative bg-white rounded-2xl border border-gray-100 p-6 transition-all duration-300 hover:border-[#04724D]/20 hover:shadow-xl hover:shadow-[#04724D]/5 h-full flex flex-col">
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
           {/* Company logo */}
@@ -55,14 +55,14 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
                 className="w-16 h-16 rounded-2xl object-cover border border-gray-100 shadow-sm"
               />
             ) : (
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-50 to-violet-100 rounded-2xl flex items-center justify-center border border-indigo-100 shadow-sm">
-                <Building2 className="h-8 w-8 text-indigo-500" />
+              <div className="w-16 h-16 bg-gradient-to-br from-[#E6F4F0] to-teal-100 rounded-2xl flex items-center justify-center border border-[#04724D]/20 shadow-sm">
+                <Building2 className="h-8 w-8 text-[#04724D]" />
               </div>
             )}
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-lg group-hover:text-indigo-600 transition-colors truncate">
+            <h3 className="font-semibold text-gray-900 text-lg group-hover:text-[#04724D] transition-colors truncate">
               {company.name}
             </h3>
             {company.location && (
@@ -108,7 +108,7 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-[#04724D] hover:bg-[#E6F4F0] rounded-lg transition-colors"
             >
               <Globe className="h-4 w-4" />
               <span className="hidden sm:inline">Website</span>
@@ -119,7 +119,7 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
 
         {/* Hover arrow */}
         <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-          <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <div className="w-9 h-9 bg-[#04724D] rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/30">
             <ArrowUpRight className="h-4 w-4 text-white" />
           </div>
         </div>
