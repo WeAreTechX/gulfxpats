@@ -71,6 +71,111 @@ export interface Database {
           modified_at?: string;
         };
       };
+      locales: {
+        Row: {
+          id: number;
+          code: string;
+          name: string;
+          native_name: string | null;
+          is_default: boolean;
+          is_active: boolean;
+          created_at: string;
+          modified_at: string;
+        };
+        Insert: {
+          id?: number;
+          code: string;
+          name: string;
+          native_name?: string | null;
+          is_default?: boolean;
+          is_active?: boolean;
+          created_at?: string;
+          modified_at?: string;
+        };
+        Update: {
+          id?: number;
+          code?: string;
+          name?: string;
+          native_name?: string | null;
+          is_default?: boolean;
+          is_active?: boolean;
+          created_at?: string;
+          modified_at?: string;
+        };
+      };
+      sources: {
+        Row: {
+          id: number;
+          name: string;
+          code: string;
+          description: string | null;
+          website_url: string | null;
+          logo_url: string | null;
+          is_active: boolean;
+          created_at: string;
+          modified_at: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+          code: string;
+          description?: string | null;
+          website_url?: string | null;
+          logo_url?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          modified_at?: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+          code?: string;
+          description?: string | null;
+          website_url?: string | null;
+          logo_url?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          modified_at?: string;
+        };
+      };
+      companies_sources: {
+        Row: {
+          id: number;
+          company_id: string;
+          source_id: number;
+          external_id: string | null;
+          external_url: string | null;
+          is_primary: boolean;
+          synced_at: string | null;
+          metadata: Json | null;
+          created_at: string;
+          modified_at: string;
+        };
+        Insert: {
+          id?: number;
+          company_id: string;
+          source_id: number;
+          external_id?: string | null;
+          external_url?: string | null;
+          is_primary?: boolean;
+          synced_at?: string | null;
+          metadata?: Json | null;
+          created_at?: string;
+          modified_at?: string;
+        };
+        Update: {
+          id?: number;
+          company_id?: string;
+          source_id?: number;
+          external_id?: string | null;
+          external_url?: string | null;
+          is_primary?: boolean;
+          synced_at?: string | null;
+          metadata?: Json | null;
+          created_at?: string;
+          modified_at?: string;
+        };
+      };
       users: {
         Row: {
           id: string;
@@ -147,7 +252,7 @@ export interface Database {
           logo_url: string | null;
           location: string | null;
           metadata: Json | null;
-          contact_person: Json | null;
+          contact: Json | null;
           status_id: number;
           created_at: string;
           modified_at: string;
@@ -160,7 +265,7 @@ export interface Database {
           logo_url?: string | null;
           location?: string | null;
           metadata?: Json | null;
-          contact_person?: Json | null;
+          contact?: Json | null;
           status_id?: number;
           created_at?: string;
           modified_at?: string;
@@ -173,7 +278,7 @@ export interface Database {
           logo_url?: string | null;
           location?: string | null;
           metadata?: Json | null;
-          contact_person?: Json | null;
+          contact?: Json | null;
           status_id?: number;
           created_at?: string;
           modified_at?: string;
@@ -390,6 +495,9 @@ export type Currency = Database['public']['Tables']['currencies']['Row'];
 export type Job = Database['public']['Tables']['jobs']['Row'];
 export type ResourceType = Database['public']['Tables']['resource_types']['Row'];
 export type Resource = Database['public']['Tables']['resources']['Row'];
+export type Locale = Database['public']['Tables']['locales']['Row'];
+export type Source = Database['public']['Tables']['sources']['Row'];
+export type CompanySource = Database['public']['Tables']['companies_sources']['Row'];
 
 // Insert types
 export type StatusInsert = Database['public']['Tables']['statuses']['Insert'];
@@ -402,6 +510,9 @@ export type CurrencyInsert = Database['public']['Tables']['currencies']['Insert'
 export type JobInsert = Database['public']['Tables']['jobs']['Insert'];
 export type ResourceTypeInsert = Database['public']['Tables']['resource_types']['Insert'];
 export type ResourceInsert = Database['public']['Tables']['resources']['Insert'];
+export type LocaleInsert = Database['public']['Tables']['locales']['Insert'];
+export type SourceInsert = Database['public']['Tables']['sources']['Insert'];
+export type CompanySourceInsert = Database['public']['Tables']['companies_sources']['Insert'];
 
 // Update types
 export type StatusUpdate = Database['public']['Tables']['statuses']['Update'];
@@ -414,6 +525,9 @@ export type CurrencyUpdate = Database['public']['Tables']['currencies']['Update'
 export type JobUpdate = Database['public']['Tables']['jobs']['Update'];
 export type ResourceTypeUpdate = Database['public']['Tables']['resource_types']['Update'];
 export type ResourceUpdate = Database['public']['Tables']['resources']['Update'];
+export type LocaleUpdate = Database['public']['Tables']['locales']['Update'];
+export type SourceUpdate = Database['public']['Tables']['sources']['Update'];
+export type CompanySourceUpdate = Database['public']['Tables']['companies_sources']['Update'];
 
 // Extended types with relations
 export interface JobWithRelations extends Job {
@@ -431,6 +545,15 @@ export interface ResourceWithRelations extends Resource {
 
 export interface UserWithRelations extends User {
   status?: Status;
+}
+
+export interface CompanySourceWithRelations extends CompanySource {
+  company?: Company;
+  source?: Source;
+}
+
+export interface CompanyWithSources extends Company {
+  sources?: CompanySourceWithRelations[];
 }
 
 // Contact person JSON structure

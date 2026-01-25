@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
           website_url: company.website_url,
           logo_url: company.logo_url,
           location: company.location,
-          contact_person: company.contact_person,
+          contact: company.contact,
           metadata: company.metadata,
           status_id: 8
         });

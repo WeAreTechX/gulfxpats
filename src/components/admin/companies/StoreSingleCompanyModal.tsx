@@ -13,24 +13,6 @@ interface AddCompanyModalProps {
   company?: Company | null; // If provided, modal is in edit mode
 }
 
-const INDUSTRIES = [
-  'Technology',
-  'Finance',
-  'Healthcare',
-  'Education',
-  'Manufacturing',
-  'Retail',
-  'Real Estate',
-  'Energy',
-  'Media & Entertainment',
-  'Telecommunications',
-  'Transportation',
-  'Hospitality',
-  'Agriculture',
-  'Construction',
-  'Other',
-];
-
 export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, company }: AddCompanyModalProps) {
   const isEditMode = !!company;
   
@@ -41,18 +23,18 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
     website_url: '',
     logo_url: '',
     location: '',
+    address: '',
     metadata: {
-      industry: '',
+      industry_id: '',
       address: '',
       linkedin: ''
     },
-    contact_person: {
+    contact: {
       first_name: '',
       last_name: '',
       email: '',
       linkedin: '',
-    },
-    status_id: 8
+    }
   });
 
   const [loading, setLoading] = useState(false);
@@ -65,18 +47,17 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
     website_url: '',
     logo_url: '',
     location: '',
+    address: '',
     metadata: {
-      industry: '',
       address: '',
       linkedin: ''
     },
-    contact_person: {
+    contact: {
       first_name: '',
       last_name: '',
       email: '',
       linkedin: '',
-    },
-    status_id: 8
+    }
   });
 
   // Reset form when modal opens/closes or company changes
@@ -91,18 +72,17 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
           website_url: company.website_url || '',
           logo_url: company.logo_url || '',
           location: company.location || '',
+          address: company.address || '',
           metadata: {
-            industry: company.metadata?.industry || '',
             address: company.metadata?.address || '',
             linkedin: company.metadata?.linkedin || '',
           },
-          contact_person: {
-            first_name: company.contact_person?.first_name || '',
-            last_name: company.contact_person?.last_name || '',
-            email: company.contact_person?.email || '',
-            linkedin: company.contact_person?.linkedin || '',
-          },
-          status_id: 8
+          contact: {
+            first_name: company.contact?.first_name || '',
+            last_name: company.contact?.last_name || '',
+            email: company.contact?.email || '',
+            linkedin: company.contact?.linkedin || '',
+          }
         });
       } else {
         // Reset form for add mode
@@ -125,12 +105,12 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
           [field]: value
         }
       }));
-    } else if (name.startsWith('contact_person.')) {
-      const field = name.replace('contact_person.', '');
+    } else if (name.startsWith('contact.')) {
+      const field = name.replace('contact.', '');
       setFormData(prev => ({
         ...prev,
-        contact_person: {
-          ...prev.contact_person,
+        contact: {
+          ...prev.contact,
           [field]: value
         }
       }));
@@ -310,25 +290,6 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                         </select>
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Industry
-                        </label>
-                        <select
-                          name="metadata.industry"
-                          value={formData.metadata.industry || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                        >
-                          <option value="">Select industry</option>
-                          {INDUSTRIES.map(industry => (
-                            <option key={industry} value={industry}>
-                              {industry}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
                     </div>
                   </div>
 
@@ -362,8 +323,8 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                         </label>
                         <input
                           type="text"
-                          name="contact_person.first_name"
-                          value={formData.contact_person.first_name || ''}
+                          name="contact.first_name"
+                          value={formData?.contact?.first_name || ''}
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                           placeholder="John"
@@ -376,8 +337,8 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                         </label>
                         <input
                           type="text"
-                          name="contact_person.last_name"
-                          value={formData.contact_person.last_name || ''}
+                          name="contact.last_name"
+                          value={formData?.contact?.last_name || ''}
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                           placeholder="Doe"
@@ -390,8 +351,8 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                         </label>
                         <input
                           type="email"
-                          name="contact_person.email"
-                          value={formData.contact_person.email || ''}
+                          name="contact.email"
+                          value={formData?.contact?.email || ''}
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                           placeholder="contact@company.com"
@@ -404,8 +365,8 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                         </label>
                         <input
                           type="url"
-                          name="contact_person.linkedin"
-                          value={formData.contact_person.linkedin || ''}
+                          name="contact.linkedin"
+                          value={formData?.contact?.linkedin || ''}
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                           placeholder="https://www.linkedin.com/in/johndoe"

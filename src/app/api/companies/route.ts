@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       website_url: body.website,
       logo_url: body.logoUrl,
       location: body.location,
-      contact_person: body.contact_person,
+      contact: body.contact,
       metadata: body.metadata,
       status_id: 11
     });

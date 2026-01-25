@@ -28,7 +28,7 @@ export default function CompaniesTable({
   const rows = useMemo(() => {
     return companies.map((company) => {
       const cells = [
-        <Status key="statsu" id={company.status_id} />,
+        <Status key="status" {...company.status} />,
         <div key="company" className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-[#00A558] flex items-center justify-center text-white font-medium text-sm">
             {company.name.charAt(0).toUpperCase()}
@@ -64,7 +64,7 @@ export default function CompaniesTable({
   ]
 
   const handleOptionClick = (action: string, rowIndex: number) => {
-    const user = companies[rowIndex];
+    const company = companies[rowIndex];
     switch (action) {
       case "edit":
         //

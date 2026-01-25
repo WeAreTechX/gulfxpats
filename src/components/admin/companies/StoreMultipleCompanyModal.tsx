@@ -33,10 +33,10 @@ interface ParsedCompany {
   metadata_phone?: string;
   metadata_linkedin?: string;
   // Contact person fields
-  contact_person_first_name?: string;
-  contact_person_last_name?: string;
-  contact_person_email?: string;
-  contact_person_linkedin?: string;
+  contact_first_name?: string;
+  contact_last_name?: string;
+  contact_email?: string;
+  contact_linkedin?: string;
   isValid: boolean;
   errors: string[];
 }
@@ -109,7 +109,7 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       errors.push('Invalid company email');
     }
 
-    if (company.contact_person_email && company.contact_person_email.trim() && !isValidEmail(company.contact_person_email)) {
+    if (company.contact_email && company.contact_email.trim() && !isValidEmail(company.contact_email)) {
       errors.push('Invalid contact person email');
     }
 
@@ -155,10 +155,10 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       'metadata.phone': 'metadata_phone',
       'metadata.linkedin': 'metadata_linkedin',
       // Contact person fields (with dot notation)
-      'contact_person.first_name': 'contact_person_first_name',
-      'contact_person.last_name': 'contact_person_last_name',
-      'contact_person.email': 'contact_person_email',
-      'contact_person.linkedin': 'contact_person_linkedin',
+      'contact.first_name': 'contact_first_name',
+      'contact.last_name': 'contact_last_name',
+      'contact.email': 'contact_email',
+      'contact.linkedin': 'contact_linkedin',
     };
 
     // Parse data rows
@@ -195,10 +195,10 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
         metadata_address: company.metadata_address,
         metadata_phone: company.metadata_phone,
         metadata_linkedin: company.metadata_linkedin,
-        contact_person_first_name: company.contact_person_first_name,
-        contact_person_last_name: company.contact_person_last_name,
-        contact_person_email: company.contact_person_email,
-        contact_person_linkedin: company.contact_person_linkedin,
+        contact_first_name: company.contact_first_name,
+        contact_last_name: company.contact_last_name,
+        contact_email: company.contact_email,
+        contact_linkedin: company.contact_linkedin,
         isValid: validation.isValid,
         errors: validation.errors,
       });
@@ -328,11 +328,11 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                 phone: c.metadata_phone || null,
                 linkedin: c.metadata_linkedin || null,
               },
-              contact_person: {
-                first_name: c.contact_person_first_name || null,
-                last_name: c.contact_person_last_name || null,
-                email: c.contact_person_email || null,
-                linkedin: c.contact_person_linkedin || null,
+              contact: {
+                first_name: c.contact_first_name || null,
+                last_name: c.contact_last_name || null,
+                email: c.contact_email || null,
+                linkedin: c.contact_linkedin || null,
               },
             })),
           }),
@@ -378,7 +378,7 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
     }
   };
 
-  const headers = ['name', 'short_description', 'long_description', 'website_url', 'logo_url', 'location', 'metadata.industry', 'metadata.email', 'metadata.address', 'metadata.phone', 'metadata.linkedin', 'contact_person.first_name', 'contact_person.last_name', 'contact_person.email', 'contact_person.linkedin'];
+  const headers = ['name', 'short_description', 'long_description', 'website_url', 'logo_url', 'location', 'metadata.industry', 'metadata.email', 'metadata.address', 'metadata.phone', 'metadata.linkedin', 'contact.first_name', 'contact.last_name', 'contact.email', 'contact.linkedin'];
   const downloadTemplate = () => {
     const sampleRow = ['Acme Corp', 'A technology company', 'A long description ',  'https://acme.com', 'https://acme.com/logo.png', 'USA', 'Technology', 'hello@acme.com', 'Delaware, USA', '123456789', 'https://linkedin.com/company/acme', 'John', 'Doe', 'john@doe.com', 'www.linkedin.com/in/johndoe'];
 

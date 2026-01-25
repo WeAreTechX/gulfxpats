@@ -95,7 +95,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
     website: company.website,
     logo: company.logo_url,
     location: company.location,
-    contactPerson: company.contact_person,
+    contactPerson: company.contact,
   };
 
   const transformedJobs = jobs.map((job: any) => ({

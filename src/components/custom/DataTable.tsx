@@ -106,18 +106,14 @@ export default function DataTable({
             <tr>
               <td
                 colSpan={headers.length + (dropdownOptions ? 1 : 0)}
-                className="px-6 py-12"
+                className="px-6 py-16"
               >
                 <div className="flex flex-col items-center justify-center text-center">
-                  <div className="mb-4">
-                    <Database className="w-16 h-16 text-gray-400" strokeWidth={1.5} />
+                  <div className="mb-3">
+                    <Database className="w-14 h-14 text-gray-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No data available
-                  </h3>
-                  <p className="text-sm text-gray-600 max-w-md">
-                    There are no items to display at this time.
-                  </p>
+                  <h3 className="text-lg font-semibold text-gray-500 mb-1">No data available</h3>
+                  <p className="text-sm text-gray-600 max-w-md">There are no items to display at this time.</p>
                 </div>
               </td>
             </tr>

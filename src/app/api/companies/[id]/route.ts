@@ -61,8 +61,8 @@ export async function PUT(
     if (body.location !== undefined) updateData.location = body.location;
     
     // Handle contact person
-    if (body.contactPerson) {
-      updateData.contact_person = body.contactPerson;
+    if (body.contact) {
+      updateData.contact = body.contact;
     }
     
     // Handle metadata/additional data

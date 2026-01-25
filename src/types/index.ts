@@ -81,6 +81,20 @@ export type Admin = Omit<User, "role"> & {
   role: "admin" | "super_admin";
 }
 
+export enum StatusesType {
+  Active = 1,
+  Inactive ,
+  Pending,
+  Published,
+  Unpublished,
+  Archived,
+  Enabled,
+  Disabled,
+  Verified,
+  Unverified,
+  Deleted
+}
+
 export interface Status {
   id?: number;
   name: string;
