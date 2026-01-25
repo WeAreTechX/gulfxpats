@@ -108,15 +108,6 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       errors.push('Invalid company LinkedIn URL');
     }
 
-    // Email validations
-    if (company.metadata_email && company.metadata_email.trim() && !isValidEmail(company.metadata_email)) {
-      errors.push('Invalid company email');
-    }
-
-    if (company.contact_email && company.contact_email.trim() && !isValidEmail(company.contact_email)) {
-      errors.push('Invalid contact person email');
-    }
-
     return {
       isValid: errors.length === 0,
       errors,
@@ -399,9 +390,11 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
   const validCount = parsedData.filter(c => c.isValid).length;
   const invalidCount = parsedData.filter(c => !c.isValid).length;
 
+  const isUploading = step === 'uploading';
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={handleClose}>
+      <Dialog as="div" className="relative z-50" onClose={() => {}}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -430,7 +423,8 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                 <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 px-6 py-6 text-white">
                   <button
                     onClick={handleClose}
-                    className="absolute right-4 top-4 p-2 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                    disabled={isUploading}
+                    className="absolute right-4 top-4 p-2 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-white/70"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -559,15 +553,16 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                               <tr>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Status</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Name</th>
-                                <th className="px-4 py-3 text-left font-medium text-slate-700">Location</th>
+                                <th className="px-4 py-3 text-left font-medium text-slate-700">Location/Address</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Website</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Short Description</th>
+                                <th className="px-4 py-3 text-left font-medium text-slate-700">LinkedIn</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Actions</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                               {parsedData.map((company, index) => (
-                                <tr key={index} className={company.isValid ? '' : 'bg-red-50'}>
+                                <tr key={index} className={company.isValid ? 'align-top' : 'bg-red-50'}>
                                   <td className="px-4 py-3">
                                     {company.isValid ? (
                                       <span className="flex items-center justify-center w-6 h-6 bg-emerald-100 rounded-full">
@@ -583,11 +578,15 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                                     )}
                                   </td>
                                   <td className="px-4 py-3 font-medium text-slate-900">
-                                    {company.name || <span className="text-red-500 italic">Missing</span>}
+                                    {company.name || <span className="text-red-500 italic">Invalid</span>}
                                   </td>
-                                  <td className="px-4 py-3 text-slate-600">{company.location || 'EMPTY'}</td>
-                                  <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">{company.website_url || 'EMPTY'}</td>
-                                  <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">{company.short_description || 'EMPTY'}</td>
+                                  <td className="px-4 py-3  min-w-[300px]">
+                                    <p className="text-gray-900 font-medium">{company.location || <span className="text-red-500 italic">Invalid</span>}</p>
+                                    <p className="text-slate-600">{company.address || <span className="text-red-500 italic">Invalid</span>}</p>
+                                  </td>
+                                  <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">{company.website_url || <span className="text-red-500 italic">Invalid</span>}</td>
+                                  <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">{company.short_description || <span className="text-red-500 italic">Invalid</span>}</td>
+                                  <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">{company.metadata_linkedin || <span className="text-red-500 italic">Invalid</span>}</td>
                                   <td className="px-4 py-3">
                                     <button
                                       onClick={() => removeCompany(index)}
