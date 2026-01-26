@@ -8,17 +8,15 @@ import {getCountryByIso3} from "@/lib/countries";
 
 interface CompaniesTableProps {
   loading: boolean;
+  error: string | null;
   companies: Company[];
   pagination: Pagination | undefined
   onPageChange: (page: number) => void;
+  onRowChange: () => void;
 }
 
-export default function CompaniesTable({
-   loading,
-   companies,
-   pagination,
-   onPageChange,
- }: CompaniesTableProps) {
+export default function CompaniesTable(props: CompaniesTableProps) {
+  const { loading, error, companies, pagination, onPageChange, onRowChange } = props;
 
   const headers = useMemo(() => {
     return ["Name", "Location", "Created on", "Updated on", "Status"];
@@ -71,12 +69,14 @@ export default function CompaniesTable({
   return (
     <DataTable
       loading={loading}
+      error={error}
       headers={headers}
       rows={rows}
       pagination={pagination}
       onPageChange={onPageChange}
       dropdownOptions={dropdownOptions}
       onOptionClick={handleOptionClick}
+      onRetryAction={onRowChange}
     />
   );
 }

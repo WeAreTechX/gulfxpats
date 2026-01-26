@@ -138,20 +138,16 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200">
-        {/* Tab Content */}
-        <div className="p-0">
-          <SourcesTable
-            error={error}
-            loading={loading}
-            sources={sources}
-            pagination={pagination}
-            onPageChange={setCurrentPage}
-            onRetryAction={fetchSources}
-            onEdit={handleOpenModal}
-          />
-        </div>
+      <div className="p-0">
+        <SourcesTable
+          error={error}
+          loading={loading}
+          sources={sources}
+          pagination={pagination}
+          onPageChange={setCurrentPage}
+          onRetryAction={fetchSources}
+          onEdit={handleOpenModal}
+        />
       </div>
     </div>
   );

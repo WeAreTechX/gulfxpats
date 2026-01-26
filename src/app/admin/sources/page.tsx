@@ -44,7 +44,7 @@ export default function AdminSourcesPage() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200">
+      <div className="bg-white rounded-tl-xl rounded-tr-xl border border-gray-200">
         <div className="border-b border-gray-200">
           <nav className="flex -mb-px">
             {tabs.map((tab) => (

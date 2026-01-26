@@ -7,6 +7,7 @@ import {Job} from "@/types/jobs";
 
 interface JobsTableProps {
   loading: boolean;
+  error: string | null;
   jobs: Job[];
   pagination: Pagination | undefined
   onPageChange: (page: number) => void;
@@ -17,7 +18,7 @@ export default function JobsTable(props: JobsTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
 
-  const { loading, jobs, pagination, onPageChange, onRowChange } = props;
+  const { loading, error, jobs, pagination, onPageChange, onRowChange } = props;
 
   const headers = useMemo(() => {
     return ["Title", "Description", "Company", "Type", "Location", "Industry", "Added", "Updated", "Status"];
@@ -111,12 +112,14 @@ export default function JobsTable(props: JobsTableProps) {
   return (
     <DataTable
       loading={loading}
+      error={error}
       headers={headers}
       rows={rows}
       pagination={pagination}
       onPageChange={onPageChange}
       dropdownOptions={dropdownOptions}
       onOptionClick={handleOptionClick}
+      onRetryAction={onRowChange}
     />
   );
 }

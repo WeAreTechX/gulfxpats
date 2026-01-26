@@ -159,6 +159,7 @@ export default function JobsView({ refresh }: { refresh: boolean }) {
       {/* Jobs Table */}
       <JobsTable
         loading={loading}
+        error={error}
         jobs={jobs}
         pagination={pagination} onPageChange={setCurrentPage} onRowChange={fetchData} />
 
