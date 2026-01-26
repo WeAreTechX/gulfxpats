@@ -247,23 +247,26 @@ export interface Database {
         Row: {
           id: string;
           name: string;
-          description: string | null;
-          website: string | null;
+          short_description: string;
+          long_description?: string | null;
+          website_url: string | null;
           logo_url: string | null;
-          location: string | null;
+          location: string;
+          address: string;
           metadata: Json | null;
           contact: Json | null;
-          status_id: number;
           created_at: string;
           modified_at: string;
         };
         Insert: {
           id?: string;
           name: string;
-          description?: string | null;
-          website?: string | null;
+          short_description: string;
+          long_description?: string | null;
+          website_url: string | null;
           logo_url?: string | null;
-          location?: string | null;
+          location: string;
+          address: string;
           metadata?: Json | null;
           contact?: Json | null;
           status_id?: number;
