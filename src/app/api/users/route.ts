@@ -6,24 +6,29 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status') || undefined;
+    const includeStats = searchParams.get('includeStats') === 'true';
     const search = searchParams.get('search') || undefined;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
 
     const supabase = await createServerSupabaseClient();
     const usersService = new UsersService(supabase);
-    
-    const { data: users, count } = await usersService.getAll({
+
+    const { list, pagination } = await usersService.index({
       status,
       search,
       limit,
       offset,
     });
 
+    let stats = null;
+    if (includeStats) {
+      stats = await usersService.getStats();
+    }
+
     return NextResponse.json({
       success: true,
-      users,
-      count: count || users.length,
+      data: { list, pagination, ...(stats && { stats }) },
     });
   } catch (error) {
     console.error('Error fetching users:', error);

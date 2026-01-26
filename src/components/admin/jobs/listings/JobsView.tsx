@@ -12,7 +12,7 @@ import {Job} from "@/types/jobs";
 import JobsTable from "@/components/admin/jobs/listings/JobsTable";
 import {QueryStats} from "@/types/api";
 
-export default function AdminJobsPage() {
+export default function JobsView({ refresh }: { refresh: boolean }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [stats, setStats] = useState<QueryStats>({ total: 0, published: 0, unpublished: 0, archived: 0 });
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function AdminJobsPage() {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage]);
+  }, [refresh, currentPage]);
 
   const fetchData = async () => {
     try {
@@ -73,7 +73,7 @@ export default function AdminJobsPage() {
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         fetchData();
       } else {
@@ -85,21 +85,19 @@ export default function AdminJobsPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04724D]"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Jobs Management</h1>
-          <p className="text-gray-600 mt-1">Manage job listings on the platform</p>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search jobs by title, company, or location..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
+          />
         </div>
         <button
           onClick={() => handleOpenModal()}
@@ -108,18 +106,6 @@ export default function AdminJobsPage() {
           <Plus className="h-5 w-5" />
           Add Job
         </button>
-      </div>
-
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search jobs by title, company, or location..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
-        />
       </div>
 
       {/* Stats */}

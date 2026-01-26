@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
       offset,
     });
 
-    // Calculate statistics if requested
     let stats = null;
     if (includeStats) {
       stats = await jobsService.getStats();

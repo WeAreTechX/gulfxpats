@@ -1,3 +1,5 @@
+import {Query} from "@/types/api";
+
 export type JobType = 'full-time' | 'contract' | 'part-time' | 'internship';
 export type JobStatus = 'open' | 'paused' | 'closed';
 
@@ -75,6 +77,10 @@ export interface User {
   email: string;
   role: "user";
   status_id: number;
+}
+
+export interface UserQuery extends Query {
+  status?: string;
 }
 
 export type Admin = Omit<User, "role"> & {

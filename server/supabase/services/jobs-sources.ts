@@ -1,12 +1,13 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, Source, SourceInsert, SourceUpdate } from '@/types/supabase';
+import { Database, SourceUpdate } from '@/types/supabase';
+import { Source } from '@/types/jobs';
 
-export class SourcesService {
+export class JobsSourcesService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
   async index(): Promise<{ list: Source[]; pagination: { count: number; current_page: number; total_count: number; total_pages: number } }> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*')
       .order('name', { ascending: true });
 
@@ -26,7 +27,7 @@ export class SourcesService {
 
   async show(id: number): Promise<Source | null> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*')
       .eq('id', id)
       .single();
@@ -37,7 +38,7 @@ export class SourcesService {
 
   async getByCode(code: string): Promise<Source | null> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*')
       .eq('code', code)
       .single();
@@ -46,9 +47,9 @@ export class SourcesService {
     return data;
   }
 
-  async store(source: SourceInsert): Promise<Source> {
+  async store(source: Source): Promise<Source> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .insert(source)
       .select()
       .single();
@@ -59,7 +60,7 @@ export class SourcesService {
 
   async update(id: number, source: SourceUpdate): Promise<Source> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .update(source)
       .eq('id', id)
       .select()
@@ -71,7 +72,7 @@ export class SourcesService {
 
   async delete(id: number): Promise<void> {
     const { error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .delete()
       .eq('id', id);
 
@@ -80,11 +81,11 @@ export class SourcesService {
 
   async getStats(): Promise<{ total: number; active: number; inactive: number }> {
     const { count: total } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*', { count: 'exact', head: true });
 
     const { count: active } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*', { count: 'exact', head: true })
       .eq('is_active', true);
 

@@ -21,6 +21,7 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const supabase = getSupabaseClient();
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -28,8 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'signup' | 'forgot-password' | null>(null);
-  
-  const supabase = getSupabaseClient();
+
 
   useEffect(() => {
     // Get initial session
@@ -170,6 +170,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const closeAuthModal = () => {
     setAuthModalMode(null);
   };
+
+  console.log(user)
 
   return (
     <AuthContext.Provider

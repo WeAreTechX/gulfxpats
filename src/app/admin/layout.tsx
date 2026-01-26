@@ -8,7 +8,6 @@ import {
   Building2, 
   BookOpen,
   Users,
-  Shield,
   Database,
   LogOut, 
   ChevronLeft,
@@ -31,7 +30,6 @@ const navigation = [
   { name: 'Companies', href: '/admin/companies', icon: Building2 },
   { name: 'Resources', href: '/admin/resources', icon: BookOpen },
   { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Admins', href: '/admin/admins', icon: Shield, superAdminOnly: true },
 ];
 
 // Content loader component for inner section
@@ -127,12 +125,6 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
         {/* Navigation */}
         <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
           {navigation.map((item) => {
-            // Only show Admins link to super admins
-            const isSuperAdminUser = displayAdmin?.role === 'super_admin';
-            if (item.superAdminOnly && !isSuperAdminUser) {
-              return null;
-            }
-            
             const isActive = pathname === item.href || (pathname === '/admin' && item.href === '/admin/overview');
             
             return (

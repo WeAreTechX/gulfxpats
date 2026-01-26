@@ -51,9 +51,9 @@ export class LookupsService {
   }
 
   // Job Industries
-  async getJobIndustries(): Promise<JobIndustry[]> {
+  async getIndustries(): Promise<JobIndustry[]> {
     const { data, error } = await this.supabase
-      .from('job_industries')
+      .from('industries')
       .select('*')
       .order('name', { ascending: true });
 
@@ -61,9 +61,9 @@ export class LookupsService {
     return data || [];
   }
 
-  async getJobIndustryByCode(code: string): Promise<JobIndustry | null> {
+  async getIndustryByCode(code: string): Promise<JobIndustry | null> {
     const { data, error } = await this.supabase
-      .from('job_industries')
+      .from('industries')
       .select('*')
       .eq('code', code)
       .single();
@@ -143,9 +143,9 @@ export class LookupsService {
   }
 
   // Sources
-  async getSources(): Promise<Source[]> {
+  async getJobSources(): Promise<Source[]> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*')
       .order('name', { ascending: true });
 
@@ -164,9 +164,9 @@ export class LookupsService {
     return data || [];
   }
 
-  async getSourceByCode(code: string): Promise<Source | null> {
+  async getJobsSourceByCode(code: string): Promise<Source | null> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*')
       .eq('code', code)
       .single();
@@ -175,9 +175,9 @@ export class LookupsService {
     return data;
   }
 
-  async getSourceById(id: number): Promise<Source | null> {
+  async getJobsSourceById(id: number): Promise<Source | null> {
     const { data, error } = await this.supabase
-      .from('sources')
+      .from('jobs_sources')
       .select('*')
       .eq('id', id)
       .single();

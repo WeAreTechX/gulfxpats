@@ -55,7 +55,7 @@ export default function StoreSingleJobModal({
       const [companiesRes, jobTypesRes, jobIndustriesRes, currenciesRes] = await Promise.all([
         fetch('/api/lookups?type=companies'),
         fetch('/api/lookups?type=job-types'),
-        fetch('/api/lookups?type=job-industries'),
+        fetch('/api/lookups?type=industries'),
         fetch('/api/lookups?type=currencies'),
       ]);
 

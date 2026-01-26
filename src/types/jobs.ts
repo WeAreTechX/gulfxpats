@@ -48,3 +48,10 @@ export interface JobQuery extends Query {
   job_type_id?: string | number;
   job_industry_id?: string | number;
 }
+
+export interface Source {
+  name: string;
+  code: string;
+  base_url: string;
+  created_by_id?: string;
+}

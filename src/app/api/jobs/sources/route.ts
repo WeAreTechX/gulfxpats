@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '../../../../server/supabase/server';
-import { SourcesService } from '../../../../server/supabase/services/sources';
+import { createServerSupabaseClient } from '../../../../../server/supabase/server';
+import { JobsSourcesService } from '../../../../../server/supabase/services/jobs-sources';
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,13 +8,13 @@ export async function GET(request: NextRequest) {
     const includeStats = searchParams.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
-    const sourcesService = new SourcesService(supabase);
+    const jobsSourcesService = new JobsSourcesService(supabase);
     
-    const { list, pagination } = await sourcesService.index();
+    const { list, pagination } = await jobsSourcesService.index();
 
     let stats = null;
     if (includeStats) {
-      stats = await sourcesService.getStats();
+      stats = await jobsSourcesService.getStats();
     }
 
     return NextResponse.json({
@@ -35,24 +35,24 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     const supabase = await createServerSupabaseClient();
-    const sourcesService = new SourcesService(supabase);
+    const jobsSourcesService = new JobsSourcesService(supabase);
 
     // Check if code already exists
-    const existing = await sourcesService.getByCode(body.code);
+    const existing = await jobsSourcesService.getByCode(body.code);
     if (existing) {
       return NextResponse.json(
         { success: false, error: 'A source with this code already exists' },
         { status: 400 }
       );
     }
-    
-    const source = await sourcesService.store({
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const source = await jobsSourcesService.store({
       name: body.name,
       code: body.code,
-      description: body.description || null,
-      website_url: body.website_url || null,
-      logo_url: body.logo_url || null,
-      is_active: body.is_active ?? true,
+      base_url: body.base_url,
+      created_by_id: session?.user.id || undefined
     });
 
     return NextResponse.json({

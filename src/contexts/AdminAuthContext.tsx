@@ -21,49 +21,17 @@ interface AdminAuthContextType {
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
-
-// LocalStorage utilities
-function setAdminStorage(admin: Admin) {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(admin));
-  } catch (error) {
-    console.error('Error saving user to localStorage:', error);
-  }
-}
-
-function getAdminFromStorage(): Admin | null {
-  if (typeof window === 'undefined') return null;
-  
-  try {
-    const stored = localStorage.getItem(USER_STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('Error reading user from localStorage:', error);
-  }
-  return null;
-}
-
-function clearAdminStorage() {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.removeItem(USER_STORAGE_KEY);
-  } catch (error) {
-    console.error('Error clearing admin from localStorage:', error);
-  }
-}
+const supabase = getSupabaseClient();
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [admin, setAdmin] = useState<Admin | null>(null);
-  const [cachedAdmin, setCachedAdmin] = useState<Admin | null>(() => getAdminFromStorage());
+  const [cachedAdmin, setCachedAdmin] = useState<Admin | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
   
-  const supabase = getSupabaseClient();
+
 
   const fetchAdminProfile = async (userId: string): Promise<Admin | null> => {
     try {
@@ -75,9 +43,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         console.log('User is not an admin:', error.message);
+        await signOut();
         return null;
       }
-      
+
+      console.log(data)
       // Check if admin is active (status_id = 1)
       if (data.status_id !== 1) {
         console.log('Admin account is not active');
@@ -110,16 +80,12 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           if (mounted) {
             setAdmin(adminData);
             if (adminData) {
-              setAdminStorage(adminData);
               setCachedAdmin(adminData);
             } else {
-              clearAdminStorage();
               setCachedAdmin(null);
             }
           }
         } else {
-          // No session, clear cached admin
-          clearAdminStorage();
           setCachedAdmin(null);
         }
       } catch (error) {
@@ -144,7 +110,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       
       if (event === 'SIGNED_OUT') {
         setAdmin(null);
-        clearAdminStorage();
         setCachedAdmin(null);
         setLoading(false);
       } else if (event === 'SIGNED_IN' && session?.user) {
@@ -154,7 +119,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           if (mounted) {
             setAdmin(adminData);
             if (adminData) {
-              setAdminStorage(adminData);
               setCachedAdmin(adminData);
             }
             setLoading(false);
@@ -215,7 +179,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       setSession(data.session);
       setAdmin(adminData);
       // Save admin data to localStorage for fast initial load
-      setAdminStorage(adminData);
       setCachedAdmin(adminData);
       setLoading(false);
       
@@ -233,7 +196,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setAdmin(null);
     setSession(null);
     // Clear localStorage on sign out
-    clearAdminStorage();
     setCachedAdmin(null);
     setLoading(false);
   };
@@ -256,10 +218,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       const adminData = await fetchAdminProfile(user.id);
       setAdmin(adminData);
       if (adminData) {
-        setAdminStorage(adminData);
         setCachedAdmin(adminData);
       } else {
-        clearAdminStorage();
         setCachedAdmin(null);
       }
     }

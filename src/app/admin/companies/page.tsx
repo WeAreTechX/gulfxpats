@@ -118,7 +118,7 @@ export default function AdminCompaniesPage() {
           </button>
           <button
             onClick={() => setisSingleModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#04724D] to-teal-600 text-white rounded-xl hover:from-[#035E3F] hover:to-teal-700 transition-all shadow-lg shadow-[#04724D]/25"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
           >
             <Plus className="h-5 w-5" />
             Add Company

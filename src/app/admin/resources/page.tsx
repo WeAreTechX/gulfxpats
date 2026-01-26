@@ -1,116 +1,89 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Edit2, 
-  Trash2, 
-  ExternalLink,
-  BookOpen
+import {
+  Plus,
+  BookOpen,
+  CheckCircle,
+  Clock,
+  Star,
 } from 'lucide-react';
+import ResourcesTable, { Resource } from '@/components/admin/resources/ResourcesTable';
+import { Pagination } from '@/types';
 
-interface Resource {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  type: string;
-  created_at: string;
+interface ResourceStats {
+  total: number;
+  published: number;
+  unpublished: number;
+  premium: number;
 }
 
 export default function AdminResourcesPage() {
   const [resources, setResources] = useState<Resource[]>([]);
+  const [stats, setStats] = useState<ResourceStats>({ total: 0, published: 0, unpublished: 0, premium: 0 });
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editingResource, setEditingResource] = useState<Resource | null>(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    url: '',
-    resourceTypeId: '',
-  });
-
-  useEffect(() => {
-    fetchResources();
-  }, []);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<Pagination>({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
 
   const fetchResources = async () => {
     try {
-      const response = await fetch('/api/resources');
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch('/api/resources?includeStats=true');
       const data = await response.json();
+
       if (data.success) {
-        setResources(data.resources);
+        const { list, stats, pagination } = data.data || {};
+        setResources(list || data.resources || []);
+        if (stats) {
+          setStats(stats);
+        } else {
+          // Calculate stats from resources list
+          const resourceList = list || data.resources || [];
+          setStats({
+            total: resourceList.length,
+            published: resourceList.filter((r: Resource) => r.status?.code === 'published').length,
+            unpublished: resourceList.filter((r: Resource) => r.status?.code === 'unpublished').length,
+            premium: resourceList.filter((r: Resource) => r.is_premium).length,
+          });
+        }
+        setPagination(pagination || { count: 1, current_page: 1, total_count: resourceList?.length || 0, total_pages: 1 });
+      } else {
+        setError('Failed to fetch resources');
       }
-    } catch (error) {
-      console.error('Error fetching resources:', error);
+    } catch (err) {
+      setError('Error loading resources');
+      console.error('Error fetching resources:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const method = editingResource ? 'PUT' : 'POST';
-      const body = editingResource 
-        ? { id: editingResource.id, ...formData }
-        : formData;
-
-      const response = await fetch('/api/resources', {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (response.ok) {
-        fetchResources();
-        setShowModal(false);
-        setEditingResource(null);
-        setFormData({ title: '', description: '', url: '', resourceTypeId: '' });
-      }
-    } catch (error) {
-      console.error('Error saving resource:', error);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this resource?')) return;
-    
-    try {
-      const response = await fetch(`/api/resources?id=${id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        fetchResources();
-      }
-    } catch (error) {
-      console.error('Error deleting resource:', error);
-    }
-  };
-
-  const openEditModal = (resource: Resource) => {
-    setEditingResource(resource);
-    setFormData({
-      title: resource.title,
-      description: resource.description,
-      url: resource.url,
-      resourceTypeId: resource.type,
-    });
-    setShowModal(true);
-  };
-
-  const filteredResources = resources.filter(resource =>
-    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    resource.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    fetchResources();
+  }, [currentPage]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#101418]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04724D]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <h3 className="text-red-800 font-semibold mb-2">Error</h3>
+        <p className="text-red-600">{error}</p>
+        <button
+          onClick={fetchResources}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -120,173 +93,74 @@ export default function AdminResourcesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#101418]">Resources</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Resources Management</h1>
           <p className="text-gray-600 mt-1">Manage career resources and content</p>
         </div>
         <button
-          onClick={() => {
-            setEditingResource(null);
-            setFormData({ title: '', description: '', url: '', resourceTypeId: '' });
-            setShowModal(true);
-          }}
-          className="flex items-center px-4 py-2 bg-[#101418] text-white rounded-lg hover:bg-[#1a1f26] transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
         >
-          <Plus className="h-5 w-5 mr-2" />
+          <Plus className="h-5 w-5" />
           Add Resource
         </button>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search resources..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#101418] focus:border-transparent outline-none"
-        />
-      </div>
-
-      {/* Resources List */}
-      {filteredResources.length > 0 ? (
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredResources.map((resource) => (
-                <tr key={resource.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="font-medium text-[#101418]">{resource.title}</div>
-                      {resource.description && (
-                        <div className="text-sm text-gray-500 truncate max-w-xs">{resource.description}</div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
-                      {resource.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <a
-                      href={resource.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 flex items-center"
-                    >
-                      <ExternalLink className="h-4 w-4 mr-1" />
-                      Visit
-                    </a>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => openEditModal(resource)}
-                      className="text-gray-400 hover:text-[#101418] mr-3"
-                    >
-                      <Edit2 className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(resource.id)}
-                      className="text-gray-400 hover:text-red-600"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[#101418] mb-2">No resources found</h3>
-          <p className="text-gray-500">Add your first resource to get started.</p>
-        </div>
-      )}
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
-            <h2 className="text-xl font-bold text-[#101418] mb-4">
-              {editingResource ? 'Edit Resource' : 'Add Resource'}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#101418] focus:border-transparent outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#101418] focus:border-transparent outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
-                <input
-                  type="url"
-                  value={formData.url}
-                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#101418] focus:border-transparent outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                <select
-                  value={formData.resourceTypeId}
-                  onChange={(e) => setFormData({ ...formData, resourceTypeId: e.target.value })}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#101418] focus:border-transparent outline-none"
-                >
-                  <option value="">Select type</option>
-                  <option value="blog">Blog</option>
-                  <option value="course">Course</option>
-                  <option value="tool">Tool</option>
-                  <option value="video">Video</option>
-                  <option value="podcast">Podcast</option>
-                  <option value="ebook">E-Book</option>
-                </select>
-              </div>
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-[#101418] text-white rounded-lg hover:bg-[#1a1f26] transition-colors"
-                >
-                  {editingResource ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </form>
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-[#E6F4F0] rounded-lg">
+              <BookOpen className="h-5 w-5 text-[#04724D]" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Total Resources</p>
+              <p className="text-xl font-bold text-gray-900">{stats.total}</p>
+            </div>
           </div>
         </div>
-      )}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Published</p>
+              <p className="text-xl font-bold text-gray-900">{stats.published}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Clock className="h-5 w-5 text-gray-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Unpublished</p>
+              <p className="text-xl font-bold text-gray-900">{stats.unpublished}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-100 rounded-lg">
+              <Star className="h-5 w-5 text-amber-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Premium</p>
+              <p className="text-xl font-bold text-gray-900">{stats.premium}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Resources Table */}
+      <ResourcesTable
+        loading={loading}
+        error={error}
+        resources={resources}
+        pagination={pagination}
+        onPageChange={setCurrentPage}
+        onRowChange={fetchResources}
+      />
     </div>
   );
 }
