@@ -5,6 +5,7 @@ import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
 import { User } from '@/types/supabase';
 import {UserCreate} from "@/types";
+import {useRouter} from "next/navigation";
 
 interface AuthContextType {
   user: SupabaseUser | null;
@@ -24,6 +25,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -51,9 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Get initial session
     const initSession = async () => {
-      console.log("Calling")
       try {
-        console.log(await supabase.auth.getSession());
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
@@ -130,11 +131,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    console.log("signOut");
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
     setSession(null);
+    router.push('/');
   };
 
   const resetPassword = async (email: string): Promise<{ error: Error | null }> => {
