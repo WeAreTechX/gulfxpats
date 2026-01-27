@@ -84,7 +84,7 @@ export default function TopNav() {
           ? "bg-white/80 backdrop-blur-xl shadow-sm"
           : "bg-transparent"
       )}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
@@ -174,14 +174,14 @@ export default function TopNav() {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => openAuthModal('login')}
-                    className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="cursor-pointer flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     <LogIn className="h-4 w-4 mr-2" />
                     Login
                   </button>
                   <button
                     onClick={() => openAuthModal('signup')}
-                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-teal-700 hover:from-[#035E3F] hover:to-teal-700 rounded-lg transition-all shadow-md shadow-[#04724D]/25 hover:shadow-lg hover:shadow-[#04724D]/30"
+                    className="cursor-pointer flex items-center px-4 py-2 text-sm font-medium text-white bg-teal-700 hover:from-[#035E3F] hover:to-teal-700 rounded-lg transition-all shadow-md shadow-[#04724D]/25 hover:shadow-lg hover:shadow-[#04724D]/30"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     Sign up

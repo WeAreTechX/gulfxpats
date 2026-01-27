@@ -324,3 +324,7 @@ textarea::placeholder {
   background: var(--surface-muted);
   border-color: var(--border-hover);
 }
+
+input:focus-within {
+  outline: none;
+}

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import {Job, JobType} from '@/types/jobs';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Job, JobType } from '@/types/jobs';
 import JobCard from '@/components/app/jobs/JobCard';
 import JobFilters from '@/components/app/jobs/JobFilters';
 import JobPreviewModal from '@/components/app/jobs/JobPreviewModal';
@@ -16,12 +17,17 @@ interface Filters {
 }
 
 export default function JobsPage() {
-  const [jobTypes, setJobTypes] = useState<JobType[]>([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
+  const [jobTypes, setJobTypes] = useState<JobType[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize state from URL params
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filters, setFilters] = useState<Filters>({
@@ -39,43 +45,98 @@ export default function JobsPage() {
   // Available locations (fetched from API response)
   const [availableLocations, setAvailableLocations] = useState<string[]>([]);
 
-  // Debounce search query
+  // Initialize filters from URL params on mount
+  useEffect(() => {
+    const search = searchParams.get('search') || '';
+    const location = searchParams.get('location') || '';
+    const jobType = searchParams.get('type') || '';
+    const remote = searchParams.get('remote') === 'true';
+    const salaryMin = parseInt(searchParams.get('salaryMin') || '0');
+    const salaryMax = parseInt(searchParams.get('salaryMax') || '0');
+
+    setSearchQuery(search);
+    setDebouncedSearch(search);
+    setFilters({
+      locations: location ? [location] : [],
+      jobTypes: jobType ? [jobType] : [],
+      remote,
+      salaryMin,
+      salaryMax,
+    });
+    setIsInitialized(true);
+  }, []);
+
+  // Update URL when filters or search change
+  const updateURL = useCallback((search: string, currentFilters: Filters) => {
+    const params = new URLSearchParams();
+    
+    if (search) {
+      params.set('search', search);
+    }
+    if (currentFilters.locations.length > 0) {
+      params.set('location', currentFilters.locations[0]);
+    }
+    if (currentFilters.jobTypes.length > 0) {
+      params.set('type', currentFilters.jobTypes[0]);
+    }
+    if (currentFilters.remote) {
+      params.set('remote', 'true');
+    }
+    if (currentFilters.salaryMin > 0) {
+      params.set('salaryMin', currentFilters.salaryMin.toString());
+    }
+    if (currentFilters.salaryMax > 0) {
+      params.set('salaryMax', currentFilters.salaryMax.toString());
+    }
+
+    const queryString = params.toString();
+    const newPath = queryString ? `/jobs?${queryString}` : '/jobs';
+    
+    router.replace(newPath, { scroll: false });
+  }, [router]);
+
+  // Debounce search query and update URL
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
+      if (isInitialized) {
+        updateURL(searchQuery, filters);
+      }
     }, 400);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Build query params from filters
+  // Update URL when filters change
+  useEffect(() => {
+    if (isInitialized) {
+      updateURL(debouncedSearch, filters);
+    }
+  }, [filters, isInitialized]);
+
+  // Build query params for API call
   const buildQueryParams = useCallback(() => {
     const params = new URLSearchParams();
     
-    // Search query
     if (debouncedSearch) {
       params.append('search', debouncedSearch);
     }
     
-    // Location filter (API supports single location, we'll use the first one)
     if (filters.locations.length > 0) {
       params.append('location', filters.locations[0]);
     }
     
-    // Job type filter (API supports job_type_id)
     if (filters.jobTypes.length > 0) {
-      // Map job type codes to IDs
       const jobTypeId = jobTypes.find(t => t.code === filters.jobTypes[0])?.id;
       if (jobTypeId) {
         params.append('job_type_id', jobTypeId?.toString());
       }
     }
     
-    // Include stats
     params.append('includeStats', 'true');
     
     return params.toString();
-  }, [debouncedSearch, filters]);
+  }, [debouncedSearch, filters, jobTypes]);
 
   // Fetch jobs when filters change
   const fetchJobs = useCallback(async (showLoader = true) => {
@@ -91,7 +152,6 @@ export default function JobsPage() {
         const { list } = jobsData.data;
         setJobs(list || []);
         
-        // Extract unique locations from jobs for the filter
         const locations = (list || [])
           .map((job: Job) => job.location)
           .filter(Boolean);
@@ -106,7 +166,7 @@ export default function JobsPage() {
     }
   }, [buildQueryParams]);
 
-  //
+  // Fetch job types
   const fetchData = async () => {
     try {
       const [jobTypesRes] = await Promise.all([
@@ -116,25 +176,22 @@ export default function JobsPage() {
       if (jobTypesData.success) setJobTypes(jobTypesData.list || []);
     } catch (error) {
       console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
   // Initial fetch
   useEffect(() => {
-    fetchData()
-    fetchJobs();
+    fetchData();
   }, []);
 
-  // Fetch when filters or search change
+  // Fetch jobs when initialized and when filters/search change
   useEffect(() => {
-    if (!loading) {
-      fetchJobs(false);
+    if (isInitialized) {
+      fetchJobs(!loading);
     }
-  }, [debouncedSearch, filters]);
+  }, [isInitialized, debouncedSearch, filters, jobTypes]);
 
-  // Handle filter changes with API call
+  // Handle filter changes
   const handleFiltersChange = (newFilters: Filters) => {
     setFilters(newFilters);
   };
@@ -166,18 +223,14 @@ export default function JobsPage() {
   // Filter jobs locally for filters that API doesn't support
   const filteredJobs = useMemo(() => {
     return jobs.filter(job => {
-      // Remote filter (client-side since API might not support it)
       const matchesRemote = !filters.remote || job.metadata?.remote === 'true';
       
-      // Salary filter (client-side)
       const matchesSalary = filters.salaryMin === 0 || 
         (job.salary_max && job.salary_max >= filters.salaryMin);
 
-      // Additional location filtering if multiple locations selected
       const matchesLocation = filters.locations.length <= 1 || 
         filters.locations.some(loc => job.location?.toLowerCase().includes(loc.toLowerCase()));
 
-      // Additional job type filtering if multiple types selected
       const matchesJobType = filters.jobTypes.length <= 1 || 
         filters.jobTypes.includes(job.job_type?.code || '');
 
@@ -198,7 +251,7 @@ export default function JobsPage() {
     (filters.remote ? 1 : 0) + 
     (filters.salaryMin > 0 ? 1 : 0);
 
-  if (loading) {
+  if (loading && !isInitialized) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
@@ -241,7 +294,7 @@ export default function JobsPage() {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search jobs, companies, or keywords..."
+              placeholder="Search job titles, keyword, or industry..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none text-gray-900 shadow-sm placeholder-gray-400"

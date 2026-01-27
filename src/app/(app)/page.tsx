@@ -57,7 +57,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       {/* Hero Section */}
       <section className="relative pt-8 pb-20 lg:pt-16 lg:pb-32 overflow-hidden">
         {/* Background decorations */}
@@ -106,7 +106,7 @@ export default function HomePage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Job title, keyword, or company..."
+                  placeholder="Job title, keyword, or industry..."
                   className="flex-1 text-gray-900 placeholder-gray-400 focus-visible:outline-none focus:outline-none text-base"
                 />
                 <button
@@ -121,7 +121,7 @@ export default function HomePage() {
             {/* Popular searches */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-sm">
               <span className="text-gray-500">Popular:</span>
-              {['Remote', 'Full-time', 'Engineering', 'Marketing'].map((term) => (
+              {['Remote', 'Full-time', 'Engineering', 'Middle-East'].map((term) => (
                 <Link
                   key={term}
                   href={`/jobs?search=${term.toLowerCase()}`}
@@ -145,8 +145,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
-                <Building2 className="h-6 w-6 text-emerald-600" />
+              <div className="w-12 h-12 bg-[#E6F4F0] rounded-2xl flex items-center justify-center">
+                <Building2 className="h-6 w-6 text-[#04724D]" />
               </div>
               <div className="text-left">
                 <p className="text-2xl font-bold text-gray-900">100+</p>
@@ -154,11 +154,11 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-teal-100 rounded-2xl flex items-center justify-center">
-                <Users className="h-6 w-6 text-teal-600" />
+              <div className="w-12 h-12 bg-[#E6F4F0] rounded-2xl flex items-center justify-center">
+                <Users className="h-6 w-6 text-[#04724D]" />
               </div>
               <div className="text-left">
-                <p className="text-2xl font-bold text-gray-900">10K+</p>
+                <p className="text-2xl font-bold text-gray-900">1000+</p>
                 <p className="text-sm text-gray-500">Job Seekers</p>
               </div>
             </div>
