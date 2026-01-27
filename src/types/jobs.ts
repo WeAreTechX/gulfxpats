@@ -5,9 +5,9 @@ import {Query} from "@/types/api";
 export interface JobCreate {
   title: string;
   description: string;
-  company_id: number;
+  company_id?: number;
   job_type_id: number;
-  job_industry_id: number;
+  industry_id: number;
   location: string;
   salary_min: number;
   salary_max: number;
@@ -38,7 +38,7 @@ export interface Job extends JobCreate {
   status_id: number;
   company?: Company;
   job_type?: JobType;
-  job_industry?: JobIndustry;
+  industry?: JobIndustry;
   currency?: Currency;
   status?: Status;
 }
@@ -46,7 +46,7 @@ export interface Job extends JobCreate {
 export interface JobQuery extends Query {
   location?: string;
   job_type_id?: string | number;
-  job_industry_id?: string | number;
+  industry_id?: string | number;
 }
 
 export interface Source {

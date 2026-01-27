@@ -14,13 +14,13 @@ export class JobsService {
         *,
         company:companies(*),
         job_type:job_types(*),
-        job_industry:job_industries(*),
+        :industries(*),
         currency:currencies(*),
         status:statuses(*)
       `, { count: 'exact' });
 
     if (options?.job_type_id) query = query.eq('job_type_id', options.job_type_id);
-    if (options?.job_industry_id) query = query.eq('job_industry_id', options.job_industry_id);
+    if (options?.industry_id) query = query.eq('industry_id', options.industry_id);
 
     if (options?.location) query = query.ilike('location', `%${options.location}%`);
     if (options?.search) query = query.or(`title.ilike.%${options.search}%,description.ilike.%${options.search}%`);

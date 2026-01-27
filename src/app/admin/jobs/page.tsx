@@ -1,96 +1,40 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
-  Plus,
-  Search,
-  Building2,
-  Briefcase, Clock, Archive,
+  Archive,
+  Briefcase,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  RefreshCw,
 } from 'lucide-react';
-import { StoreSingleJobModal } from '@/components/admin';
-import {Job} from "@/types/jobs";
-import JobsTable from "@/components/admin/jobs/listings/JobsTable";
+import JobsView from "@/components/admin/jobs/listings/JobsView";
+import SourcesView from "@/components/admin/jobs/sources/SourcesView";
+import MigrationsView from "@/components/admin/jobs/migrations/MigrationsView";
 import {QueryStats} from "@/types/api";
 
-export default function AdminJobsPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [stats, setStats] = useState<QueryStats>({ total: 0, published: 0, unpublished: 0, archived: 0 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type TabType = 'listings' | 'sources' | 'migrations';
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
+export default function AdminSourcesPage() {
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>('listings');
+  const [refresh, setRefresh] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, [currentPage]);
+  const [stats, setStats] = useState<QueryStats>({ total_jobs: 0, published_jobs: 0, unpublished_jobs: 0, archived_jobs: 0, total_sources: 0 });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const tabs = [
+    { id: 'listings' as TabType, label: 'Listings' },
+    { id: 'sources' as TabType, label: 'Sources' },
+    { id: 'migrations' as TabType, label: 'Migrations' },
+  ];
 
-      const jobsRes= await fetch('/api/jobs?includeStats=true')
-      const jobsData = await jobsRes.json();
-
-      if (jobsData.success) {
-        const { list, stats, pagination } = jobsData.data;
-        setJobs(list || []);
-        setStats(stats || {});
-        setPagination(pagination ||  { count: 1, current_page: 1, total_count: 1, total_pages: 1 })
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOpenModal = (job?: Job) => {
-    setEditingJob(job || null);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingJob(null);
-  };
-
-  const handleSuccess = () => {
-    fetchData();
-  };
-
-  const handleDelete = async (jobId: string) => {
-    if (!confirm('Are you sure you want to delete this job?')) return;
-
-    try {
-      const response = await fetch(`/api/jobs/${jobId}`, {
-        method: 'DELETE',
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        fetchData();
-      } else {
-        alert('Error: ' + data.error);
-      }
-    } catch (error) {
-      console.error('Error deleting job:', error);
-      alert('Failed to delete job');
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04724D]"></div>
-      </div>
-    );
+  const handleSetStats = (next: QueryStats) => {
+    setStats(prev => ({
+      ...prev,
+      ...next
+    }));
   }
 
   return (
@@ -99,29 +43,20 @@ export default function AdminJobsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Jobs Management</h1>
-          <p className="text-gray-600 mt-1">Manage job listings on the platform</p>
+          <p className="text-gray-600 mt-1">Manage data sources and view fetch history</p>
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
-        >
-          <Plus className="h-5 w-5" />
-          Add Job
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setRefresh(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search jobs by title, company, or location..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
-        />
-      </div>
-
+      {/* Stats */}
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-gray-200 p-4">
@@ -131,18 +66,18 @@ export default function AdminJobsPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Jobs</p>
-              <p className="text-xl font-bold text-gray-900">{jobs.length}</p>
+              <p className="text-xl font-bold text-gray-900">{stats.total_jobs}</p>
             </div>
           </div>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-100 rounded-lg">
-              <Building2 className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-green-600" />
             </div>
             <div>
               <p className="text-sm text-gray-600">Published</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.published}</p>
+              <p className="text-xl font-bold text-gray-900">{stats?.published_jobs}</p>
             </div>
           </div>
         </div>
@@ -153,36 +88,91 @@ export default function AdminJobsPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Unpublished</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.unpublished}</p>
+              <p className="text-xl font-bold text-gray-900">{stats?.unpublished_jobs}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-100 rounded-lg">
-              <Archive className="h-5 w-5 text-gray-900" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Archived</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.archived}</p>
+
+        {activeTab === 'listings' && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Archive className="h-5 w-5 text-gray-900" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Archived</p>
+                <p className="text-xl font-bold text-gray-900">{stats?.archived_jobs}</p>
+              </div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'sources' && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#E6F4F0] rounded-lg">
+                <Database className="h-5 w-5 text-[#04724D]" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Sources</p>
+                <p className="text-xl font-bold text-gray-900">{stats?.total_sources}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'migrations' && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Download className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Fetches</p>
+                <p className="text-xl font-bold text-gray-900">0</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      {/* Tabs */}
+      <div className="bg-white rounded-tl-xl rounded-tr-xl border border-gray-200">
+        <div className="border-b border-gray-200">
+          <nav className="flex -mb-px">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                  relative px-6 py-4 text-sm font-medium transition-colors
+                  ${activeTab === tab.id
+                  ? 'text-[#04724D] border-b-2 border-[#04724D]'
+                  : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }
+                `}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
         </div>
       </div>
 
-      {/* Jobs Table */}
-      <JobsTable
-        loading={loading}
-        jobs={jobs}
-        pagination={pagination} onPageChange={setCurrentPage} onRowChange={fetchData} />
+      {/* Tab Content */}
+      <div className="bg-white p-4 rounded-xl">
 
-      {/* Job Modal */}
-      <StoreSingleJobModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSuccess={handleSuccess}
-        job={editingJob}
-      />
+        {activeTab === 'listings' && (
+          <JobsView refresh={refresh} />
+        )}
+
+        {activeTab === 'sources' && (
+          <SourcesView refresh={refresh} />
+        )}
+
+        {activeTab === 'migrations' && (
+          <MigrationsView refresh={refresh} />
+        )}
+      </div>
     </div>
   );
 }

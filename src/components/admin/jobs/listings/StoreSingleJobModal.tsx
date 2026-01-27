@@ -20,7 +20,7 @@ const getInitialFormData = (): JobCreate => ({
   description: '',
   company_id: 0,
   job_type_id: 0,
-  job_industry_id: 0,
+  industry_id: 0,
   location: '',
   salary_min: 0,
   salary_max: 0,
@@ -40,7 +40,7 @@ export default function StoreSingleJobModal({
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [jobTypes, setJobTypes] = useState<JobType[]>([]);
-  const [jobIndustries, setJobIndustries] = useState<JobIndustry[]>([]);
+  const [industries, setIndustries] = useState<JobIndustry[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function StoreSingleJobModal({
       setLoading(true);
 
       // Fetch companies and lookups in parallel
-      const [companiesRes, jobTypesRes, jobIndustriesRes, currenciesRes] = await Promise.all([
+      const [companiesRes, jobTypesRes, industriesRes, currenciesRes] = await Promise.all([
         fetch('/api/lookups?type=companies'),
         fetch('/api/lookups?type=job-types'),
         fetch('/api/lookups?type=industries'),
@@ -61,12 +61,12 @@ export default function StoreSingleJobModal({
 
       const companiesData = await companiesRes.json();
       const jobTypesData = await jobTypesRes.json();
-      const jobIndustriesData = await jobIndustriesRes.json();
+      const industriesData = await industriesRes.json();
       const currenciesData = await currenciesRes.json();
 
       if (companiesData.success) setCompanies(companiesData.list || []);
       if (jobTypesData.success) setJobTypes(jobTypesData.list || []);
-      if (jobIndustriesData.success) setJobIndustries(jobIndustriesData.list || []);
+      if (industriesData.success) setIndustries(industriesData.list || []);
       if (currenciesData.success) setCurrencies(currenciesData.list || []);
 
     } catch (error) {
@@ -90,7 +90,7 @@ export default function StoreSingleJobModal({
           description: job.description,
           company_id: job.company_id,
           job_type_id: job.job_type_id,
-          job_industry_id: job.job_industry_id,
+          industry_id: job.industry_id,
           location: job.location || '',
           salary_min: job.salary_min,
           salary_max: job.salary_max,
@@ -125,7 +125,7 @@ export default function StoreSingleJobModal({
         description: formData.description || null,
         company_id: formData.company_id,
         job_type_id: formData.job_type_id,
-        job_industry_id: formData.job_industry_id,
+        industry_id: formData.industry_id,
         location: formData.location || null,
         salary_min: formData.salary_min,
         salary_max: formData.salary_max,
@@ -251,7 +251,7 @@ export default function StoreSingleJobModal({
                       <div className="grid grid-cols-1 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-slate-700 mb-1">
-                            Company <span className="text-red-500">*</span>
+                            Company
                           </label>
                           <select
                             name="company_id"
@@ -296,14 +296,14 @@ export default function StoreSingleJobModal({
                             Job Industry <span className="text-red-500">*</span>
                           </label>
                           <select
-                            name="job_industry_id"
-                            value={formData.job_industry_id}
+                            name="industry_id"
+                            value={formData.industry_id}
                             onChange={handleChange}
                             required
                             className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                           >
                             <option value="">Select industry</option>
-                            {jobIndustries.map((type) => (
+                            {industries.map((type) => (
                               <option key={type.id} value={type.id}>
                                 {type.name}
                               </option>
@@ -331,7 +331,25 @@ export default function StoreSingleJobModal({
                   {/* Salary Information */}
                   <div>
                     <h4 className="text-sm font-semibold text-slate-900 mb-4">Salary Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                          Currency
+                        </label>
+                        <select
+                          name="currency_id"
+                          value={formData.currency_id}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                        >
+                          <option value="">Select currency</option>
+                          {currencies.map((curr) => (
+                            <option key={curr.id} value={curr.id}>
+                              {curr.code} ({curr.symbol})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">
                           Min Salary
@@ -362,20 +380,17 @@ export default function StoreSingleJobModal({
 
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Currency
+                          Frequency
                         </label>
                         <select
-                          name="currency_id"
-                          value={formData.currency_id}
+                          name="salary_frequency"
+                          value={formData.salary_frequency}
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                         >
-                          <option value="">Select currency</option>
-                          {currencies.map((curr) => (
-                            <option key={curr.id} value={curr.id}>
-                              {curr.code} ({curr.symbol})
-                            </option>
-                          ))}
+                          <option value="">Select frequency</option>
+                          <option key={'monthly'} value={'monthly'}>Monthly</option>
+                          <option key={'annually'} value={'annually'}>Annually</option>
                         </select>
                       </div>
                     </div>
@@ -412,8 +427,8 @@ export default function StoreSingleJobModal({
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={loading || !formData.title || !formData.company_id || !formData.job_type_id || !formData.apply_url}
-                    className="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    disabled={loading || !formData.title || !formData.job_type_id || !formData.apply_url}
+                    className="px-5 py-2.5 text-sm font-medium text-white bg-teal-700  rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                     {isEditMode ? 'Update Job' : 'Add Job'}

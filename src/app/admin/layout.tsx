@@ -8,7 +8,6 @@ import {
   Building2, 
   BookOpen,
   Users,
-  Database,
   LogOut, 
   ChevronLeft,
   ChevronRight,
@@ -25,7 +24,6 @@ interface AdminLayoutProps {
 
 const navigation = [
   { name: 'Overview', href: '/admin/overview', icon: LayoutDashboard },
-  { name: 'Sources', href: '/admin/sources', icon: Database },
   { name: 'Jobs', href: '/admin/jobs', icon: Briefcase },
   { name: 'Companies', href: '/admin/companies', icon: Building2 },
   { name: 'Resources', href: '/admin/resources', icon: BookOpen },

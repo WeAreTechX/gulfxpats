@@ -81,13 +81,13 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search jobs by title, company, or location..."
+            placeholder="Search by name or code"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
           />
         </div>
         <div className="flex items-center gap-3">
@@ -101,42 +101,6 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#E6F4F0] rounded-lg">
-              <Database className="h-5 w-5 text-[#04724D]" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Sources</p>
-              <p className="text-xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 rounded-lg">
-              <RefreshCw className="h-5 w-5 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Active Sources</p>
-              <p className="text-xl font-bold text-gray-900">{stats.active}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Download className="h-5 w-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Fetches</p>
-              <p className="text-xl font-bold text-gray-900">{sources.length}</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="p-0">
         <SourcesTable

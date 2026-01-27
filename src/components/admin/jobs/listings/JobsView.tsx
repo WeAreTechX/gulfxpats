@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   Plus,
-  Search,
-  Building2,
-  Briefcase, Clock, Archive,
+  Search
 } from 'lucide-react';
 import { StoreSingleJobModal } from '@/components/admin';
 import {Job} from "@/types/jobs";
@@ -93,10 +91,10 @@ export default function JobsView({ refresh }: { refresh: boolean }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="Search jobs by title, company, or location..."
+            placeholder="Search jobs by title or description"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
           />
         </div>
         <button
@@ -106,54 +104,6 @@ export default function JobsView({ refresh }: { refresh: boolean }) {
           <Plus className="h-5 w-5" />
           Add Job
         </button>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#E6F4F0] rounded-lg">
-              <Briefcase className="h-5 w-5 text-[#04724D]" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Jobs</p>
-              <p className="text-xl font-bold text-gray-900">{jobs.length}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Building2 className="h-5 w-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Published</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.published}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-100 rounded-lg">
-              <Clock className="h-5 w-5 text-gray-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Unpublished</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.unpublished}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-100 rounded-lg">
-              <Archive className="h-5 w-5 text-gray-900" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Archived</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.archived}</p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Jobs Table */}

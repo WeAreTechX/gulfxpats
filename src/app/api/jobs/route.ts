@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const includeStats = searchParams.get('includeStats') === 'true';
     const job_type_id = searchParams.get('job_type_id') || undefined;
-    const job_industry_id = searchParams.get('job_industry_id') || undefined;
+    const industry_id = searchParams.get('industry_id') || undefined;
     const location = searchParams.get('location') || undefined;
     const search = searchParams.get('search') || undefined;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     
     const { list, pagination } = await jobsService.index({
       job_type_id,
-      job_industry_id,
+      industry_id,
       location,
       search,
       limit,
@@ -53,16 +53,14 @@ export async function POST(request: NextRequest) {
     const job = await jobsService.store({
       title: body.title,
       description: body.description,
-      company_id: body.company_id,
       job_type_id: body.job_type_id,
-      job_industry_id: body.job_industry_id,
+      industry_id: body.industry_id,
       location: body.location,
       salary_min: body.salary_min,
       salary_max: body.salary_max,
       salary_frequency: body.salary_frequency,
       currency_id: body.currency_id,
       apply_url: body.apply_url,
-      status_id: body.status_id || 8,
       metadata: body.metadata
     });
 
