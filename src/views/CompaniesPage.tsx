@@ -6,6 +6,7 @@ import CompanyCard from '@/components/app/companies/CompanyCard';
 import CompanyFilters from '@/components/app/companies/CompanyFilters';
 import CompanyPreviewModal from '@/components/app/companies/CompanyPreviewModal';
 import { Search, SlidersHorizontal, X, Building2, Sparkles, Loader2 } from 'lucide-react';
+import {useRouter, useSearchParams} from "next/navigation";
 
 interface Filters {
   locations: string[];
@@ -13,16 +14,23 @@ interface Filters {
 }
 
 export default function CompaniesPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize state from URL params
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filters, setFilters] = useState<Filters>({
     locations: [],
-    hasOpenJobs: false,
+    hasOpenJobs: false
   });
+
 
   // Modal state
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
@@ -31,13 +39,60 @@ export default function CompaniesPage() {
   // Available locations
   const [availableLocations, setAvailableLocations] = useState<string[]>([]);
 
-  // Debounce search query
+  // Initialize filters from URL params on mount
+  useEffect(() => {
+    const search = searchParams.get('search') || '';
+    const location = searchParams.get('location') || '';
+    const hasOpenJobs = searchParams.get('hasOpenJobs') === 'true';
+
+    setSearchQuery(search);
+    setDebouncedSearch(search);
+    setFilters({
+      locations: location ? [location] : [],
+      hasOpenJobs,
+    });
+    setIsInitialized(true);
+  }, []);
+
+  // Update URL when filters or search change
+  const updateURL = useCallback((search: string, currentFilters: Filters) => {
+    const params = new URLSearchParams();
+
+    if (search) {
+      params.set('search', search);
+    }
+    if (currentFilters.locations.length > 0) {
+      params.set('location', currentFilters.locations[0]);
+    }
+    if (currentFilters.hasOpenJobs) {
+      params.set('hasOpenJobs', 'true');
+    }
+
+    const queryString = params.toString();
+    const newPath = queryString ? `/companies?${queryString}` : '/companies';
+
+    router.replace(newPath, { scroll: false });
+  }, [router]);
+
+
+  // Debounce search query and update URL
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-    }, 1000);
+      if (isInitialized) {
+        updateURL(searchQuery, filters);
+      }
+    }, 400);
+
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  // Update URL when filters change
+  useEffect(() => {
+    if (isInitialized) {
+      updateURL(debouncedSearch, filters);
+    }
+  }, [filters, isInitialized]);
 
   // Build query params from filters
   const buildQueryParams = useCallback(() => {
@@ -49,6 +104,10 @@ export default function CompaniesPage() {
     
     if (filters.locations.length > 0) {
       params.append('location', filters.locations[0]);
+    }
+
+    if (filters.hasOpenJobs) {
+      params.append('hasOpenJobs', 'true');
     }
     
     return params.toString();
@@ -63,12 +122,12 @@ export default function CompaniesPage() {
       }
 
       const queryString = buildQueryParams();
-      const response = await fetch(`/api/companies?${queryString}`);
-      const data = await response.json();
+      const companiesRes = await fetch(`/api/companies?${queryString}`);
+      const companiesData = await companiesRes.json();
       
-      if (data.success) {
-        const list = data.data?.list || [];
-        setCompanies(list);
+      if (companiesData.success) {
+        const { list } = companiesData.data;
+        setCompanies(list || []);
         
         // Extract unique locations
         const locations = list
@@ -95,7 +154,7 @@ export default function CompaniesPage() {
     if (!loading) {
       fetchCompanies(false);
     }
-  }, [debouncedSearch, filters]);
+  }, [isInitialized, debouncedSearch, filters]);
 
   // Handle filter changes
   const handleFiltersChange = (newFilters: Filters) => {
