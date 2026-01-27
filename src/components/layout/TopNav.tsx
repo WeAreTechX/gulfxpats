@@ -66,6 +66,7 @@ export default function TopNav() {
     if (profile) {
       return profile.first_name;
     }
+    console.log(user)
     if (user?.email) {
       return user.email.split('@')[0];
     }

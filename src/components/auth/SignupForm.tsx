@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/custom/Toast';
 import { Mail, Lock, User, MapPin, Loader2, Eye, EyeOff, Check } from 'lucide-react';
 import { COUNTRIES } from '@/lib/countries';
+import {UserCreate} from "@/types";
 
 interface SignupFormProps {
   onSuccess: () => void;
@@ -51,7 +52,8 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
     }
 
     try {
-      const { error } = await signUp(email, password, firstName, lastName, location);
+      const payload: UserCreate = { email, password, first_name: firstName, last_name: lastName, location, role: 'user' }
+      const { error } = await signUp(payload);
       
       if (error) {
         toast.error('Signup failed', error.message);

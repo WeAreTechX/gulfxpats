@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
-import {USER_STORAGE_KEY} from "@/lib/constants";
 import {Admin} from "@/types";
 
 interface AdminAuthContextType {
@@ -29,9 +28,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [cachedAdmin, setCachedAdmin] = useState<Admin | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
-  
-
 
   const fetchAdminProfile = async (userId: string): Promise<Admin | null> => {
     try {
@@ -47,7 +43,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
-      console.log(data)
       // Check if admin is active (status_id = 1)
       if (data.status_id !== 1) {
         console.log('Admin account is not active');
@@ -93,7 +88,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       } finally {
         if (mounted) {
           setLoading(false);
-          setInitialized(true);
           initializedLocal = true;
         }
       }
