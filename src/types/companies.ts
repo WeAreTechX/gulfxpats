@@ -9,8 +9,8 @@ export interface CompanyCreate {
   logo_url: string | undefined;
   location: string;
   address: string;
-  tags: string[];
-  metadata: {
+  tags?: string[];
+  metadata?: {
     [key: string]: string | undefined;
   };
   contact?: {
@@ -31,7 +31,6 @@ export interface Company extends CompanyCreate {
 
 export interface CompanyQuery extends Query {
   location?: string;
-  order?: string;
 }
 
 export interface SourceCreate {

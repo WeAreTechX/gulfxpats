@@ -14,7 +14,7 @@ export default function FeaturedJobs() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const  jobsRes = await fetch('/api/jobs?limit=4')
+        const  jobsRes = await fetch('/api/jobs?limit=4&order=rank')
         const jobsData = await jobsRes.json();
         if (jobsData.success) setJobs(jobsData.data.list);
       } catch (error) {

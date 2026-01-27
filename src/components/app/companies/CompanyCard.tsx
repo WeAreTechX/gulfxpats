@@ -1,25 +1,35 @@
 'use client';
 
-import Link from 'next/link';
 import { Company } from '@/types/companies';
 import { MapPin, Globe, Briefcase, ArrowUpRight, Building2, Users, ExternalLink } from 'lucide-react';
 
 interface CompanyCardProps {
   company: Company;
   variant?: 'default' | 'compact' | 'featured';
+  onViewCompany?: (company: Company) => void;
 }
 
-export default function CompanyCard({ company, variant = 'default' }: CompanyCardProps) {
+export default function CompanyCard({ company, variant = 'default', onViewCompany }: CompanyCardProps) {
+  const handleClick = () => {
+    if (onViewCompany) {
+      onViewCompany(company);
+    }
+  };
+
+  const handleWebsiteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   if (variant === 'compact') {
     return (
-      <Link href={`/companies/${company.id}`} className="block group">
+      <div onClick={handleClick} className="block group cursor-pointer">
         <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-[#04724D]/20 hover:shadow-lg transition-all">
           <div className="flex-shrink-0">
             {company.logo_url ? (
               <img 
                 src={company.logo_url}
                 alt={company.name}
-                className="w-12 h-12 rounded-xl object-cover border border-gray-100"
+                className="w-8 h-8 rounded-xl object-cover border border-gray-100"
               />
             ) : (
               <div className="w-12 h-12 bg-gradient-to-br from-[#E6F4F0] to-teal-100 rounded-xl flex items-center justify-center border border-[#04724D]/20">
@@ -37,13 +47,13 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
           </div>
           <ArrowUpRight className="h-5 w-5 text-gray-400 group-hover:text-[#04724D] transition-colors" />
         </div>
-      </Link>
+      </div>
     );
   }
 
   return (
-    <Link href={`/companies/${company.id}`} className="block group h-full">
-      <div className="relative bg-white rounded-2xl border border-gray-100 p-6 transition-all duration-300 hover:border-[#04724D]/20 hover:shadow-xl hover:shadow-[#04724D]/5 h-full flex flex-col">
+    <div onClick={handleClick} className="block group h-full cursor-pointer">
+      <div className="relative bg-white rounded-2xl border border-gray-200 p-6 transition-all duration-300 hover:border-[#04724D]/20 hover:shadow-xl hover:shadow-[#04724D]/5 h-full flex flex-col">
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
           {/* Company logo */}
@@ -52,7 +62,7 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
               <img 
                 src={company.logo_url}
                 alt={company.name}
-                className="w-16 h-16 rounded-2xl object-cover border border-gray-100 shadow-sm"
+                className="w-11 h-11 rounded-xl object-cover border border-gray-100 shadow-sm"
               />
             ) : (
               <div className="w-16 h-16 bg-gradient-to-br from-[#E6F4F0] to-teal-100 rounded-2xl flex items-center justify-center border border-[#04724D]/20 shadow-sm">
@@ -107,7 +117,7 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
               href={company.website_url}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
+              onClick={handleWebsiteClick}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-[#04724D] hover:bg-[#E6F4F0] rounded-lg transition-colors"
             >
               <Globe className="h-4 w-4" />
@@ -124,6 +134,6 @@ export default function CompanyCard({ company, variant = 'default' }: CompanyCar
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

@@ -1,16 +1,16 @@
 'use client';
 
-import Link from 'next/link';
 import { Job } from '@/types/jobs';
 import { MapPin, Clock, Banknote, Building2, ArrowUpRight, Zap, Bookmark } from 'lucide-react';
-import {formatDate} from "@/lib/date";
-import {formatSalary} from "@/lib/utils";
+import { formatDate } from "@/lib/date";
+import { formatSalary } from "@/lib/utils";
 
 interface JobCardProps {
-  job: Job
+  job: Job;
+  onViewJob?: (job: Job) => void;
 }
 
-export default function JobCard({ job }: JobCardProps) {
+export default function JobCard({ job, onViewJob }: JobCardProps) {
   const salary = formatSalary(job.salary_min, job.salary_max, job.currency!.code);
   const isNew = new Date(job.created_at).getTime() > Date.now() - 3 * 24 * 60 * 60 * 1000;
 
@@ -24,9 +24,23 @@ export default function JobCard({ job }: JobCardProps) {
 
   const typeStyle = jobTypeConfig[job.job_type!.code] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-100' };
 
+  const handleClick = () => {
+    if (onViewJob) {
+      onViewJob(job);
+    }
+  };
+
+  const handleSaveJob = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Handle save job logic
+  };
+
   return (
-    <Link href={`/jobs/${job.id}`} className="block group h-full">
-      <div className="relative bg-white rounded-2xl border border-gray-100 p-5 transition-all duration-300 hover:border-[#04724D]/20 hover:shadow-xl hover:shadow-[#04724D]/5 h-full flex flex-col">
+    <div 
+      onClick={handleClick}
+      className="block group h-full cursor-pointer"
+    >
+      <div className="relative bg-white rounded-2xl border border-gray-200 p-5 transition-all duration-300 hover:border-[#04724D]/20 hover:shadow-xl hover:shadow-[#04724D]/5 h-full flex flex-col">
         {/* New badge */}
         {isNew && (
           <div className="absolute -top-2.5 left-5">
@@ -56,7 +70,7 @@ export default function JobCard({ job }: JobCardProps) {
               </span>
             )}
             <button 
-              onClick={(e) => { e.preventDefault(); }}
+              onClick={handleSaveJob}
               className="p-1.5 text-gray-400 hover:text-[#04724D] hover:bg-[#E6F4F0] rounded-lg transition-colors"
               title="Save job"
             >
@@ -113,6 +127,6 @@ export default function JobCard({ job }: JobCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

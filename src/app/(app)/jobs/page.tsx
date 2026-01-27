@@ -1,84 +1,194 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Job } from '@/types/jobs';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import {Job, JobType} from '@/types/jobs';
 import JobCard from '@/components/app/jobs/JobCard';
 import JobFilters from '@/components/app/jobs/JobFilters';
-import { Search, SlidersHorizontal, X, Briefcase, Sparkles } from 'lucide-react';
+import JobPreviewModal from '@/components/app/jobs/JobPreviewModal';
+import { Search, SlidersHorizontal, X, Briefcase, Sparkles, Loader2 } from 'lucide-react';
 
-const DEFAULT_JOB_TYPES = [
-  { id: '1', name: 'Full Time', code: 'full-time' },
-  { id: '2', name: 'Part Time', code: 'part-time' },
-  { id: '3', name: 'Contract', code: 'contract' },
-  { id: '4', name: 'Internship', code: 'internship' },
-  { id: '5', name: 'Freelance', code: 'freelance' },
-];
+interface Filters {
+  locations: string[];
+  jobTypes: string[];
+  remote: boolean;
+  salaryMin: number;
+  salaryMax: number;
+}
 
 export default function JobsPage() {
-  const [jobs, setJobs] = useState<JobN[]>([]);
+  const [jobTypes, setJobTypes] = useState<JobType[]>([]);
+
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState({
-    query: '',
-    locations: [] as string[],
-    jobTypes: [] as string[],
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [filters, setFilters] = useState<Filters>({
+    locations: [],
+    jobTypes: [],
     remote: false,
     salaryMin: 0,
     salaryMax: 0,
   });
 
-  const availableLocations = useMemo(() => {
-    const locations = jobs
-      .map(job => job.location)
-      .filter(Boolean);
-    return [...new Set(locations)].sort();
-  }, [jobs]);
+  // Modal state
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
+  // Available locations (fetched from API response)
+  const [availableLocations, setAvailableLocations] = useState<string[]>([]);
+
+  // Debounce search query
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch('/api/jobs?includeStats=true');
-        const data = await response.json();
-        
-        if (data.success) {
-          setJobs(data.list);
-        }
-      } catch (error) {
-        console.error('Error fetching jobs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 400);
 
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Build query params from filters
+  const buildQueryParams = useCallback(() => {
+    const params = new URLSearchParams();
+    
+    // Search query
+    if (debouncedSearch) {
+      params.append('search', debouncedSearch);
+    }
+    
+    // Location filter (API supports single location, we'll use the first one)
+    if (filters.locations.length > 0) {
+      params.append('location', filters.locations[0]);
+    }
+    
+    // Job type filter (API supports job_type_id)
+    if (filters.jobTypes.length > 0) {
+      // Map job type codes to IDs
+      const jobTypeId = jobTypes.find(t => t.code === filters.jobTypes[0])?.id;
+      if (jobTypeId) {
+        params.append('job_type_id', jobTypeId?.toString());
+      }
+    }
+    
+    // Include stats
+    params.append('includeStats', 'true');
+    
+    return params.toString();
+  }, [debouncedSearch, filters]);
+
+  // Fetch jobs when filters change
+  const fetchJobs = useCallback(async (showLoader = true) => {
+    try {
+      if (showLoader) {
+        setSearching(true);
+      }
+      const queryString = buildQueryParams();
+      const jobsRes = await fetch(`/api/jobs?${queryString}`);
+      const jobsData = await jobsRes.json();
+
+      if (jobsData.success) {
+        const { list } = jobsData.data;
+        setJobs(list || []);
+        
+        // Extract unique locations from jobs for the filter
+        const locations = (list || [])
+          .map((job: Job) => job.location)
+          .filter(Boolean);
+        const uniqueLocations = [...new Set(locations)] as string[];
+        setAvailableLocations(uniqueLocations.sort());
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      setLoading(false);
+      setSearching(false);
+    }
+  }, [buildQueryParams]);
+
+  //
+  const fetchData = async () => {
+    try {
+      const [jobTypesRes] = await Promise.all([
+        fetch('/api/lookups?type=job-types')
+      ]);
+      const jobTypesData = await jobTypesRes.json();
+      if (jobTypesData.success) setJobTypes(jobTypesData.list || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial fetch
+  useEffect(() => {
+    fetchData()
     fetchJobs();
   }, []);
 
+  // Fetch when filters or search change
+  useEffect(() => {
+    if (!loading) {
+      fetchJobs(false);
+    }
+  }, [debouncedSearch, filters]);
+
+  // Handle filter changes with API call
+  const handleFiltersChange = (newFilters: Filters) => {
+    setFilters(newFilters);
+  };
+
+  // Handle job card click - open preview modal
+  const handleViewJob = (job: Job) => {
+    setSelectedJob(job);
+    setIsPreviewModalOpen(true);
+  };
+
+  // Close preview modal
+  const handleClosePreview = () => {
+    setIsPreviewModalOpen(false);
+    setSelectedJob(null);
+  };
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSearchQuery('');
+    setFilters({
+      locations: [],
+      jobTypes: [],
+      remote: false,
+      salaryMin: 0,
+      salaryMax: 0,
+    });
+  };
+
+  // Filter jobs locally for filters that API doesn't support
   const filteredJobs = useMemo(() => {
     return jobs.filter(job => {
-      const matchesSearch = !searchQuery || 
-        job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.description && job.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      // Remote filter (client-side since API might not support it)
+      const matchesRemote = !filters.remote || job.metadata?.remote === 'true';
       
-      const matchesLocation = filters.locations.length === 0 || 
-        filters.locations.some(loc => job.location.toLowerCase().includes(loc.toLowerCase()));
-      
-      const matchesJobType = filters.jobTypes.length === 0 || 
-        filters.jobTypes.includes(job.type);
-      
-      const matchesRemote = !filters.remote || job.remote;
-      
+      // Salary filter (client-side)
       const matchesSalary = filters.salaryMin === 0 || 
-        (job.salaryMax && job.salaryMax >= filters.salaryMin);
+        (job.salary_max && job.salary_max >= filters.salaryMin);
 
-      return matchesSearch && matchesLocation && matchesJobType && matchesRemote && matchesSalary;
+      // Additional location filtering if multiple locations selected
+      const matchesLocation = filters.locations.length <= 1 || 
+        filters.locations.some(loc => job.location?.toLowerCase().includes(loc.toLowerCase()));
+
+      // Additional job type filtering if multiple types selected
+      const matchesJobType = filters.jobTypes.length <= 1 || 
+        filters.jobTypes.includes(job.job_type?.code || '');
+
+      return matchesRemote && matchesSalary && matchesLocation && matchesJobType;
     });
-  }, [jobs, searchQuery, filters]);
+  }, [jobs, filters]);
 
+  // Sort jobs by date
   const sortedJobs = useMemo(() => {
     return [...filteredJobs].sort((a, b) => {
-      return new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime();
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
   }, [filteredJobs]);
 
@@ -101,6 +211,13 @@ export default function JobsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      {/* Job Preview Modal */}
+      <JobPreviewModal
+        isOpen={isPreviewModalOpen}
+        onClose={handleClosePreview}
+        job={selectedJob}
+      />
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
@@ -127,9 +244,14 @@ export default function JobsPage() {
               placeholder="Search jobs, companies, or keywords..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none text-gray-900 shadow-sm placeholder-gray-400"
+              className="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none text-gray-900 shadow-sm placeholder-gray-400"
             />
-            {searchQuery && (
+            {searching && (
+              <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
+                <Loader2 className="h-5 w-5 text-[#04724D] animate-spin" />
+              </div>
+            )}
+            {searchQuery && !searching && (
               <button
                 onClick={() => setSearchQuery('')}
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -162,9 +284,9 @@ export default function JobsPage() {
           <div className="sticky top-24">
             <JobFilters
               filters={filters}
-              onFiltersChange={setFilters}
+              onFiltersChange={handleFiltersChange}
               availableLocations={availableLocations}
-              availableJobTypes={DEFAULT_JOB_TYPES}
+              jobTypes={jobTypes}
             />
           </div>
         </div>
@@ -185,9 +307,9 @@ export default function JobsPage() {
               <div className="p-4">
                 <JobFilters
                   filters={filters}
-                  onFiltersChange={setFilters}
+                  onFiltersChange={handleFiltersChange}
                   availableLocations={availableLocations}
-                  availableJobTypes={DEFAULT_JOB_TYPES}
+                  jobTypes={jobTypes}
                 />
               </div>
               <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4">
@@ -211,7 +333,7 @@ export default function JobsPage() {
                 <span className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   Remote
                   <button
-                    onClick={() => setFilters({ ...filters, remote: false })}
+                    onClick={() => handleFiltersChange({ ...filters, remote: false })}
                     className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -220,9 +342,9 @@ export default function JobsPage() {
               )}
               {filters.jobTypes.map(type => (
                 <span key={type} className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
-                  {DEFAULT_JOB_TYPES.find(t => t.code === type)?.name || type}
+                  {jobTypes.find(t => t.code === type)?.name || type}
                   <button
-                    onClick={() => setFilters({ ...filters, jobTypes: filters.jobTypes.filter(t => t !== type) })}
+                    onClick={() => handleFiltersChange({ ...filters, jobTypes: filters.jobTypes.filter(t => t !== type) })}
                     className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -233,7 +355,7 @@ export default function JobsPage() {
                 <span key={location} className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   {location}
                   <button
-                    onClick={() => setFilters({ ...filters, locations: filters.locations.filter(l => l !== location) })}
+                    onClick={() => handleFiltersChange({ ...filters, locations: filters.locations.filter(l => l !== location) })}
                     className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -244,7 +366,7 @@ export default function JobsPage() {
                 <span className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   ${(filters.salaryMin / 1000).toFixed(0)}k+
                   <button
-                    onClick={() => setFilters({ ...filters, salaryMin: 0, salaryMax: 0 })}
+                    onClick={() => handleFiltersChange({ ...filters, salaryMin: 0, salaryMax: 0 })}
                     className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -252,14 +374,7 @@ export default function JobsPage() {
                 </span>
               )}
               <button
-                onClick={() => setFilters({
-                  query: '',
-                  locations: [],
-                  jobTypes: [],
-                  remote: false,
-                  salaryMin: 0,
-                  salaryMax: 0,
-                })}
+                onClick={clearAllFilters}
                 className="text-sm text-gray-500 hover:text-[#04724D] font-medium"
               >
                 Clear all
@@ -271,15 +386,16 @@ export default function JobsPage() {
           <div className="mb-5 flex items-center justify-between">
             <p className="text-sm text-gray-600">
               Showing <span className="font-semibold text-gray-900">{sortedJobs.length}</span> jobs
+              {searching && <span className="ml-2 text-[#04724D]">Updating...</span>}
             </p>
           </div>
 
           {/* Job Cards Grid */}
           {sortedJobs.length > 0 ? (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
               {sortedJobs.map((job, index) => (
-                <div key={job.uid} className="animate-fade-in" style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}>
-                  <JobCard job={job} />
+                <div key={job.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}>
+                  <JobCard job={job} onViewJob={handleViewJob} />
                 </div>
               ))}
             </div>
@@ -291,17 +407,7 @@ export default function JobsPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No jobs found</h3>
               <p className="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
               <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setFilters({
-                    query: '',
-                    locations: [],
-                    jobTypes: [],
-                    remote: false,
-                    salaryMin: 0,
-                    salaryMax: 0,
-                  });
-                }}
+                onClick={clearAllFilters}
                 className="text-[#04724D] font-medium hover:text-[#035E3F]"
               >
                 Clear all filters

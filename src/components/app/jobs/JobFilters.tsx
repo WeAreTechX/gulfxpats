@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { X, ChevronDown, ChevronUp, SlidersHorizontal, Wifi } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { JobType} from "@/types/jobs";
 
 interface JobFiltersProps {
   filters: {
-    query: string;
     locations: string[];
     jobTypes: string[];
     remote: boolean;
@@ -15,7 +15,7 @@ interface JobFiltersProps {
   };
   onFiltersChange: (filters: any) => void;
   availableLocations: string[];
-  availableJobTypes: { id: string; name: string; code: string }[];
+  jobTypes: JobType[];
   className?: string;
 }
 
@@ -27,13 +27,8 @@ const SALARY_RANGES = [
   { label: '$150k+', min: 150000, max: 0 },
 ];
 
-export default function JobFilters({ 
-  filters, 
-  onFiltersChange, 
-  availableLocations,
-  availableJobTypes,
-  className 
-}: JobFiltersProps) {
+export default function JobFilters(props: JobFiltersProps) {
+  const { filters, onFiltersChange, jobTypes, availableLocations, className } = props;
   const [expandedSections, setExpandedSections] = useState({
     jobType: true,
     location: true,
@@ -67,7 +62,6 @@ export default function JobFilters({
 
   const clearFilters = () => {
     onFiltersChange({
-      query: '',
       locations: [],
       jobTypes: [],
       remote: false,
@@ -157,7 +151,7 @@ export default function JobFilters({
         </button>
         {expandedSections.jobType && (
           <div className="px-5 pb-5 space-y-2">
-            {availableJobTypes.map((type) => (
+            {jobTypes.map((type) => (
               <label key={type.id} className="flex items-center gap-3 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="relative">
                   <input

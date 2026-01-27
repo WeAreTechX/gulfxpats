@@ -5,13 +5,15 @@ import { JobsService } from '../../../../server/supabase/services/jobs';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const includeStats = searchParams.get('includeStats') === 'true';
     const job_type_id = searchParams.get('job_type_id') || undefined;
     const industry_id = searchParams.get('industry_id') || undefined;
     const location = searchParams.get('location') || undefined;
     const search = searchParams.get('search') || undefined;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
+    const order = searchParams.get('order') || undefined;
+
+    const includeStats = searchParams.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
     const jobsService = new JobsService(supabase);
@@ -23,6 +25,7 @@ export async function GET(request: NextRequest) {
       search,
       limit,
       offset,
+      order
     });
 
     let stats = null;

@@ -15,7 +15,7 @@ export class CompaniesService {
 
     // Apply filters
     if (options?.location) query = query.ilike('location', `%${options.location}%`);
-    if (options?.search) query = query.or(`name.ilike.%${options.search}%,description.ilike.%${options.search}%`);
+    if (options?.search) query = query.or(`name.ilike.%${options.search}%,short_description.ilike.%${options.search}%,long_description.ilike.%${options.search}%`);
 
     // Apply pagination
     if (options?.limit) query = query.limit(options.limit);

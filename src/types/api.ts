@@ -4,6 +4,7 @@ export interface Query {
   search?: string;
   limit?: number;
   offset?: number;
+  order?: string;
 }
 
 export interface QueryStats {

@@ -30,6 +30,7 @@ export class JobsService {
     if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
 
     query = query.order('modified_at', { ascending: false });
+    query = query.order(options?.order || 'modified_at', { ascending: false });
 
     const { data, error, count } = await query;
 
