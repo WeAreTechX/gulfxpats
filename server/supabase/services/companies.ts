@@ -21,8 +21,12 @@ export class CompaniesService {
     if (options?.limit) query = query.limit(options.limit);
     if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
 
-    // Order by name
-    query = query.order('name', { ascending: true });
+    // Order by
+    if (options?.order) {
+      query = query.order(options.order, { ascending: false });
+    } else {
+      query = query.order('name', { ascending: true });
+    }
 
     const { data, error, count } = await query;
 

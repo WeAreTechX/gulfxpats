@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || undefined;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
+    const order = searchParams.get('order') || undefined;
     const includeStats = searchParams.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
@@ -19,6 +20,7 @@ export async function GET(request: NextRequest) {
       search,
       limit,
       offset,
+      order
     });
 
     // Optionally include stats

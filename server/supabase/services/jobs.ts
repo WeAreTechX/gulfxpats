@@ -14,7 +14,7 @@ export class JobsService {
         *,
         company:companies(*),
         job_type:job_types(*),
-        :industries(*),
+        industries(*),
         currency:currencies(*),
         status:statuses(*)
       `, { count: 'exact' });
