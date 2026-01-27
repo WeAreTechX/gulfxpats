@@ -8,8 +8,8 @@ import {
   Database,
   RefreshCw,
 } from 'lucide-react';
-import CompaniesView from "@/components/admin/companies/CompaniesView";
-import CompaniesSourcesView from "@/components/admin/companies/CompaniesSourcesView";
+import CompaniesView from "@/components/admin/companies/listings/CompaniesView";
+import CompaniesSourcesView from "@/components/admin/companies/sources/CompaniesSourcesView";
 import { QueryStats } from "@/types/api";
 
 type TabType = 'listings' | 'sources';

@@ -20,7 +20,7 @@ export default function Footer() {
             </p>
             
             {/* Newsletter */}
-            <div>
+            <div className="hidden">
               <p className="text-sm font-medium text-gray-900 mb-3">Stay updated with new jobs</p>
               <form className="flex gap-2">
                 <input
@@ -71,22 +71,22 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Company</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/about" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Blog
                 </Link>
               </li>
@@ -98,17 +98,17 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/privacy" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
                   Cookie Policy
                 </Link>
               </li>
@@ -128,7 +128,7 @@ export default function Footer() {
               <li>
                 <span className="flex items-center gap-2 text-gray-600">
                   <MapPin className="h-4 w-4" />
-                  <span>Lagos, Nigeria</span>
+                  <span>Doha, Qatar</span>
                 </span>
               </li>
             </ul>

@@ -6,7 +6,6 @@ export interface UserCreate {
   email: string;
   password: string;
   location: string;
-  role: "user";
 }
 
 export interface User extends UserCreate {
@@ -18,7 +17,7 @@ export interface UserQuery extends Query {
   status?: string;
 }
 
-export type Admin = Omit<User, "role"> & {
+export interface Admin extends User {
   role: "admin" | "super_admin";
 }
 

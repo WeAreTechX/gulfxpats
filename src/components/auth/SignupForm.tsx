@@ -52,7 +52,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
     }
 
     try {
-      const payload: UserCreate = { email, password, first_name: firstName, last_name: lastName, location, role: 'user' }
+      const payload: UserCreate = { email, password, first_name: firstName, last_name: lastName, location }
       const { error } = await signUp(payload);
       
       if (error) {

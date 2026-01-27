@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import {User as SupabaseUser, Session, PostgrestSingleResponse, PostgrestError} from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
 import {Admin} from "@/types";
 
@@ -31,7 +31,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const fetchAdminProfile = async (userId: string): Promise<Admin | null> => {
     try {
-      const { data, error } = await supabase
+      const { data, error }: PostgrestSingleResponse<Admin> = await supabase
         .from('admins')
         .select('*')
         .eq('id', userId)
@@ -150,7 +150,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Check if the user is an admin
-      const { data: adminData, error: adminError } = await supabase
+      const { data: adminData, error: adminError }: PostgrestSingleResponse<Admin> = await supabase
         .from('admins')
         .select('*')
         .eq('id', data.user.id)

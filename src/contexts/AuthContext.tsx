@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import {createContext, useContext, useEffect, useState, ReactNode, useMemo} from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
 import { User } from '@/types/supabase';
@@ -22,7 +22,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const supabase = getSupabaseClient();
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -30,6 +29,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'signup' | 'forgot-password' | null>(null);
+
+  // const supabase = getSupabaseClient();
+  const supabase = useMemo(() => getSupabaseClient(), []);
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -49,7 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Get initial session
     const initSession = async () => {
+      console.log("Calling")
       try {
+        console.log(await supabase.auth.getSession());
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
@@ -126,6 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    console.log("signOut");
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);

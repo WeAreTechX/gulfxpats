@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  Briefcase, 
-  Building2, 
-  Search, 
+  Briefcase,
+  Building2,
+  Search,
   Sparkles,
-  Users, 
+  Users,
   Zap,
   CheckCircle,
   Globe,
@@ -34,10 +34,10 @@ export default function HomePage() {
       icon: Target,
       title: 'Smart Matching',
       description: 'Find jobs that match your skills and career goals perfectly.',
-      color: 'teal'
+      color: 'gray'
     },
     {
-      icon: Shield,
+      icon: CheckCircle,
       title: 'Verified Employers',
       description: 'All companies are verified to ensure legitimate opportunities.',
       color: 'emerald'
@@ -46,18 +46,18 @@ export default function HomePage() {
       icon: Globe,
       title: 'Remote & Global',
       description: 'Access opportunities worldwide, including remote positions.',
-      color: 'cyan'
+      color: 'gray'
     },
     {
       icon: Zap,
       title: 'Quick Apply',
       description: 'Apply to multiple jobs in minutes with your saved profile.',
-      color: 'amber'
+      color: 'emerald'
     }
   ];
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto px-4">
       {/* Hero Section */}
       <section className="relative pt-8 pb-20 lg:pt-16 lg:pb-32 overflow-hidden">
         {/* Background decorations */}

@@ -66,7 +66,6 @@ export default function TopNav() {
     if (profile) {
       return profile.first_name;
     }
-    console.log(user)
     if (user?.email) {
       return user.email.split('@')[0];
     }
@@ -85,7 +84,7 @@ export default function TopNav() {
           ? "bg-white/80 backdrop-blur-xl shadow-sm"
           : "bg-transparent"
       )}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">

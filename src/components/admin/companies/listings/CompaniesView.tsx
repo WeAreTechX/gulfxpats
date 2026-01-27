@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { StoreSingleCompanyModal, StoreMultipleCompanyModal } from '@/components/admin';
 import { Company } from "@/types/companies";
-import CompaniesTable from "@/components/admin/companies/CompaniesTable";
+import CompaniesTable from "@/components/admin/companies/listings/CompaniesTable";
 import { QueryStats } from "@/types/api";
 
 interface CompaniesViewProps {
