@@ -1,127 +1,61 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {Clock, CheckCircle, Plus, Upload, Building2} from 'lucide-react';
-import { StoreSingleCompanyModal, StoreMultipleCompanyModal } from '@/components/admin';
-import CompaniesTable from "@/components/admin/companies/CompaniesTable";
-import {Company} from "@/types/companies";
+import { useState } from 'react';
+import {
+  Building2,
+  CheckCircle,
+  Clock,
+  Database,
+  RefreshCw,
+} from 'lucide-react';
+import CompaniesView from "@/components/admin/companies/CompaniesView";
+import CompaniesSourcesView from "@/components/admin/companies/CompaniesSourcesView";
+import { QueryStats } from "@/types/api";
+
+type TabType = 'listings' | 'sources';
 
 export default function AdminCompaniesPage() {
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [stats, setStats] = useState<{ [key: string]: number }>({ total: 0, published: 0, unpublished: 0 });
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
+  const [activeTab, setActiveTab] = useState<TabType>('listings');
+  const [refresh, setRefresh] = useState(false);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterLocation, setFilterLocation] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<QueryStats>({ 
+    total: 0, 
+    published: 0, 
+    unpublished: 0, 
+    total_sources: 0 
+  });
 
-  const fetchCompanies = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const tabs = [
+    { id: 'listings' as TabType, label: 'Listings' },
+    { id: 'sources' as TabType, label: 'Sources' },
+  ];
 
-      const companiesRes = await fetch('/api/companies?includeStats=true');
-      const companiesData = await companiesRes.json();
-
-      if (companiesData.success) {
-        const { list, stats, pagination } = companiesData.data;
-        setCompanies(list || []);
-        setStats(stats);
-        setPagination(pagination || {});
-      } else {
-        setError('Failed to fetch companies');
-      }
-    } catch (err) {
-      setError('Error loading companies');
-      console.error('Error fetching companies:', err);
-    } finally {
-      setLoading(false);
-    }
+  const handleSetStats = (next: QueryStats) => {
+    setStats(prev => ({
+      ...prev,
+      ...next
+    }));
   };
 
-  useEffect(() => {
-    fetchCompanies().then();
-  }, []);
-
-  // Modal states
-  const [isSingleModalOpen, setisSingleModalOpen] = useState(false);
-  const [isMultipleModalOpen, setisMultipleModalOpen] = useState(false);
-  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
-
-  const handleAddSuccess = () => {
-    fetchCompanies();
+  const handleRefresh = () => {
+    setRefresh(prev => !prev);
   };
-
-  const handleEditCompany = (company: Company) => {
-    setEditingCompany(company);
-    setisSingleModalOpen(true);
-  };
-
-  const handleCloseAddModal = () => {
-    setisSingleModalOpen(false);
-    setEditingCompany(null);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04724D]"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <h3 className="text-red-800 font-semibold mb-2">Error</h3>
-        <p className="text-red-600">{error}</p>
-        <button
-          onClick={fetchCompanies}
-          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
-      {/* Modals */}
-      <StoreSingleCompanyModal
-        isOpen={isSingleModalOpen}
-        onClose={handleCloseAddModal}
-        onSuccess={handleAddSuccess}
-        company={editingCompany}
-      />
-      <StoreMultipleCompanyModal
-        isOpen={isMultipleModalOpen}
-        onClose={() => setisMultipleModalOpen(false)}
-        onSuccess={handleAddSuccess}
-      />
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Companies Management</h1>
-          <p className="text-gray-600 mt-1">Manage and view all companies in the system</p>
+          <p className="text-gray-600 mt-1">Manage companies and their data sources</p>
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setisMultipleModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+            onClick={handleRefresh}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
           >
-            <Upload className="h-4 w-4" />
-            Bulk Upload
-          </button>
-          <button
-            onClick={() => setisSingleModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
-          >
-            <Plus className="h-5 w-5" />
-            Add Company
+            <RefreshCw className="h-4 w-4" />
+            Refresh
           </button>
         </div>
       </div>
@@ -135,7 +69,7 @@ export default function AdminCompaniesPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Companies</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.total || companies.length}</p>
+              <p className="text-xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </div>
@@ -146,7 +80,7 @@ export default function AdminCompaniesPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Published</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.published || 0}</p>
+              <p className="text-xl font-bold text-gray-900">{stats?.published}</p>
             </div>
           </div>
         </div>
@@ -157,17 +91,59 @@ export default function AdminCompaniesPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Unpublished</p>
-              <p className="text-xl font-bold text-gray-900">{stats?.unpublished || 0}</p>
+              <p className="text-xl font-bold text-gray-900">{stats?.unpublished}</p>
             </div>
           </div>
         </div>
+
+        {activeTab === 'sources' && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#E6F4F0] rounded-lg">
+                <Database className="h-5 w-5 text-[#04724D]" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Sources</p>
+                <p className="text-xl font-bold text-gray-900">{stats?.total_sources}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      <CompaniesTable
-        loading={loading}
-        companies={companies}
-        pagination={pagination}
-        onPageChange={setCurrentPage} />
+      {/* Tabs */}
+      <div className="bg-white rounded-tl-xl rounded-tr-xl border border-gray-200">
+        <div className="border-b border-gray-200">
+          <nav className="flex -mb-px">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                  relative px-6 py-4 text-sm font-medium transition-colors
+                  ${activeTab === tab.id
+                  ? 'text-[#04724D] border-b-2 border-[#04724D]'
+                  : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }
+                `}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="bg-white p-4 rounded-xl">
+        {activeTab === 'listings' && (
+          <CompaniesView refresh={refresh} onStatsChange={handleSetStats} />
+        )}
+
+        {activeTab === 'sources' && (
+          <CompaniesSourcesView refresh={refresh} onStatsChange={handleSetStats} />
+        )}
+      </div>
     </div>
   );
 }

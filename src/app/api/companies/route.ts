@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
     
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
-    
+
+    const { data: { session } } = await supabase.auth.getSession();
     const company = await companiesService.store({
       name: body.name,
       short_description: body.short_description,
@@ -56,7 +57,8 @@ export async function POST(request: NextRequest) {
       location: body.location,
       address: body.address,
       contact: body.contact,
-      metadata: body.metadata
+      metadata: body.metadata,
+      created_by_id: session?.user.id || undefined
     });
 
     return NextResponse.json({

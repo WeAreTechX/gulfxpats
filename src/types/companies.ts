@@ -15,6 +15,7 @@ export interface CompanyCreate {
   contact?: {
     [key: string]: string | undefined;
   };
+  created_by_id?: string;
 }
 
 export interface Company extends CompanyCreate {

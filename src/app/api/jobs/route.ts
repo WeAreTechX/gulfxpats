@@ -49,7 +49,8 @@ export async function POST(request: NextRequest) {
     
     const supabase = await createServerSupabaseClient();
     const jobsService = new JobsService(supabase);
-    
+
+    const { data: { session } } = await supabase.auth.getSession();
     const job = await jobsService.store({
       title: body.title,
       description: body.description,
@@ -61,7 +62,8 @@ export async function POST(request: NextRequest) {
       salary_frequency: body.salary_frequency,
       currency_id: body.currency_id,
       apply_url: body.apply_url,
-      metadata: body.metadata
+      metadata: body.metadata,
+      created_by_id: session?.user.id || undefined
     });
 
     return NextResponse.json({

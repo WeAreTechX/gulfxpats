@@ -17,6 +17,7 @@ export interface JobCreate {
   metadata: {
     [key: string]: string | undefined;
   };
+  created_by_id?: string;
 }
 
 export interface JobType {
