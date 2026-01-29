@@ -3,14 +3,15 @@
 import { useState, useEffect } from 'react';
 import {
   Plus,
-  Search
+  Search,
+  Upload
 } from 'lucide-react';
 import { StoreSingleJobModal } from '@/components/admin';
-import {Job} from "@/types/jobs";
+import StoreMultipleJobsModal from '@/components/admin/jobs/listings/StoreMultipleJobsModal';
 import JobsTable from "@/components/admin/jobs/listings/JobsTable";
-import {QueryStats} from "@/types/api";
+import {Job,QueryStats} from "@/types";
 
-export default function JobsView({ refresh }: { refresh: boolean }) {
+export default function JobsListing({ refresh }: { refresh: boolean }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [stats, setStats] = useState<QueryStats>({ total: 0, published: 0, unpublished: 0, archived: 0 });
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,7 @@ export default function JobsView({ refresh }: { refresh: boolean }) {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
 
   useEffect(() => {
@@ -97,13 +99,22 @@ export default function JobsView({ refresh }: { refresh: boolean }) {
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#04724D] focus:border-transparent"
           />
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
-        >
-          <Plus className="h-5 w-5" />
-          Add Job
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsBulkModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            <Upload className="h-4 w-4" />
+            Bulk Upload
+          </button>
+          <button
+            onClick={() => handleOpenModal()}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
+          >
+            <Plus className="h-5 w-5" />
+            Add Job
+          </button>
+        </div>
       </div>
 
       {/* Jobs Table */}
@@ -119,6 +130,13 @@ export default function JobsView({ refresh }: { refresh: boolean }) {
         onClose={handleCloseModal}
         onSuccess={handleSuccess}
         job={editingJob}
+      />
+
+      {/* Bulk Upload Modal */}
+      <StoreMultipleJobsModal
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onSuccess={handleSuccess}
       />
     </div>
   );

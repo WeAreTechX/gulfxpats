@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { ReactNode, useMemo } from "react";
-import {ChevronDown, ChevronLeft, ChevronRight, Database, MoreVertical} from "lucide-react";
+import {ChevronDown, ChevronLeft, ChevronRight, Database, Loader2, MoreVertical} from "lucide-react";
 import {Pagination} from "@/types";
 
 interface CustomDataTableProps {
@@ -95,9 +95,14 @@ export default function DataTable({
           </thead>
           <tbody className="divide-y divide-gray-200">
           {loading ? (
-            <div className="flex items-center justify-center min-h-[400px]">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04724D]"></div>
-            </div>
+            <tr>
+              <td colSpan={12}>
+
+                <div className="flex items-center justify-center min-h-[400px]">
+                  <Loader2 className="h-10 w-10 text-[#04724D] animate-spin" />
+                </div>
+              </td>
+            </tr>
           ) : rows.length === 0 ? (
             <tr>
               <td
@@ -165,7 +170,7 @@ export default function DataTable({
       </div>
 
       {/* Pagination Footer */}
-      {!hidePaginationSection && (
+      {!hidePaginationSection && !loading && (
         <div className="flex items-center justify-between px-6 py-4">
           <p className="text-sm text-gray-600">
             Showing {startCount}–{endCount} of {totalCount}

@@ -1,7 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database, UserInsert, UserUpdate, UserWithRelations } from '@/types/supabase';
-import {QueryResponse, QueryStats} from "@/types/api";
-import {Status, User, UserQuery} from "@/types";
+import {QueryResponse, QueryStats, Entity, User, UserQuery} from "@/types";
 
 export class UsersService {
   constructor(private supabase: SupabaseClient<Database>) {}

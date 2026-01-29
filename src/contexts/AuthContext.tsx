@@ -3,8 +3,7 @@
 import {createContext, useContext, useEffect, useState, ReactNode, useMemo} from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
-import { User } from '@/types/supabase';
-import {UserCreate} from "@/types";
+import {User, UserCreate} from "@/types";
 import {useRouter} from "next/navigation";
 
 interface AuthContextType {
@@ -59,7 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
 
-        if (session?.user) {
+        console.log(session?.user);
+        if (session?.user && session?.user?.user_metadata?.role) {
           await fetchProfile(session.user.id);
         }
       } catch (error) {
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
 
-      if (session?.user) {
+      if (session?.user && session?.user?.user_metadata?.role) {
         await fetchProfile(session.user.id);
       } else {
         setProfile(null);
@@ -100,9 +100,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password: payload.password,
         options: {
           data: {
+            email: payload.first_name,
             first_name: payload.first_name,
             last_name: payload.last_name,
-            location: payload.location,
+            country: payload.country,
             role: 'user'
           }
         }

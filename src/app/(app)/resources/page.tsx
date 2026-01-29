@@ -4,7 +4,23 @@ import { useState, useEffect, useMemo } from 'react';
 import { Resource } from '@/types';
 import ResourceCard from '@/components/app/resources/ResourceCard';
 import ResourceFilters from '@/components/app/resources/ResourceFilters';
-import { Search, SlidersHorizontal, X, BookOpen, ExternalLink } from 'lucide-react';
+import { 
+  Search, 
+  SlidersHorizontal, 
+  X, 
+  BookOpen, 
+  ExternalLink,
+  FileText,
+  Video,
+  Headphones,
+  Wrench,
+  GraduationCap,
+  BookMarked,
+  Sparkles,
+  Bell,
+  ArrowRight,
+  Zap
+} from 'lucide-react';
 
 // Default resource types
 const DEFAULT_RESOURCE_TYPES = [
@@ -78,66 +94,277 @@ export default function ResourcesPage() {
 
   // Show coming soon if no resources
   if (resources.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-[#101418] rounded-full mb-6">
-              <BookOpen className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-[#101418] mb-4">
-              Resources
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Your comprehensive hub for career development, job search tips, and professional growth resources
-            </p>
-          </div>
+    const resourceTypes = [
+      { 
+        icon: FileText, 
+        name: 'Blog Articles', 
+        description: 'In-depth guides and industry insights',
+        color: 'from-blue-500 to-blue-600',
+        bgColor: 'bg-blue-50',
+        iconColor: 'text-blue-600'
+      },
+      { 
+        icon: Video, 
+        name: 'Video Tutorials', 
+        description: 'Step-by-step visual learning content',
+        color: 'from-red-500 to-rose-600',
+        bgColor: 'bg-red-50',
+        iconColor: 'text-red-600'
+      },
+      { 
+        icon: GraduationCap, 
+        name: 'Online Courses', 
+        description: 'Structured learning paths for skill development',
+        color: 'from-purple-500 to-violet-600',
+        bgColor: 'bg-purple-50',
+        iconColor: 'text-purple-600'
+      },
+      { 
+        icon: Headphones, 
+        name: 'Podcasts', 
+        description: 'Expert conversations on career growth',
+        color: 'from-emerald-500 to-teal-600',
+        bgColor: 'bg-emerald-50',
+        iconColor: 'text-emerald-600'
+      },
+      { 
+        icon: Wrench, 
+        name: 'Career Tools', 
+        description: 'Templates, calculators, and utilities',
+        color: 'from-amber-500 to-orange-600',
+        bgColor: 'bg-amber-50',
+        iconColor: 'text-amber-600'
+      },
+      { 
+        icon: BookMarked, 
+        name: 'E-Books', 
+        description: 'Comprehensive guides and handbooks',
+        color: 'from-pink-500 to-rose-600',
+        bgColor: 'bg-pink-50',
+        iconColor: 'text-pink-600'
+      },
+    ];
 
-          {/* Coming Soon */}
-          <div className="relative mb-16">
-            <div className="bg-white rounded-3xl shadow-2xl p-12 text-center border border-gray-100">
-              <h2 className="text-3xl font-bold text-[#101418] mb-4">
-                Coming Soon
-              </h2>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                We're crafting an amazing collection of resources to help you excel in your career journey. 
-                Get ready for expert insights, practical tips, and valuable tools.
+    return (
+      <div className="min-h-screen">
+        {/* Hero Section */}
+        <div className="relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#04724D]/5 via-white to-teal-50/50"></div>
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-[#04724D]/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-teal-100/50 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
+          
+          <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
+            {/* Badge */}
+            <div className="flex justify-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#04724D]/10 rounded-full">
+                <Sparkles className="w-4 h-4 text-[#04724D]" />
+                <span className="text-sm font-semibold text-[#04724D]">Coming Soon</span>
+              </div>
+            </div>
+
+            {/* Main Heading */}
+            <div className="text-center max-w-3xl mx-auto">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Your Career
+                <span className="relative">
+                  <span className="relative z-10 text-[#04724D]"> Resource Hub</span>
+                  <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
+                    <path d="M2 10C50 4 150 2 298 8" stroke="#04724D" strokeWidth="4" strokeLinecap="round" className="opacity-30"/>
+                  </svg>
+                </span>
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed">
+                We're building a comprehensive library of resources to accelerate your career growth. 
+                From expert guides to practical tools — everything you need in one place.
               </p>
 
-              {/* Progress indicator */}
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-6 max-w-md mx-auto">
-                <div className="bg-[#101418] h-2 rounded-full w-3/4 animate-pulse"></div>
+              {/* Progress Section */}
+              <div className="inline-flex flex-col items-center gap-3 px-8 py-6 bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full bg-[#E6F4F0] flex items-center justify-center">
+                      <Zap className="w-6 h-6 text-[#04724D]" />
+                    </div>
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#04724D] rounded-full animate-ping"></span>
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#04724D] rounded-full"></span>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-900">Actively Building</p>
+                    <p className="text-xs text-gray-500">Launching very soon</p>
+                  </div>
+                </div>
+                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full w-4/5 bg-gradient-to-r from-[#04724D] to-teal-500 rounded-full relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400">80% complete</p>
               </div>
-              <p className="text-sm text-gray-500">Development in progress...</p>
             </div>
           </div>
+        </div>
 
-          {/* Call to Action */}
-          <div className="text-center bg-gradient-to-r from-[#101418] to-gray-800 rounded-3xl p-12 text-white">
-            <h3 className="text-2xl font-bold mb-4">Stay Updated</h3>
-            <p className="text-lg mb-8 opacity-90">
-              Be the first to know when our resources are ready. Follow us for updates and exclusive early access.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a 
-                href="https://www.instagram.com/wearetechx/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-6 py-3 bg-white text-[#101418] rounded-full font-medium hover:bg-gray-100 transition-colors"
-              >
-                Follow on Instagram
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </a>
-              <a 
-                href="https://linkedin.com/company/wearetechx" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors"
-              >
-                Connect on LinkedIn
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </a>
+        {/* What's Coming Section */}
+        <div className="bg-white py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                What's Coming
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                A curated collection of resources tailored for professionals in the African tech ecosystem
+              </p>
+            </div>
+
+            {/* Resource Type Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {resourceTypes.map((resource, index) => (
+                <div 
+                  key={resource.name}
+                  className="group relative bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:shadow-gray-200/50 hover:border-transparent transition-all duration-300"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Gradient overlay on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${resource.color} opacity-0 group-hover:opacity-[0.03] rounded-2xl transition-opacity duration-300`}></div>
+                  
+                  <div className="relative">
+                    <div className={`w-14 h-14 ${resource.bgColor} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <resource.icon className={`w-7 h-7 ${resource.iconColor}`} />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{resource.name}</h3>
+                    <p className="text-gray-500 text-sm">{resource.description}</p>
+                  </div>
+
+                  {/* Coming soon badge */}
+                  <div className="absolute top-4 right-4 px-2 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">
+                    Soon
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Features Preview */}
+        <div className="bg-gradient-to-b from-gray-50 to-white py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Left Content */}
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full text-sm font-medium mb-6">
+                  <Bell className="w-4 h-4" />
+                  Early Access
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+                  Be the first to explore our resources
+                </h2>
+                <p className="text-gray-600 text-lg mb-8">
+                  Get notified when we launch. Early members will receive exclusive access to premium content and special features.
+                </p>
+
+                <div className="space-y-4">
+                  {[
+                    'Curated content from industry experts',
+                    'Practical tools for job seekers',
+                    'Exclusive career development guides',
+                    'Regular updates with new materials'
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-[#E6F4F0] flex items-center justify-center flex-shrink-0">
+                        <svg className="w-3.5 h-3.5 text-[#04724D]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Content - Illustration/Card */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#04724D]/20 to-teal-500/20 rounded-3xl blur-2xl"></div>
+                <div className="relative bg-white rounded-3xl shadow-2xl shadow-gray-200/50 p-8 border border-gray-100">
+                  {/* Mock Resource Card */}
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-to-br from-[#04724D] to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-gray-100 rounded w-full"></div>
+                        <div className="h-3 bg-gray-100 rounded w-2/3 mt-1"></div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl opacity-75">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Video className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+                        <div className="h-3 bg-gray-100 rounded w-full"></div>
+                        <div className="h-3 bg-gray-100 rounded w-1/2 mt-1"></div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl opacity-50">
+                      <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Wrench className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                        <div className="h-3 bg-gray-100 rounded w-full"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Decorative elements */}
+                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#04724D]/10 rounded-full blur-xl"></div>
+                  <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-teal-500/10 rounded-full blur-xl"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="py-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#04724D] via-[#04724D] to-teal-600 rounded-3xl p-10 sm:p-14">
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
+              
+              <div className="relative text-center">
+                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+                  Stay in the Loop
+                </h3>
+                <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
+                  Follow us for the latest updates on our resource library launch and get exclusive previews of what's coming.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <a 
+                    href="https://www.instagram.com/wearetechx/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-6 py-3.5 bg-white text-[#04724D] rounded-xl font-semibold hover:bg-gray-100 transition-all hover:shadow-lg hover:shadow-white/20 group"
+                  >
+                    Follow on Instagram
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                  <a 
+                    href="https://linkedin.com/company/wearetechx" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-6 py-3.5 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-xl font-semibold hover:bg-white/20 transition-all group"
+                  >
+                    Connect on LinkedIn
+                    <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

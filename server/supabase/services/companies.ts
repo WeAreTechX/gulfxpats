@@ -1,9 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, CompanyUpdate } from '@/types/supabase';
-import {Company, CompanyCreate} from '@/types/companies';
-import {QueryResponse, QueryStats} from "@/types/api";
-import {CompanyQuery} from "@/types/companies";
-import {Status} from "@/types";
+import { Database } from '@/types/supabase';
+import {QueryResponse, QueryStats, Company, CompanyCreate, CompanyUpdate, CompanyQuery, Entity} from "@/types";
 
 export class CompaniesService {
   constructor(private supabase: SupabaseClient<Database>) {}

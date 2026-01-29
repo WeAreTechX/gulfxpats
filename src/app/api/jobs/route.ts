@@ -5,13 +5,13 @@ import { JobsService } from '../../../../server/supabase/services/jobs';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const job_type_id = searchParams.get('job_type_id') || undefined;
+    const type_id = searchParams.get('type_id') || undefined;
     const industry_id = searchParams.get('industry_id') || undefined;
-    const location = searchParams.get('location') || undefined;
+    const country = searchParams.get('country') || undefined;
     const search = searchParams.get('search') || undefined;
-    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
-    const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
-    const order = searchParams.get('order') || undefined;
+    const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined;
+    const page_size = searchParams.get('page_size') ? parseInt(searchParams.get('page_size')!) : undefined;
+    const order_by = searchParams.get('order_by') || undefined;
 
     const includeStats = searchParams.get('includeStats') === 'true';
 
@@ -19,13 +19,13 @@ export async function GET(request: NextRequest) {
     const jobsService = new JobsService(supabase);
     
     const { list, pagination } = await jobsService.index({
-      job_type_id,
+      type_id,
       industry_id,
-      location,
+      country,
       search,
-      limit,
-      offset,
-      order
+      page,
+      page_size,
+      order_by
     });
 
     let stats = null;

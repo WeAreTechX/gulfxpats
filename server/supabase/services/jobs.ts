@@ -1,13 +1,11 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, JobUpdate } from '@/types/supabase';
-import {QueryResponse, QueryStats} from "@/types/api";
-import {JobQuery, Job, JobCreate} from "@/types/jobs";
-import {Status} from "@/types";
+import { Database,  } from '@/types/supabase';
+import {QueryResponse, QueryStats, Entity, JobsQuery, Job, JobCreate, JobUpdate} from "@/types";
 
 export class JobsService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async index(options?: JobQuery): Promise<QueryResponse<Job>> {
+  async index(options?: JobsQuery): Promise<QueryResponse<Job>> {
     let query = this.supabase
       .from('jobs')
       .select(`
@@ -19,18 +17,18 @@ export class JobsService {
         status:statuses(*)
       `, { count: 'exact' });
 
-    if (options?.job_type_id) query = query.eq('job_type_id', options.job_type_id);
+    if (options?.type_id) query = query.eq('type_id', options.type_id);
     if (options?.industry_id) query = query.eq('industry_id', options.industry_id);
 
-    if (options?.location) query = query.ilike('location', `%${options.location}%`);
+    if (options?.country) query = query.ilike('location', `%${options.country}%`);
     if (options?.search) query = query.or(`title.ilike.%${options.search}%,description.ilike.%${options.search}%`);
 
     // Apply pagination
-    if (options?.limit) query = query.limit(options.limit);
-    if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+    if (options?.page_size) query = query.limit(options.page_size);
+    if (options?.page) query = query.range(options.page, options.page + (options.page_size || 10) - 1);
 
     query = query.order('modified_at', { ascending: false });
-    query = query.order(options?.order || 'modified_at', { ascending: false });
+    query = query.order(options?.order_by || 'modified_at', { ascending: options && options.order_dir === 'asc' });
 
     const { data, error, count } = await query;
 
@@ -130,7 +128,7 @@ export class JobsService {
       .from('statuses')
       .select('id, code');
 
-    const statusMap = new Map(statuses?.map((s: Status) => [s.code, s.id]) || []);
+    const statusMap = new Map(statuses?.map((s: Entity) => [s.code, s.id]) || []);
     const stats: QueryStats = {};
 
     const { count: total } = await this.supabase

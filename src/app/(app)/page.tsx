@@ -11,7 +11,6 @@ import {
   Zap,
   CheckCircle,
   Globe,
-  Shield,
   Target,
   Star,
   ChevronRight

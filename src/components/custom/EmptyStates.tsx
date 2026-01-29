@@ -9,7 +9,7 @@ interface EmptyStateProps {
 }
 
 // Job Search Empty State Illustration
-export function JobsEmptyIllustration({ className = "w-64 h-64" }: { className?: string }) {
+export function JobsEmptyIllustration({ className = "w-60 h-60" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Background elements */}
@@ -67,7 +67,7 @@ export function JobsEmptyIllustration({ className = "w-64 h-64" }: { className?:
 }
 
 // Companies Empty State Illustration
-export function CompaniesEmptyIllustration({ className = "w-64 h-64" }: { className?: string }) {
+export function CompaniesEmptyIllustration({ className = "w-60 h-60" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Background */}
@@ -134,7 +134,7 @@ export function CompaniesEmptyIllustration({ className = "w-64 h-64" }: { classN
 }
 
 // Resources Empty State Illustration  
-export function ResourcesEmptyIllustration({ className = "w-64 h-64" }: { className?: string }) {
+export function ResourcesEmptyIllustration({ className = "w-60 h-60" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Background */}

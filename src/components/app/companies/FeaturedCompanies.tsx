@@ -56,7 +56,7 @@ export default function FeaturedCompanies() {
 
   return (
     <>
-      <section className="py-20">
+      <section className="py-15">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Trusted Companies</h2>
@@ -89,7 +89,9 @@ export default function FeaturedCompanies() {
             ))}
           </div>
         ) : (
-          <CompaniesEmptyState />
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl border border-gray-100">
+            <CompaniesEmptyState />
+          </div>
         )}
       </section>
 

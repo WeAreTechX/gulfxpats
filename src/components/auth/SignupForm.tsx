@@ -19,7 +19,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [location, setLocation] = useState('');
+  const [country, setCountry] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -34,7 +34,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
       const response = await fetch('https://ipapi.co/json/');
       const data = await response.json();
       if (data.country_code_iso3) {
-        setLocation(data.country_code_iso3);
+        setCountry(data.country_code_iso3);
       }
     } catch (error) {
       console.log('Could not auto-detect location');
@@ -52,7 +52,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
     }
 
     try {
-      const payload: UserCreate = { email, password, first_name: firstName, last_name: lastName, location }
+      const payload: UserCreate = { email, password, first_name: firstName, last_name: lastName, country }
       const { error } = await signUp(payload);
       
       if (error) {
@@ -169,16 +169,16 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
         <div className="relative">
           <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           <select
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            id="country"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
             required
             className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none transition-all text-gray-900 appearance-none"
           >
             <option value="">Select your country</option>
-            {COUNTRIES.map((country) => (
-              <option key={country.code} value={country.iso3}>
-                {country.name}
+            {COUNTRIES.map((item) => (
+              <option key={item.code} value={item.iso3}>
+                {item.name}
               </option>
             ))}
           </select>

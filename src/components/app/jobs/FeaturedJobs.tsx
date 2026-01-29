@@ -6,7 +6,7 @@ import { JobsEmptyState } from '@/components/custom/EmptyStates';
 import { ArrowRight } from 'lucide-react';
 import JobCard from '@/components/app/jobs/JobCard';
 import JobPreviewModal from '@/components/app/jobs/JobPreviewModal';
-import { Job } from '@/types/jobs';
+import { Job } from '@/types';
 
 export default function FeaturedJobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -17,7 +17,7 @@ export default function FeaturedJobs() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const jobsRes = await fetch('/api/jobs?limit=4&order=rank');
+        const jobsRes = await fetch('/api/jobs?limit=4&order_by=rank');
         const jobsData = await jobsRes.json();
         if (jobsData.success) setJobs(jobsData.data.list);
       } catch (error) {
@@ -55,7 +55,7 @@ export default function FeaturedJobs() {
 
   return (
     <>
-      <section className="py-20">
+      <section className="py-15">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Featured Jobs</h2>

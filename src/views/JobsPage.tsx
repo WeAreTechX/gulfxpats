@@ -433,37 +433,39 @@ export default function JobsPage() {
           </div>
 
           {/* Job Cards Grid */}
-          {loading && (
+          {loading ? (
             <div className="flex items-center justify-center min-h-[60vh]">
               <div className="flex flex-col items-center gap-4">
                 <div className="w-12 h-12 border-4 border-[#E6F4F0] border-t-[#04724D] rounded-full animate-spin" />
                 <p className="text-gray-500 text-sm">Loading companies...</p>
               </div>
             </div>
-          )}
-
-          {sortedJobs.length > 0 ? (
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-              {sortedJobs.map((job, index) => (
-                <div key={job.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}>
-                  <JobCard job={job} onViewJob={handleViewJob} />
-                </div>
-              ))}
-            </div>
           ) : (
-            <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="h-8 w-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No jobs found</h3>
-              <p className="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
-              <button
-                onClick={clearAllFilters}
-                className="text-[#04724D] font-medium hover:text-[#035E3F]"
-              >
-                Clear all filters
-              </button>
-            </div>
+            <>
+              {sortedJobs.length > 0 ? (
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+                  {sortedJobs.map((job, index) => (
+                    <div key={job.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}>
+                      <JobCard job={job} onViewJob={handleViewJob} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Briefcase className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No jobs found</h3>
+                  <p className="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-[#04724D] font-medium hover:text-[#035E3F]"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

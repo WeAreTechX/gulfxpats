@@ -1,16 +1,15 @@
 import { useMemo } from "react";
 import DataTable from "@/components/custom/DataTable";
 import Status from "@/components/ui/Status";
-import {Pagination} from "@/types";
+import {QueryPagination, Company} from "@/types";
 import {formatDate} from "@/lib/date";
-import {Company} from "@/types/companies";
 import {getCountryByIso3} from "@/lib/countries";
 
 interface CompaniesTableProps {
   loading: boolean;
   error: string | null;
   companies: Company[];
-  pagination: Pagination | undefined
+  pagination: QueryPagination | undefined
   onPageChange: (page: number) => void;
   onRowChange: () => void;
 }
@@ -30,9 +29,9 @@ export default function CompaniesTable(props: CompaniesTableProps) {
           <p key="description" className="text-gray-700 truncate">{company.short_description || '-'}</p>
         </div>,
         <div key="location" className="max-w-[160px]">
-          {company.location && <p className="font-medium text-gray-900">{getCountryByIso3(company.location)?.name}</p>}
-          {company.address && (
-            <p className="text-gray-500 flex items-center gap-1 mt-1">{company.address}</p>
+          {company.location && <p className="font-medium text-gray-900">{company.location}</p>}
+          {company.country && (
+            <p className="text-gray-500 flex items-center gap-1 mt-1">{getCountryByIso3(company.country)?.name}</p>
           )}
         </div>,
         <p key="created_at" className="text-gray-600">{formatDate(company.created_at)}</p>,

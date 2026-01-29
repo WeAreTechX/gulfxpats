@@ -15,7 +15,7 @@ interface SourcesTableProps {
   onEdit: (source: Source) => void;
 }
 
-export default function MigrationsTable(props: SourcesTableProps) {
+export default function ScrapingsTable(props: SourcesTableProps) {
   const { loading, error, sources, pagination, onPageChange, onRetryAction, onEdit } = props;
   
   const headers = useMemo(() => {

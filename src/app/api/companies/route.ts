@@ -55,12 +55,14 @@ export async function POST(request: NextRequest) {
       name: body.name,
       short_description: body.short_description,
       long_description: body.long_description || "-",
-      website_url: body.website,
-      logo_url: body.logoUrl,
+      website_url: body.website_url,
+      logo_url: body.logo_url,
       location: body.location,
-      address: body.address,
+      country: body.country,
       contact: body.contact,
       metadata: body.metadata,
+      rank: body.rank || 5,
+      is_premium: body.is_premium,
       created_by_id: session?.user.id || undefined
     });
 

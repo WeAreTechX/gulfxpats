@@ -8,9 +8,9 @@ import {
   Database,
   RefreshCw,
 } from 'lucide-react';
-import CompaniesView from "@/components/admin/companies/listings/CompaniesView";
+import CompaniesListing from "@/components/admin/companies/listings/CompaniesListing";
 import CompaniesSourcesView from "@/components/admin/companies/sources/CompaniesSourcesView";
-import { QueryStats } from "@/types/api";
+import { QueryStats } from "@/types";
 
 type TabType = 'listings' | 'sources';
 
@@ -137,7 +137,7 @@ export default function AdminCompaniesPage() {
       {/* Tab Content */}
       <div className="bg-white p-4 rounded-xl">
         {activeTab === 'listings' && (
-          <CompaniesView refresh={refresh} onStatsChange={handleSetStats} />
+          <CompaniesListing refresh={refresh} onStatsChange={handleSetStats} />
         )}
 
         {activeTab === 'sources' && (

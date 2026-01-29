@@ -7,16 +7,15 @@ import {
   Upload,
 } from 'lucide-react';
 import { StoreSingleCompanyModal, StoreMultipleCompanyModal } from '@/components/admin';
-import { Company } from "@/types/companies";
 import CompaniesTable from "@/components/admin/companies/listings/CompaniesTable";
-import { QueryStats } from "@/types/api";
+import { QueryStats, Company } from "@/types";
 
 interface CompaniesViewProps {
   refresh: boolean;
   onStatsChange?: (stats: QueryStats) => void;
 }
 
-export default function CompaniesView({ refresh, onStatsChange }: CompaniesViewProps) {
+export default function CompaniesListing({ refresh, onStatsChange }: CompaniesViewProps) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [stats, setStats] = useState<QueryStats>({ total: 0, published: 0, unpublished: 0 });
   const [loading, setLoading] = useState(true);

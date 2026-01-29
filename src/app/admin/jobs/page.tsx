@@ -10,12 +10,12 @@ import {
   Download,
   RefreshCw,
 } from 'lucide-react';
-import JobsView from "@/components/admin/jobs/listings/JobsView";
+import JobsListing from "@/components/admin/jobs/listings/JobsListing";
 import SourcesView from "@/components/admin/jobs/sources/SourcesView";
-import MigrationsView from "@/components/admin/jobs/migrations/MigrationsView";
-import {QueryStats} from "@/types/api";
+import ScrapingsView from "@/components/admin/jobs/scrapings/ScrapingsView";
+import {QueryStats} from "@/types";
 
-type TabType = 'listings' | 'sources' | 'migrations';
+type TabType = 'listings' | 'sources' | 'scrapings';
 
 export default function AdminSourcesPage() {
 
@@ -27,7 +27,7 @@ export default function AdminSourcesPage() {
   const tabs = [
     { id: 'listings' as TabType, label: 'Listings' },
     { id: 'sources' as TabType, label: 'Sources' },
-    { id: 'migrations' as TabType, label: 'Migrations' },
+    { id: 'scrapings' as TabType, label: 'Scrapings' },
   ];
 
   const handleSetStats = (next: QueryStats) => {
@@ -121,7 +121,7 @@ export default function AdminSourcesPage() {
           </div>
         )}
 
-        {activeTab === 'migrations' && (
+        {activeTab === 'scrapings' && (
           <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 rounded-lg">
@@ -162,15 +162,15 @@ export default function AdminSourcesPage() {
       <div className="bg-white p-4 rounded-xl">
 
         {activeTab === 'listings' && (
-          <JobsView refresh={refresh} />
+          <JobsListing refresh={refresh} />
         )}
 
         {activeTab === 'sources' && (
           <SourcesView refresh={refresh} />
         )}
 
-        {activeTab === 'migrations' && (
-          <MigrationsView refresh={refresh} />
+        {activeTab === 'scrapings' && (
+          <ScrapingsView refresh={refresh} />
         )}
       </div>
     </div>

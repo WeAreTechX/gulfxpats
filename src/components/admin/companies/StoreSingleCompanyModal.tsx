@@ -4,7 +4,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Building2, Loader2 } from 'lucide-react';
 import { COUNTRIES } from '@/lib/countries';
-import {CompanyCreate, Company} from "@/types/companies";
+import {CompanyCreate, Company} from "@/types";
 
 interface AddCompanyModalProps {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
     website_url: '',
     logo_url: '',
     location: '',
-    address: '',
+    country: '',
     metadata: {
       industry: '',
       phone: '',
@@ -35,7 +35,10 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
       last_name: '',
       email: '',
       linkedin: '',
-    }
+    },
+    tags: [],
+    rank: 5,
+    is_premium: false
   });
 
   const [loading, setLoading] = useState(false);
@@ -48,7 +51,7 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
     website_url: '',
     logo_url: '',
     location: '',
-    address: '',
+    country: '',
     metadata: {
       industry: '',
       phone: '',
@@ -60,7 +63,10 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
       last_name: '',
       email: '',
       linkedin: '',
-    }
+    },
+    tags: [],
+    rank: 5,
+    is_premium: false
   });
 
   // Reset form when modal opens/closes or company changes
@@ -75,9 +81,12 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
           website_url: company.website_url || '',
           logo_url: company.logo_url || '',
           location: company.location || '',
-          address: company.address || '',
+          country: company.country || '',
           metadata: company.metadata,
           contact: company.contact,
+          tags: company.tags,
+          rank: company.rank || 5,
+          is_premium: company.is_premium || false
         });
       } else {
         // Reset form for add mode
@@ -270,9 +279,23 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                         <label className="block text-sm font-medium text-slate-700 mb-1">
                           Location
                         </label>
-                        <select
+                        <input
+                          type="text"
                           name="location"
                           value={formData.location}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                          placeholder="Los Angeles, California"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                          Country
+                        </label>
+                        <select
+                          name="country"
+                          value={formData.country}
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                         >
@@ -303,6 +326,20 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                           placeholder="https://linkedin.com/company/..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                          Company Email
+                        </label>
+                        <input
+                          type="email"
+                          name="metadata.email"
+                          value={formData?.metadata?.email || ''}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                          placeholder="hello@company.com"
                         />
                       </div>
                     </div>

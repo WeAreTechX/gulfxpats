@@ -11,7 +11,7 @@ import { Source } from '@/types/companies';
 import SourcesTable from '@/components/admin/jobs/sources/SourcesTable';
 import StoreSourceModal from '@/components/admin/jobs/sources/StoreSourceModal';
 
-export default function MigrationsView({ refresh }: { refresh: boolean }) {
+export default function ScrapingsView({ refresh }: { refresh: boolean }) {
   const [sources, setSources] = useState<Source[]>([]);
   const [stats, setStats] = useState<{ total: number; active: number; inactive: number }>({ total: 0, active: 0, inactive: 0 });
   const [loading, setLoading] = useState(true);

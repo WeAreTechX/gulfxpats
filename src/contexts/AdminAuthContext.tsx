@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import {User as SupabaseUser, Session, PostgrestSingleResponse, PostgrestError} from '@supabase/supabase-js';
+import {User as SupabaseUser, Session, PostgrestSingleResponse} from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
 import {Admin} from "@/types";
 

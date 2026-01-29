@@ -5,10 +5,9 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import { CompaniesSources, Source } from '@/types/companies';
 import CompaniesSourcesTable from '@/components/admin/companies/sources/CompaniesSourcesTable';
 import StoreCompanySourceModal from '@/components/admin/companies/StoreCompanySourceModal';
-import { QueryStats } from '@/types/api';
+import { QueryStats, CompaniesSources } from '@/types';
 
 interface CompaniesSourcesViewProps {
   refresh: boolean;
