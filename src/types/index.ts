@@ -9,7 +9,7 @@ export interface Query {
   page?: number;
   page_size?: number;
   order_by?: string;
-  order_dir?: "asc" | "desc";
+  order_asc?: string;
 }
 
 export interface QueryStats {
@@ -26,6 +26,11 @@ export interface QueryPagination {
 export interface QueryResponse<T> {
   pagination: QueryPagination;
   list: T[]
+}
+
+export interface QueryViewAction {
+  refresh: boolean;
+  onFetchAction: (stats: { [key: string]: number }) => void;
 }
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
@@ -148,6 +153,7 @@ export interface Company extends CompanyCreate {
   created_by: Admin;
   created_at: Date | string;
   modified_at: Date | string;
+  jobs_count?: number;
 }
 
 export interface CompanyUpdate extends CompanyCreate {
@@ -265,34 +271,39 @@ export interface JobsScrapings extends  JobsScrapingsCreate {
  * ========================
  */
 export interface JobCreate {
-  type_id: number;
+  type_id: number | undefined;
   title: string;
   description: string;
-  company_id: string;
-  company_name: string;
-  jobs_scrapings_id: string;
+  company_id: string | null;
+  company_name: string | null;
+  jobs_scrapings_id: string | null;
   location?: string;
   country: string;
-  salary_min: number;
-  salary_max: number;
-  salary_frequency: 'monthly' | 'annually';
-  currency_id: number;
-  industry_id: number;
+  salary_min?: number;
+  salary_max?: number;
+  salary_frequency?: 'monthly' | 'annually';
+  currency_id: number | undefined | null;
+  currency_code?: string;
+  industry_id: number | undefined | null;
   apply_url: string;
   metadata?: { [key: string]: Json };
   tags?: string[];
   rank?: number;
   is_premium: boolean;
-  created_by_id: string;
+  created_by_id?: string;
 }
 
 export interface Job extends JobCreate {
   id: string;
   status_id: number;
-  status: Entity;
-  created_by: Admin;
   created_at: Date | string;
   modified_at: Date | string;
+  type: Entity;
+  status: Entity;
+  created_by: Admin;
+  currency: Currency;
+  industry: Entity;
+  company: Company;
 }
 
 export type JobUpdate = JobCreate

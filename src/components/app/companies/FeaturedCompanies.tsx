@@ -6,7 +6,7 @@ import CompanyCard from '@/components/app/companies/CompanyCard';
 import CompanyPreviewModal from '@/components/app/companies/CompanyPreviewModal';
 import { CompaniesEmptyState } from '@/components/custom/EmptyStates';
 import { ArrowRight } from 'lucide-react';
-import { Company } from '@/types/companies';
+import { Company } from '@/types';
 
 export default function FeaturedCompanies() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -17,7 +17,7 @@ export default function FeaturedCompanies() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const companiesRes = await fetch('/api/companies?limit=4&order=rank');
+        const companiesRes = await fetch('/api/companies?limit=4&order_by=rank&order_dir=asc');
         const companiesData = await companiesRes.json();
         if (companiesData.success) setCompanies(companiesData.data.list);
       } catch (error) {

@@ -2,8 +2,8 @@ export { default as StoreSingleCompanyModal } from './companies/StoreSingleCompa
 export { default as StoreMultipleCompanyModal } from './companies/StoreMultipleCompanyModal';
 export { default as StoreSingleJobModal } from './jobs/listings/StoreSingleJobModal';
 export { default as StoreMultipleJobsModal } from './jobs/listings/StoreMultipleJobsModal';
-export { default as StoreSourceModal } from './jobs/sources/StoreSourceModal';
-export { default as SourcesTable } from './jobs/sources/SourcesTable';
+export { default as StoreJobSourceModal } from './jobs/sources/StoreJobSourceModal';
+export { default as JobsSourcesTable } from './jobs/sources/JobsSourcesTable';
 export { default as ScrapingsTable } from '@/components/admin/jobs/scrapings/ScrapingsTable';
 
 export { default as JobsTable } from './jobs/listings/JobsTable';

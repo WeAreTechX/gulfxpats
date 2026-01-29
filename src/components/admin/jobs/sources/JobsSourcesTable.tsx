@@ -15,7 +15,7 @@ interface SourcesTableProps {
   onEdit: (source: Source) => void;
 }
 
-export default function SourcesTable(props: SourcesTableProps) {
+export default function JobsSourcesTable(props: SourcesTableProps) {
   const { loading, error, sources, pagination, onPageChange, onRetryAction, onEdit } = props;
   
   const headers = useMemo(() => {

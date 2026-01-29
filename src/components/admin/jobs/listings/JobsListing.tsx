@@ -9,11 +9,10 @@ import {
 import { StoreSingleJobModal } from '@/components/admin';
 import StoreMultipleJobsModal from '@/components/admin/jobs/listings/StoreMultipleJobsModal';
 import JobsTable from "@/components/admin/jobs/listings/JobsTable";
-import {Job,QueryStats} from "@/types";
+import {Job, QueryViewAction} from "@/types";
 
-export default function JobsListing({ refresh }: { refresh: boolean }) {
+export default function JobsListing({ refresh, onFetchAction}: QueryViewAction) {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [stats, setStats] = useState<QueryStats>({ total: 0, published: 0, unpublished: 0, archived: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +39,7 @@ export default function JobsListing({ refresh }: { refresh: boolean }) {
       if (jobsData.success) {
         const { list, stats, pagination } = jobsData.data;
         setJobs(list || []);
-        setStats(stats || {});
+        onFetchAction({ total_published: stats.published, published_jobs: stats.published, unpublished_jobs: stats.unpublished, archived_jobs: stats.archived });
         setPagination(pagination ||  { count: 1, current_page: 1, total_count: 1, total_pages: 1 })
       }
     } catch (error) {
@@ -109,9 +108,9 @@ export default function JobsListing({ refresh }: { refresh: boolean }) {
           </button>
           <button
             onClick={() => handleOpenModal()}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-sm text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-4 w-4" />
             Add Job
           </button>
         </div>

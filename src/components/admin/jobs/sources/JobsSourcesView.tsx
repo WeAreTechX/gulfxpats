@@ -2,18 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Plus,
-  Database,
-  RefreshCw,
-  Download, Search,
+  Plus, Search,
 } from 'lucide-react';
-import { Source } from '@/types/companies';
-import SourcesTable from '@/components/admin/jobs/sources/SourcesTable';
-import StoreSourceModal from '@/components/admin/jobs/sources/StoreSourceModal';
+import {JobSource, QueryViewAction} from '@/types';
+import JobsSourcesTable from '@/components/admin/jobs/sources/JobsSourcesTable';
+import StoreJobSourceModal from '@/components/admin/jobs/sources/StoreJobSourceModal';
 
-export default function SourcesView({ refresh }: { refresh: boolean }) {
-  const [sources, setSources] = useState<Source[]>([]);
-  const [stats, setStats] = useState<{ total: number; active: number; inactive: number }>({ total: 0, active: 0, inactive: 0 });
+export default function JobsSourcesView({ refresh, onFetchAction }: QueryViewAction) {
+  const [sources, setSources] = useState<JobSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +20,7 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingSource, setEditingSource] = useState<Source | null>(null);
+  const [editingSource, setEditingSource] = useState<JobSource | null>(null);
 
   useEffect(() => {
     fetchSources();
@@ -41,7 +37,7 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
       if (result.success) {
         const { list, stats, pagination } = result.data;
         setSources(list || []);
-        setStats(stats || { total: 0, active: 0, inactive: 0 });
+        onFetchAction({ total_sources: stats.total || 0 });
         setPagination(pagination || { count: 1, current_page: 1, total_count: 1, total_pages: 1 });
       } else {
         setError('Failed to fetch sources');
@@ -54,7 +50,7 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
     }
   };
 
-  const handleOpenModal = (source?: Source) => {
+  const handleOpenModal = (source?: JobSource) => {
     setEditingSource(source || null);
     setIsModalOpen(true);
   };
@@ -71,7 +67,7 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
   return (
     <div className="space-y-6">
       {/* Modal */}
-      <StoreSourceModal
+      <StoreJobSourceModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSuccess={handleSuccess}
@@ -103,7 +99,7 @@ export default function SourcesView({ refresh }: { refresh: boolean }) {
 
 
       <div className="p-0">
-        <SourcesTable
+        <JobsSourcesTable
           error={error}
           loading={loading}
           sources={sources}

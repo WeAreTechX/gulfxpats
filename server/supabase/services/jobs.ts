@@ -11,8 +11,8 @@ export class JobsService {
       .select(`
         *,
         company:companies(*),
-        job_type:job_types(*),
-        industries(*),
+        type:job_types(*),
+        industry:industries(*),
         currency:currencies(*),
         status:statuses(*)
       `, { count: 'exact' });
@@ -27,8 +27,7 @@ export class JobsService {
     if (options?.page_size) query = query.limit(options.page_size);
     if (options?.page) query = query.range(options.page, options.page + (options.page_size || 10) - 1);
 
-    query = query.order('modified_at', { ascending: false });
-    query = query.order(options?.order_by || 'modified_at', { ascending: options && options.order_dir === 'asc' });
+    query = query.order(options?.order_by || 'modified_at', { ascending: options && options.order_asc === '1' });
 
     const { data, error, count } = await query;
 

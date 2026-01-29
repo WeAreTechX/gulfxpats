@@ -97,9 +97,9 @@ export default function CompaniesListing({ refresh, onStatsChange }: CompaniesVi
           </button>
           <button
             onClick={() => handleOpenModal()}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-700 text-sm text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-4 w-4" />
             Add Company
           </button>
         </div>

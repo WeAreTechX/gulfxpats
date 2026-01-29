@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '../../../../../server/supabase/server';
 import { CompaniesService } from '../../../../../server/supabase/services/companies';
-import { CompanyCreate } from "@/types/companies";
+import { CompanyCreate } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,9 +45,10 @@ export async function POST(request: NextRequest) {
           website_url: company.website_url,
           logo_url: company.logo_url,
           location: company.location,
-          address: company.address,
+          country: company.country,
           contact: company.contact,
-          metadata: company.metadata
+          metadata: company.metadata,
+          is_premium: company.is_premium || false
         });
 
         results.created++;

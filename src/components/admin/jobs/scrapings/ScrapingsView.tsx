@@ -7,12 +7,12 @@ import {
   RefreshCw,
   Download, Search,
 } from 'lucide-react';
-import { Source } from '@/types/companies';
-import SourcesTable from '@/components/admin/jobs/sources/SourcesTable';
-import StoreSourceModal from '@/components/admin/jobs/sources/StoreSourceModal';
+import JobsSourcesTable from '@/components/admin/jobs/sources/JobsSourcesTable';
+import StoreJobSourceModal from '@/components/admin/jobs/sources/StoreJobSourceModal';
+import {JobSource, QueryViewAction} from "@/types";
 
-export default function ScrapingsView({ refresh }: { refresh: boolean }) {
-  const [sources, setSources] = useState<Source[]>([]);
+export default function ScrapingsView({ refresh }: QueryViewAction) {
+  const [sources, setSources] = useState<JobSource[]>([]);
   const [stats, setStats] = useState<{ total: number; active: number; inactive: number }>({ total: 0, active: 0, inactive: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,7 @@ export default function ScrapingsView({ refresh }: { refresh: boolean }) {
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingSource, setEditingSource] = useState<Source | null>(null);
+  const [editingSource, setEditingSource] = useState<JobSource | null>(null);
 
   useEffect(() => {
     fetchSources();
@@ -54,7 +54,7 @@ export default function ScrapingsView({ refresh }: { refresh: boolean }) {
     }
   };
 
-  const handleOpenModal = (source?: Source) => {
+  const handleOpenModal = (source?: JobSource) => {
     setEditingSource(source || null);
     setIsModalOpen(true);
   };
@@ -71,7 +71,7 @@ export default function ScrapingsView({ refresh }: { refresh: boolean }) {
   return (
     <div className="space-y-6">
       {/* Modal */}
-      <StoreSourceModal
+      <StoreJobSourceModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSuccess={handleSuccess}
@@ -149,7 +149,7 @@ export default function ScrapingsView({ refresh }: { refresh: boolean }) {
       <div className="bg-white rounded-xl border border-gray-200">
         {/* Tab Content */}
         <div className="p-0">
-          <SourcesTable
+          <JobsSourcesTable
             error={error}
             loading={loading}
             sources={sources}

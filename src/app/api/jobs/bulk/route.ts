@@ -1,19 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '../../../../../server/supabase/server';
 import { JobsService } from '../../../../../server/supabase/services/jobs';
+import {Json} from "@/types";
 
 interface BulkJobInput {
   title: string;
-  description?: string | null;
+  description: string;
   company_name?: string | null;
-  job_type_code?: string | null;
-  industry_code?: string | null;
+  type_code?: string;
+  industry_code?: string;
+  jobs_scrapings_id?: number;
   location?: string | null;
+  country: string;
   salary_min?: number | null;
   salary_max?: number | null;
   salary_frequency?: 'monthly' | 'annually' | null;
-  currency_code?: string | null;
-  apply_url?: string | null;
+  currency_code?: string;
+  apply_url: string;
+  is_premium: boolean;
+  tags?: string[];
+  metadata?: { [key: string]: Json }
 }
 
 export async function POST(request: NextRequest) {
@@ -33,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // Get current user session
     const { data: { session } } = await supabase.auth.getSession();
-    const createdById = session?.user.id || undefined;
+    const created_by_id = session?.user.id || undefined;
 
     // Fetch lookup data for companies, job types, industries, currencies
     const [companiesRes, jobTypesRes, industriesRes, currenciesRes] = await Promise.all([
@@ -78,10 +84,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Lookup company ID
-        let companyId: string | undefined;
-        if (job.company_name) {
-          companyId = companyMap.get(job.company_name.toLowerCase());
-          if (!companyId) {
+        let company_id: string | undefined;
+        if (job.company_id) {
+          company_id = companyMap.get(job.company_id);
+          if (!company_id) {
             results.errors.push({
               row: i + 1,
               title: job.title,
@@ -92,24 +98,24 @@ export async function POST(request: NextRequest) {
         }
 
         // Lookup job type ID
-        let jobTypeId: number | undefined;
-        if (job.job_type_code) {
-          jobTypeId = jobTypeMap.get(job.job_type_code.toLowerCase());
-          if (!jobTypeId) {
+        let type_id: number | undefined;
+        if (job.type_code) {
+          type_id = jobTypeMap.get(job.type_code.toLowerCase());
+          if (!type_id) {
             results.errors.push({
               row: i + 1,
               title: job.title,
-              error: `Job type "${job.job_type_code}" not found. Valid values: full-time, part-time, contract, internship, freelance`,
+              error: `Job type "${job.type_id}" not found. Valid values: full-time, part-time, contract, internship, freelance`,
             });
             continue;
           }
         }
 
         // Lookup industry ID
-        let industryId: number | undefined;
+        let industry_id: number | undefined;
         if (job.industry_code) {
-          industryId = industryMap.get(job.industry_code.toLowerCase());
-          if (!industryId) {
+          industry_id = industryMap.get(job.industry_code.toLowerCase());
+          if (!industry_id) {
             results.errors.push({
               row: i + 1,
               title: job.title,
@@ -137,16 +143,22 @@ export async function POST(request: NextRequest) {
         await jobsService.store({
           title: job.title.trim(),
           description: job.description || '',
-          company_id: companyId ? parseInt(companyId) : undefined,
-          job_type_id: jobTypeId || 1, // Default to first job type if not specified
-          industry_id: industryId || 1, // Default to first industry if not specified
+          company_id: company_id || null,
+          company_name: job.company_name || null,
+          type_id: type_id,
+          jobs_scrapings_id: null,
+          industry_id: industry_id,
           location: job.location || '',
+          country: job.country || '',
           salary_min: job.salary_min || undefined,
           salary_max: job.salary_max || undefined,
           salary_frequency: job.salary_frequency || undefined,
-          currency_id: currencyId || 1, // Default to first currency if not specified
+          currency_id: currencyId,
           apply_url: job.apply_url || '',
-          created_by_id: createdById,
+          created_by_id: created_by_id,
+          is_premium: job.is_premium || false,
+          tags: job.tags,
+          metadata: job.metadata
         });
 
         results.created++;

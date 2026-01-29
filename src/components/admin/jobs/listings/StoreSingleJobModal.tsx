@@ -3,10 +3,8 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Briefcase, Loader2 } from 'lucide-react';
-import {Job, JobCreate} from "@/types/jobs";
-import {Currency } from "@/types";
-import {Company} from "@/types/companies";
-import {JobType, JobIndustry} from "@/types/jobs";
+import {Currency, Entity, Job, JobCreate, Company } from "@/types";
+import {COUNTRIES} from "@/lib/countries";
 
 interface StoreSingleJobModalProps {
   isOpen: boolean;
@@ -18,16 +16,20 @@ interface StoreSingleJobModalProps {
 const getInitialFormData = (): JobCreate => ({
   title: '',
   description: '',
-  company_id: 0,
-  job_type_id: 0,
-  industry_id: 0,
+  type_id: undefined,
+  company_id: '',
+  company_name: '',
+  jobs_scrapings_id: undefined,
+  industry_id: undefined,
   location: '',
+  country: '',
   salary_min: 0,
   salary_max: 0,
   salary_frequency: 'monthly',
-  currency_id: 0,
+  currency_id: undefined,
   apply_url: '',
-  metadata: {}
+  metadata: {},
+  is_premium: false
 });
 
 export default function StoreSingleJobModal({
@@ -39,8 +41,8 @@ export default function StoreSingleJobModal({
   const isEditMode = !!job;
 
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [jobTypes, setJobTypes] = useState<JobType[]>([]);
-  const [industries, setIndustries] = useState<JobIndustry[]>([]);
+  const [jobTypes, setJobTypes] = useState<Entity[]>([]);
+  const [industries, setIndustries] = useState<Entity[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
 
   useEffect(() => {
@@ -88,16 +90,20 @@ export default function StoreSingleJobModal({
         setFormData({
           title: job.title,
           description: job.description,
+          type_id: job.type_id,
           company_id: job.company_id,
-          job_type_id: job.job_type_id,
-          industry_id: job.industry_id,
+          company_name: job.company_name,
+          jobs_scrapings_id: job.jobs_scrapings_id,
           location: job.location || '',
+          country: job.country || '',
           salary_min: job.salary_min,
           salary_max: job.salary_max,
           salary_frequency: job.salary_frequency,
+          industry_id: job.industry_id,
           currency_id: job.currency_id,
           apply_url: job.apply_url || '',
-          metadata: job.metadata
+          metadata: job.metadata,
+          is_premium: job.is_premium,
         });
       } else {
         // Reset form for add mode
@@ -123,14 +129,19 @@ export default function StoreSingleJobModal({
       const payload = {
         title: formData.title,
         description: formData.description || null,
+        type_id: formData.type_id,
         company_id: formData.company_id,
-        job_type_id: formData.job_type_id,
-        industry_id: formData.industry_id,
+        company_name: formData.company_name,
         location: formData.location || null,
+        country: formData.country,
         salary_min: formData.salary_min,
         salary_max: formData.salary_max,
+        salary_frequency: formData.salary_frequency,
+        industry_id: formData.industry_id,
         currency_id: formData.currency_id,
         apply_url: formData.apply_url,
+        metadata: formData.metadata,
+        is_premium: formData.is_premium,
       };
 
       const url = isEditMode ? `/api/jobs/${job.id}` : '/api/jobs';
@@ -276,8 +287,8 @@ export default function StoreSingleJobModal({
                             Job Type <span className="text-red-500">*</span>
                           </label>
                           <select
-                            name="job_type_id"
-                            value={formData.job_type_id}
+                            name="type_id"
+                            value={formData.type_id}
                             onChange={handleChange}
                             required
                             className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
@@ -312,18 +323,40 @@ export default function StoreSingleJobModal({
                         </div>
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Location
-                        </label>
-                        <input
-                          type="text"
-                          name="location"
-                          value={formData.location}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                          placeholder="e.g., Dubai, UAE"
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Location
+                          </label>
+                          <input
+                            type="text"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder="e.g., Dubai"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Country
+                          </label>
+                          <select
+                            name="country"
+                            value={formData.country}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                          >
+                            <option value="">Select country</option>
+                            {COUNTRIES.map((item) => (
+                              <option key={item.code} value={item.iso3}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -427,7 +460,7 @@ export default function StoreSingleJobModal({
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={loading || !formData.title || !formData.job_type_id || !formData.apply_url}
+                    disabled={loading || !formData.title || !formData.type_id || !formData.apply_url}
                     className="px-5 py-2.5 text-sm font-medium text-white bg-teal-700  rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {loading && <Loader2 className="h-4 w-4 animate-spin" />}

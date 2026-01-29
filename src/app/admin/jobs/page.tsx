@@ -11,7 +11,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import JobsListing from "@/components/admin/jobs/listings/JobsListing";
-import SourcesView from "@/components/admin/jobs/sources/SourcesView";
+import JobsSourcesView from "@/components/admin/jobs/sources/JobsSourcesView";
 import ScrapingsView from "@/components/admin/jobs/scrapings/ScrapingsView";
 import {QueryStats} from "@/types";
 
@@ -162,15 +162,15 @@ export default function AdminSourcesPage() {
       <div className="bg-white p-4 rounded-xl">
 
         {activeTab === 'listings' && (
-          <JobsListing refresh={refresh} />
+          <JobsListing refresh={refresh} onFetchAction={handleSetStats} />
         )}
 
         {activeTab === 'sources' && (
-          <SourcesView refresh={refresh} />
+          <JobsSourcesView refresh={refresh} onFetchAction={handleSetStats} />
         )}
 
         {activeTab === 'scrapings' && (
-          <ScrapingsView refresh={refresh} />
+          <ScrapingsView refresh={refresh} onFetchAction={handleSetStats} />
         )}
       </div>
     </div>

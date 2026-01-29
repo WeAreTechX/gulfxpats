@@ -1,15 +1,15 @@
 import {useMemo, useState} from "react";
 import DataTable from "@/components/custom/DataTable";
 import Status from "@/components/ui/Status";
-import {Pagination} from "@/types";
+import {QueryPagination, Job} from "@/types";
 import {formatDate} from "@/lib/date";
-import {Job} from "@/types/jobs";
+import {formatSalary} from "@/lib/utils";
 
 interface JobsTableProps {
   loading: boolean;
   error: string | null;
   jobs: Job[];
-  pagination: Pagination | undefined
+  pagination: QueryPagination | undefined
   onPageChange: (page: number) => void;
   onRowChange: () => void;
 }
@@ -31,20 +31,21 @@ export default function JobsTable(props: JobsTableProps) {
           <p className="font-medium text-gray-900">{job.title}</p>
           {job.salary_min && (
             <p className="text-gray-500 flex items-center gap-1 mt-1">
-              {job.currency?.symbol}{job.salary_min.toLocaleString()}
-              {job.salary_max && ` - ${job.currency?.symbol}${job.salary_max.toLocaleString()}`}
+              {formatSalary(job.salary_min, job.salary_max, job.currency?.code)}
             </p>
           )}
         </div>,
         <p key="description" className="text-gray-700  truncate max-w-[100px]">{job.description || '-'}</p>,
-        <p key="company" className="text-gray-700 max-w-[160px]">{job.company?.name || '-'}</p>,
-        <span key="job_type" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-          {job.job_type?.name || '-'}
-        </span>,
+        <p key="company" className="text-gray-700 max-w-[160px]">{job.company_name || (job.company?.name || '-')}</p>,
+        <p key="type"  className="min-w-[80px]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+          {job.type?.name || '-'}
+        </span>
+        </p>,
         <span key="location" className="text-gray-700">{job.location || '-'}</span>,
         <p key="industry" className="text-gray-700 max-w-[100px]">{job.industry?.name || '-'}</p>,
-        <p key="created_at" className="text-gray-700 w-[170px]">{formatDate(job.created_at, 'medium', '-')}</p>,
-        <p key="modified_at" className="text-gray-700 w-[170px]">{formatDate(job.modified_at, 'medium', '-')}</p>,
+        <p key="created_at" className="text-gray-700 w-[160px]">{formatDate(job.created_at, 'medium', '-')}</p>,
+        <p key="modified_at" className="text-gray-700 w-[160px]">{formatDate(job.modified_at, 'medium', '-')}</p>,
         <Status key="status" {...job.status!} />
       ];
 

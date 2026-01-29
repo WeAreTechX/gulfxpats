@@ -24,7 +24,7 @@ const getInitialFormData = (): SourceFormData => ({
   base_url: '',
 });
 
-export default function StoreSourceModal({
+export default function StoreJobSourceModal({
   isOpen,
   onClose,
   onSuccess,

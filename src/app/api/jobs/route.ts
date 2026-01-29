@@ -4,16 +4,17 @@ import { JobsService } from '../../../../server/supabase/services/jobs';
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const type_id = searchParams.get('type_id') || undefined;
-    const industry_id = searchParams.get('industry_id') || undefined;
-    const country = searchParams.get('country') || undefined;
-    const search = searchParams.get('search') || undefined;
-    const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined;
-    const page_size = searchParams.get('page_size') ? parseInt(searchParams.get('page_size')!) : undefined;
-    const order_by = searchParams.get('order_by') || undefined;
+    const params = request.nextUrl.searchParams;
+    const type_id = params.get('type_id') || undefined;
+    const industry_id = params.get('industry_id') || undefined;
+    const country = params.get('country') || undefined;
+    const search = params.get('search') || undefined;
+    const page = params.get('page') ? parseInt(params.get('page')!) : undefined;
+    const page_size = params.get('page_size') ? parseInt(params.get('page_size')!) : undefined;
+    const order_by = params.get('order_by') || undefined;
+    const order_asc = params.get('order_asc') || undefined;
 
-    const includeStats = searchParams.get('includeStats') === 'true';
+    const includeStats = params.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
     const jobsService = new JobsService(supabase);
@@ -25,7 +26,8 @@ export async function GET(request: NextRequest) {
       search,
       page,
       page_size,
-      order_by
+      order_by,
+      order_asc
     });
 
     let stats = null;
@@ -57,15 +59,20 @@ export async function POST(request: NextRequest) {
     const job = await jobsService.store({
       title: body.title,
       description: body.description,
-      job_type_id: body.job_type_id,
-      industry_id: body.industry_id,
+      type_id: body.type_id,
+      jobs_scrapings_id: body.jobs_scrapings_id,
+      company_id: body.company_id,
+      company_name: body.company_name,
       location: body.location,
+      country: body.country,
       salary_min: body.salary_min,
       salary_max: body.salary_max,
       salary_frequency: body.salary_frequency,
       currency_id: body.currency_id,
+      industry_id: body.industry_id,
       apply_url: body.apply_url,
       metadata: body.metadata,
+      is_premium: body.is_premium || false,
       created_by_id: session?.user.id || undefined
     });
 

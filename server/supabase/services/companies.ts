@@ -1,29 +1,25 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
-import {QueryResponse, QueryStats, Company, CompanyCreate, CompanyUpdate, CompanyQuery, Entity} from "@/types";
+import {QueryResponse, QueryStats, Company, CompanyCreate, CompanyUpdate, CompaniesQuery, Entity} from "@/types";
 
 export class CompaniesService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async index(options?: CompanyQuery): Promise<QueryResponse<Company>> {
+  async index(options?: CompaniesQuery): Promise<QueryResponse<Company>> {
     let query = this.supabase
       .from('companies')
       .select(`*, status:statuses(*)`);
 
     // Apply filters
-    if (options?.location) query = query.ilike('location', `%${options.location}%`);
     if (options?.search) query = query.or(`name.ilike.%${options.search}%,short_description.ilike.%${options.search}%,long_description.ilike.%${options.search}%`);
+    if (options?.country) query = query.ilike('country', `%${options.country}%`);
 
     // Apply pagination
-    if (options?.limit) query = query.limit(options.limit);
-    if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+    if (options?.page_size) query = query.limit(options.page_size);
+    if (options?.page) query = query.range(options.page, options.page + (options.page_size || 10) - 1);
 
     // Order by
-    if (options?.order) {
-      query = query.order(options.order, { ascending: false });
-    } else {
-      query = query.order('name', { ascending: true });
-    }
+    query = query.order(options?.order_by || 'name', { ascending: options && options.order_asc === '1' });
 
     const { data, error, count } = await query;
 
@@ -103,7 +99,7 @@ export class CompaniesService {
       .from('statuses')
       .select('id, code');
 
-    const statusMap = new Map(statuses?.map((s: Status) => [s.code, s.id]) || []);
+    const statusMap = new Map(statuses?.map((s: Entity) => [s.code, s.id]) || []);
     const stats: QueryStats = {};
 
     const { count: total } = await this.supabase

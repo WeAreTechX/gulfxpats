@@ -1,7 +1,8 @@
 'use client';
 
-import { Company } from '@/types/companies';
+import { Company } from '@/types';
 import { MapPin, Globe, Briefcase, ArrowUpRight, Building2, Users, ExternalLink } from 'lucide-react';
+import {getCountryByIso3} from "@/lib/countries";
 
 interface CompanyCardProps {
   company: Company;
@@ -41,9 +42,7 @@ export default function CompanyCard({ company, variant = 'default', onViewCompan
             <h3 className="font-semibold text-gray-900 group-hover:text-[#04724D] transition-colors truncate">
               {company.name}
             </h3>
-            {company.location && (
-              <p className="text-sm text-gray-500 truncate">{company.location}</p>
-            )}
+            <p className="text-sm text-gray-500 truncate">{getCountryByIso3(company.country)?.name}</p>
           </div>
           <ArrowUpRight className="h-5 w-5 text-gray-400 group-hover:text-[#04724D] transition-colors" />
         </div>
@@ -78,7 +77,7 @@ export default function CompanyCard({ company, variant = 'default', onViewCompan
             {company.location && (
               <p className="text-gray-500 text-sm mt-1 flex items-center">
                 <MapPin className="h-3.5 w-3.5 mr-1.5 flex-shrink-0 text-gray-400" />
-                <span className="truncate">{company.location}</span>
+                <span className="truncate">{getCountryByIso3(company.country)?.name}</span>
               </p>
             )}
           </div>

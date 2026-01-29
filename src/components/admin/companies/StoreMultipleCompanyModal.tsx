@@ -12,6 +12,7 @@ import {
   Download,
   Trash2
 } from 'lucide-react';
+import {getCountryByIso3} from "@/lib/countries";
 
 interface BulkUploadCompanyModalProps {
   isOpen: boolean;
@@ -26,11 +27,12 @@ interface ParsedCompany {
   website_url?: string;
   logo_url?: string;
   location?: string;
-  address?: string;
+  country?: string;
   // Metadata fields
+  metadata_address?: string;
   metadata_industry?: string;
-  metadata_email?: string;
   metadata_phone?: string;
+  metadata_email?: string;
   metadata_linkedin?: string;
   // Contact person fields
   contact_first_name?: string;
@@ -96,8 +98,8 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       errors.push('Location is required');
     }
 
-    if (!company.address || company.address.trim() === '') {
-      errors.push('Address is required');
+    if (!company.country || company.country.trim() === '') {
+      errors.push('Country is required');
     }
 
     // URL validations
@@ -148,8 +150,9 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       'website_url': 'website_url',
       'logo_url': 'logo_url',
       'location': 'location',
-      'address': 'address',
+      'country': 'country',
       // Metadata fields (with dot notation)
+      'metadata.address': 'metadata_address',
       'metadata.industry': 'metadata_industry',
       'metadata.email': 'metadata_email',
       'metadata.phone': 'metadata_phone',
@@ -190,7 +193,8 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
         website_url: company.website_url,
         logo_url: company.logo_url,
         location: company.location,
-        address: company.address,
+        country: company.country,
+        metadata_address: company.metadata_address,
         metadata_industry: company.metadata_industry,
         metadata_email: company.metadata_email,
         metadata_phone: company.metadata_phone,
@@ -316,15 +320,17 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
           body: JSON.stringify({
             companies: batch.map(c => ({
               name: c.name,
-              short_description: c.short_description || null,
+              short_description: c.short_description,
               long_description: c.long_description || null,
-              website_url: c.website_url || null,
+              website_url: c.website_url,
               logo_url: c.logo_url || null,
               location: c.location || null,
+              country: c.country,
               metadata: {
+                address: c.metadata_address || null,
                 industry: c.metadata_industry || null,
-                email: c.metadata_email || null,
                 phone: c.metadata_phone || null,
+                email: c.metadata_email || null,
                 linkedin: c.metadata_linkedin || null,
               },
               contact: {
@@ -374,10 +380,10 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
     setStep('complete');
   };
 
-  const headersRequired = ['name', 'short_description', 'website_url', 'location', 'address'];
-  const headers = ['name', 'short_description', 'long_description', 'website_url', 'logo_url', 'location', 'address', 'metadata.industry', 'metadata.email', 'metadata.phone', 'metadata.linkedin', 'contact.first_name', 'contact.last_name', 'contact.email', 'contact.linkedin'];
+  const headersRequired = ['name', 'short_description', 'website_url', 'location', 'country'];
+  const headers = ['name', 'short_description', 'long_description', 'website_url', 'logo_url', 'location', 'country', 'metadata.address', 'metadata.industry', 'metadata.email', 'metadata.phone', 'metadata.linkedin', 'contact.first_name', 'contact.last_name', 'contact.email', 'contact.linkedin'];
   const downloadTemplate = () => {
-    const sampleRow = ['Acme Corp', 'A technology company', 'A long description ',  'https://acme.com', 'https://acme.com/logo.png', 'USA', 'Technology', 'hello@acme.com', 'Delaware, USA', '123456789', 'https://linkedin.com/company/acme', 'John', 'Doe', 'john@doe.com', 'www.linkedin.com/in/johndoe'];
+    const sampleRow = ['Acme Corp', 'A technology company', 'A long description ',  'https://acme.com', 'https://acme.com/logo.png', 'New York', 'USA', 'Technology', 'hello@acme.com', '+123456789', 'https://linkedin.com/company/acme', 'John', 'Doe', 'john@doe.com', 'www.linkedin.com/in/johndoe'];
 
     const csvContent = [headers.join(','), sampleRow.join(',')].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -515,7 +521,12 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                             </span>
                           ))}
                         </div>
-                        <p className="text-xs text-slate-500 mt-2">* Required fields in red (other fields can be empty)</p>
+                        <p className="text-xs text-slate-500 mt-4">* Required fields in red (other fields can be empty)</p>
+                        <div className="mt-2 text-xs text-slate-600 space-y-1">
+                          <p><strong>- website_url:</strong> should include full http url</p>
+                          <p><strong>- location:</strong> should contain city/region within the country</p>
+                          <p><strong>- country:</strong> provide the iso3 value</p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -555,7 +566,7 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                               <tr>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Status</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Name</th>
-                                <th className="px-4 py-3 text-left font-medium text-slate-700">Location/Address</th>
+                                <th className="px-4 py-3 text-left font-medium text-slate-700">Location</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Website</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">Short Description</th>
                                 <th className="px-4 py-3 text-left font-medium text-slate-700">LinkedIn</th>
@@ -595,9 +606,8 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
                                   <td className="px-4 py-3 font-medium text-slate-900">
                                     {company.name || <span className="text-red-500 italic">Invalid</span>}
                                   </td>
-                                  <td className="px-4 py-3  min-w-[300px]">
-                                    <p className="text-gray-900 font-medium">{company.location || <span className="text-red-500 italic">Invalid</span>}</p>
-                                    <p className="text-slate-600">{company.address || <span className="text-red-500 italic">Invalid</span>}</p>
+                                  <td className="px-4 py-3  min-w-[200px]">
+                                    <p className="text-gray-900 font-medium">{company.country ? getCountryByIso3(company.country)?.name : <span className="text-red-500 italic">Invalid</span>}</p>
                                   </td>
                                   <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">{company.website_url || <span className="text-red-500 italic">Invalid</span>}</td>
                                   <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">{company.short_description || <span className="text-red-500 italic">Invalid</span>}</td>

@@ -23,9 +23,10 @@ interface ParsedJob {
   title: string;
   description?: string;
   company_name?: string;
-  job_type_code?: string;
+  type_code?: string;
   industry_code?: string;
   location?: string;
+  country_code?: string;
   salary_min?: string;
   salary_max?: string;
   salary_frequency?: string;
@@ -86,7 +87,7 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
       errors.push('Company name is required');
     }
 
-    if (!job.job_type_code || job.job_type_code.trim() === '') {
+    if (!job.type_code || job.type_code.trim() === '') {
       errors.push('Job type is required');
     }
 
@@ -96,6 +97,10 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
 
     if (!job.location || job.location.trim() === '') {
       errors.push('Location is required');
+    }
+
+    if (!job.country_code || job.country_code.trim() === '') {
+      errors.push('Country is required');
     }
 
     if (!job.currency_code || job.currency_code.trim() === '') {
@@ -152,11 +157,10 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
       'description': 'description',
       'company_name': 'company_name',
       'company': 'company_name',
-      'job_type': 'job_type_code',
-      'job_type_code': 'job_type_code',
-      'industry': 'industry_code',
+      'type_code': 'type_code',
       'industry_code': 'industry_code',
       'location': 'location',
+      'country_code': 'country_code',
       'salary_min': 'salary_min',
       'salary_max': 'salary_max',
       'salary_frequency': 'salary_frequency',
@@ -191,9 +195,10 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
         title: job.title || '',
         description: job.description,
         company_name: job.company_name,
-        job_type_code: job.job_type_code,
+        type_code: job.type_code,
         industry_code: job.industry_code,
         location: job.location,
+        country_code: job.country_code,
         salary_min: job.salary_min,
         salary_max: job.salary_max,
         salary_frequency: job.salary_frequency,
@@ -318,9 +323,10 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
               title: j.title,
               description: j.description || null,
               company_name: j.company_name || null,
-              job_type_code: j.job_type_code || null,
+              type_code: j.type_code || null,
               industry_code: j.industry_code || null,
               location: j.location || null,
+              country_code: j.country_code,
               salary_min: j.salary_min ? Number(j.salary_min) : null,
               salary_max: j.salary_max ? Number(j.salary_max) : null,
               salary_frequency: j.salary_frequency?.toLowerCase() || null,
@@ -375,7 +381,7 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
       'We are looking for a skilled software engineer...',
       'Acme Corp',
       'full-time',
-      'it',
+      'information-technology',
       'Lagos, Nigeria',
       '500000',
       '800000',
@@ -525,7 +531,7 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
                           <p><strong>job_type_code:</strong> full-time, part-time, contract, internship, freelance</p>
                           <p><strong>industry_code:</strong> it, finance, healthcare, education, energy, etc.</p>
                           <p><strong>currency_code:</strong> NGN, USD, GBP, EUR, etc.</p>
-                          <p><strong>salary_frequency:</strong> monthly, annually</p>
+                          <p><strong>salary_frequency:</strong> monthly or annually</p>
                         </div>
                       </div>
                     </div>
@@ -614,7 +620,7 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
                                     <span className="truncate block">{job.location || <span className="text-red-500 italic">Missing</span>}</span>
                                   </td>
                                   <td className="px-4 py-3 text-slate-600">
-                                    {job.job_type_code || <span className="text-red-500 italic">-</span>}
+                                    {job.type_code || <span className="text-red-500 italic">-</span>}
                                   </td>
                                   <td className="px-4 py-3 text-slate-600">
                                     {job.industry_code || <span className="text-red-500 italic">-</span>}

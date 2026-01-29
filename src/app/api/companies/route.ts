@@ -4,24 +4,26 @@ import { CompaniesService } from '../../../../server/supabase/services/companies
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const location = searchParams.get('location') || undefined;
-    const search = searchParams.get('search') || undefined;
-    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
-    const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
-    const order = searchParams.get('order') || undefined;
+    const params = request.nextUrl.searchParams;
+    const search = params.get('search') || undefined;
+    const country = params.get('country') || undefined;
+    const page_size = params.get('page_size') ? parseInt(params.get('page_size')!) : undefined;
+    const page = params.get('page') ? parseInt(params.get('page')!) : undefined;
+    const order_by = params.get('order_by') || undefined;
+    const order_asc = params.get('order_asc') || "1";
 
-    const includeStats = searchParams.get('includeStats') === 'true';
+    const includeStats = params.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
     const { list, pagination } = await companiesService.index({
-      location,
       search,
-      limit,
-      offset,
-      order
+      country,
+      page,
+      page_size,
+      order_by,
+      order_asc
     });
 
     // Optionally include stats
