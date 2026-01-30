@@ -35,15 +35,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // const supabase = getSupabaseClient();
   const supabase = useMemo(() => getSupabaseClient(), []);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (email: string) => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) throw error;
+      const response = await fetch(`/api/users/${email}`);
+      const { data } = await response.json();
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -58,9 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
 
-        console.log(session?.user);
         if (session?.user && session?.user?.user_metadata?.role) {
-          await fetchProfile(session.user.id);
+          await fetchProfile(session.user.email!);
         }
       } catch (error) {
         console.error('Error getting session:', error);
@@ -77,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null);
 
       if (session?.user && session?.user?.user_metadata?.role) {
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.user.email!);
       } else {
         setProfile(null);
       }

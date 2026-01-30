@@ -93,9 +93,9 @@ export interface User extends UserCreate {
   modified_at: Date | string;
 }
 
-export interface UserUpdate extends UserCreate {
+export interface UserUpdate {
   first_name: string;
-  last_name: string;
+  last_name?: string;
   location?: string;
   country: string;
   status_id?: number;

@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import {User as SupabaseUser, Session, PostgrestSingleResponse} from '@supabase/supabase-js';
 import { getSupabaseClient } from '../../server/supabase/client';
-import {Admin} from "@/types";
+import {Admin, Statuses} from "@/types";
 
 interface AdminAuthContextType {
   user: SupabaseUser | null;
@@ -29,22 +29,13 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchAdminProfile = async (userId: string): Promise<Admin | null> => {
+  const fetchAdminProfile = async (email: string): Promise<Admin | null> => {
     try {
-      const { data, error }: PostgrestSingleResponse<Admin> = await supabase
-        .from('admins')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const response = await fetch(`/api/admins/${email}`);
+      const { data } = await response.json();
 
-      if (error) {
-        console.log('User is not an admin:', error.message);
-        await signOut();
-        return null;
-      }
-
-      // Check if admin is active (status_id = 1)
-      if (data.status_id !== 1) {
+      if (data.status_id !== Statuses.Active) {
+        console.log("Susi")
         console.log('Admin account is not active');
         return null;
       }
@@ -52,6 +43,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       return data;
     } catch (error) {
       console.error('Error fetching admin profile:', error);
+      await signOut();
       return null;
     }
   };
@@ -69,9 +61,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         
         setSession(session);
         setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          const adminData = await fetchAdminProfile(session.user.id);
+
+        if (session?.user && session?.user?.user_metadata?.role) {
+          const adminData = await fetchAdminProfile(session.user.email!);
           if (mounted) {
             setAdmin(adminData);
             if (adminData) {
@@ -106,10 +98,10 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         setAdmin(null);
         setCachedAdmin(null);
         setLoading(false);
-      } else if (event === 'SIGNED_IN' && session?.user) {
+      } else if (event === 'SIGNED_IN' && session?.user && session?.user?.user_metadata?.role) {
         // Only fetch on explicit sign in events after initialization
         if (initializedLocal) {
-          const adminData = await fetchAdminProfile(session.user.id);
+          const adminData = await fetchAdminProfile(session.user.email!);
           if (mounted) {
             setAdmin(adminData);
             if (adminData) {
@@ -149,21 +141,16 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         throw new Error('Login failed');
       }
 
-      // Check if the user is an admin
-      const { data: adminData, error: adminError }: PostgrestSingleResponse<Admin> = await supabase
-        .from('admins')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
+      const response = await fetch(`/api/admins/${email}`);
+      const { data: adminData } = await response.json();
 
-      if (adminError || !adminData) {
-        // User is not an admin, sign them out
+      if (!adminData) {
         await supabase.auth.signOut();
         throw new Error('You do not have admin access');
       }
 
       // Check if admin is active
-      if (adminData.status_id !== 1) {
+      if (adminData.status_id !== Statuses.Active) {
         await supabase.auth.signOut();
         throw new Error('Your admin account is deactivated');
       }
@@ -209,7 +196,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const refreshAdmin = async () => {
     if (user) {
-      const adminData = await fetchAdminProfile(user.id);
+      const adminData = await fetchAdminProfile(user.email!);
       setAdmin(adminData);
       if (adminData) {
         setCachedAdmin(adminData);

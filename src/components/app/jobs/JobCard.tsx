@@ -1,6 +1,6 @@
 'use client';
 
-import { Job } from '@/types/jobs';
+import { Job } from '@/types';
 import { MapPin, Clock, Banknote, Building2, ArrowUpRight, Zap, Bookmark } from 'lucide-react';
 import { formatDate } from "@/lib/date";
 import { formatSalary } from "@/lib/utils";
@@ -11,7 +11,7 @@ interface JobCardProps {
 }
 
 export default function JobCard({ job, onViewJob }: JobCardProps) {
-  const salary = formatSalary(job.salary_min, job.salary_max, job.currency!.code);
+  const salary = job.salary_min && job.salary_max && formatSalary(job.salary_min, job.salary_max, job.currency!.code);
   const isNew = new Date(job.created_at).getTime() > Date.now() - 3 * 24 * 60 * 60 * 1000;
 
   const jobTypeConfig: Record<string, { bg: string; text: string; border: string }> = {
@@ -22,7 +22,7 @@ export default function JobCard({ job, onViewJob }: JobCardProps) {
     'freelance': { bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-100' },
   };
 
-  const typeStyle = jobTypeConfig[job.job_type!.code] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-100' };
+  const typeStyle = jobTypeConfig[job.type!.code] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-100' };
 
   const handleClick = () => {
     if (onViewJob) {
@@ -64,7 +64,7 @@ export default function JobCard({ job, onViewJob }: JobCardProps) {
 
           {/* Badges */}
           <div className="flex items-center gap-2">
-            {job.job_type?.code.includes('remote') && (
+            {job.type?.code.includes('remote') && (
               <span className="px-2.5 py-1 bg-[#E6F4F0] text-[#04724D] text-xs font-medium rounded-lg border border-[#04724D]/20">
                 Remote
               </span>
@@ -92,7 +92,7 @@ export default function JobCard({ job, onViewJob }: JobCardProps) {
         {/* Tags */}
         <div className="mt-4 flex flex-wrap gap-2">
           <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg border ${typeStyle.bg} ${typeStyle.text} ${typeStyle.border}`}>
-            {job.job_type?.name?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Full Time'}
+            {job.type?.name?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Full Time'}
           </span>
           {job.location && (
             <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 text-gray-600 text-xs font-medium rounded-lg border border-gray-100">

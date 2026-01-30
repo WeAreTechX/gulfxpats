@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, UserInsert, UserUpdate, UserWithRelations } from '@/types/supabase';
-import {QueryResponse, QueryStats, Entity, User, UserQuery} from "@/types";
+import { Database } from '@/types/supabase';
+import {QueryResponse, QueryStats, Entity, User, UserQuery, UserCreate, UserUpdate} from "@/types";
 
 export class UsersService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -8,21 +8,18 @@ export class UsersService {
   async index(options?: UserQuery): Promise<QueryResponse<User>> {
     let query = this.supabase
       .from('users')
-      .select(`
-        *,
-        status:statuses(*)
-      `, { count: 'exact' });
+      .select(`*, status:statuses(*)`, { count: 'exact' });
 
     // Apply filters
-    if (options?.status) query = query.eq('status.code', options.status);
+    if (options?.status_code) query = query.eq('status.code', options.status_code);
     if (options?.search) query = query.or(`first_name.ilike.%${options.search}%,last_name.ilike.%${options.search}%,email.ilike.%${options.search}%`);
 
     // Apply pagination
-    if (options?.limit) query = query.limit(options.limit);
-    if (options?.offset) query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+    if (options?.page_size) query = query.limit(options.page_size);
+    if (options?.page) query = query.range(options.page, options.page + (options.page_size || 10) - 1);
 
     // Order by created_at desc
-    query = query.order('created_at', { ascending: false });
+    query = query.order(options?.order_by || 'created_at' , { ascending: options && options.order_asc === '1' });
 
     const { data, error, count } = await query;
 
@@ -33,18 +30,15 @@ export class UsersService {
     };
   }
 
-  async getById(id: string): Promise<UserWithRelations | null> {
+  async show(id: string): Promise<User | null> {
     const { data, error } = await this.supabase
       .from('users')
-      .select(`
-        *,
-        status:statuses(*)
-      `)
-      .eq('id', id)
+      .select(`first_name, last_name, role, status_id, status:statuses(*)`)
+      .eq('email', id)
       .single();
 
     if (error) throw error;
-    return data as UserWithRelations;
+    return data as User;
   }
 
   async getByEmail(email: string): Promise<User | null> {
@@ -58,7 +52,7 @@ export class UsersService {
     return data;
   }
 
-  async create(user: UserInsert): Promise<User> {
+  async create(user: UserCreate): Promise<User> {
     const { data, error } = await this.supabase
       .from('users')
       .insert(user)
@@ -90,16 +84,12 @@ export class UsersService {
     if (error) throw error;
   }
 
-  async updateStatus(id: string, statusId: number): Promise<User> {
-    return this.update(id, { status_id: statusId });
-  }
-
   async getStats(): Promise<QueryStats> {
     const { data: statuses } = await this.supabase
       .from('statuses')
       .select('id, code');
 
-    const statusMap = new Map(statuses?.map((s: Status) => [s.code, s.id]) || []);
+    const statusMap = new Map(statuses?.map((s: Entity) => [s.code, s.id]) || []);
     const stats: QueryStats = {};
 
     const { count: total } = await this.supabase
