@@ -168,7 +168,7 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="py-20 border-t border-gray-100">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Jingu?</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose GulfXpats?</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">We&apos;re committed to helping you find the perfect opportunity with tools and features designed for your success.</p>
         </div>
         

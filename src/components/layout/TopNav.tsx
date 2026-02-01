@@ -93,7 +93,7 @@ export default function TopNav() {
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                  Jingu
+                  GulfXpats
                 </span>
               </Link>
             </div>

@@ -19,7 +19,7 @@ const getInitialFormData = (): JobCreate => ({
   type_id: undefined,
   company_id: '',
   company_name: '',
-  jobs_scrapings_id: undefined,
+  jobs_scrapings_id: '',
   industry_id: undefined,
   location: '',
   country: '',
@@ -196,7 +196,7 @@ export default function StoreSingleJobModal({
             >
               <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
                 {/* Header */}
-                <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 px-6 py-6 text-white">
+                <div className="relative bg-gradient-to-br from-teal-700 to-teal-800 px-6 py-6 text-white">
                   <button
                     onClick={onClose}
                     className="absolute right-4 top-4 p-2 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-colors"
@@ -232,7 +232,7 @@ export default function StoreSingleJobModal({
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Job Title <span className="text-red-500">*</span>
+                          Title <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -259,7 +259,7 @@ export default function StoreSingleJobModal({
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-slate-700 mb-1">
                             Company
@@ -278,6 +278,20 @@ export default function StoreSingleJobModal({
                               </option>
                             ))}
                           </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Company Name <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="company_name"
+                            value={formData.company_name}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder=""
+                          />
                         </div>
                       </div>
 

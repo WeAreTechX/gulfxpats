@@ -114,7 +114,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
             </div>
             {!sidebarCollapsed && (
               <span className="text-lg font-semibold text-white">
-                Jingu
+                GulfXpats
               </span>
             )}
           </Link>

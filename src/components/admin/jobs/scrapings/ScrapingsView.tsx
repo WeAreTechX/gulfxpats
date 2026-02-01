@@ -11,9 +11,8 @@ import JobsSourcesTable from '@/components/admin/jobs/sources/JobsSourcesTable';
 import StoreJobSourceModal from '@/components/admin/jobs/sources/StoreJobSourceModal';
 import {JobSource, QueryViewAction} from "@/types";
 
-export default function ScrapingsView({ refresh }: QueryViewAction) {
+export default function ScrapingsView({ refresh, onFetchAction }: QueryViewAction) {
   const [sources, setSources] = useState<JobSource[]>([]);
-  const [stats, setStats] = useState<{ total: number; active: number; inactive: number }>({ total: 0, active: 0, inactive: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +40,7 @@ export default function ScrapingsView({ refresh }: QueryViewAction) {
       if (result.success) {
         const { list, stats, pagination } = result.data;
         setSources(list || []);
-        setStats(stats || { total: 0, active: 0, inactive: 0 });
+        onFetchAction({ total_scrapings: stats.total })
         setPagination(pagination || { count: 1, current_page: 1, total_count: 1, total_pages: 1 });
       } else {
         setError('Failed to fetch sources');
@@ -105,43 +104,6 @@ export default function ScrapingsView({ refresh }: QueryViewAction) {
             <Plus className="h-5 w-5" />
             Add Source
           </button>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#E6F4F0] rounded-lg">
-              <Database className="h-5 w-5 text-[#04724D]" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Sources</p>
-              <p className="text-xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 rounded-lg">
-              <RefreshCw className="h-5 w-5 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Active Sources</p>
-              <p className="text-xl font-bold text-gray-900">{stats.active}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Download className="h-5 w-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Fetches</p>
-              <p className="text-xl font-bold text-gray-900">{sources.length}</p>
-            </div>
-          </div>
         </div>
       </div>
 

@@ -72,6 +72,7 @@ export default function CompaniesTable(props: CompaniesTableProps) {
       headers={headers}
       rows={rows}
       pagination={pagination}
+      hidePagination={true}
       onPageChange={onPageChange}
       dropdownOptions={dropdownOptions}
       onOptionClick={handleOptionClick}

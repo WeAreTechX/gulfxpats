@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Plus,
   Users,
   CheckCircle,
   Clock,
   Calendar,
 } from 'lucide-react';
-import UsersTable, { User } from '@/components/admin/users/UsersTable';
-import { Pagination } from '@/types';
+import UsersTable from '@/components/admin/users/UsersTable';
+import { QueryPagination, User } from '@/types';
 
 interface UserStats {
   total: number;
@@ -24,7 +23,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState<Pagination>({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
+  const [pagination, setPagination] = useState<QueryPagination>({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
 
   const fetchUsers = async () => {
     try {
@@ -34,30 +33,10 @@ export default function AdminUsersPage() {
       const response = await fetch('/api/users?includeStats=true');
       const data = await response.json();
 
-      if (data.success) {
-        const { list, stats, pagination } = data.data || {};
-        setUsers(list || data.users || []);
-        if (stats) {
-          setStats(stats);
-        } else {
-          // Calculate stats from users list
-          const userList = list || data.users || [];
-          const now = new Date();
-          setStats({
-            total: userList.length,
-            verified: userList.filter((u: User) => u.status?.code === 'verified').length,
-            unverified: userList.filter((u: User) => u.status?.code === 'unverified').length,
-            newThisMonth: userList.filter((u: User) => {
-              const createdDate = new Date(u.created_at);
-              return createdDate.getMonth() === now.getMonth() &&
-                     createdDate.getFullYear() === now.getFullYear();
-            }).length,
-          });
-        }
-        setPagination(pagination || { count: 1, current_page: 1, total_count: userList?.length || 0, total_pages: 1 });
-      } else {
-        setError('Failed to fetch users');
-      }
+      const { list, stats, pagination } = data.data || {};
+      setUsers(list || data.users || []);
+      setStats(stats || { total: 0, verified: 0, unverified: 0, newThisMonth: 0 });
+      setPagination(pagination || { count: 1, current_page: 1, total_count: 1, total_pages: 1 });
     } catch (err) {
       setError('Error loading users');
       console.error('Error fetching users:', err);
@@ -101,12 +80,6 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-bold text-gray-900">Users Management</h1>
           <p className="text-gray-600 mt-1">Manage and view all users on the platform</p>
         </div>
-        <button
-          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
-        >
-          <Plus className="h-5 w-5" />
-          Add User
-        </button>
       </div>
 
       {/* Stats */}
@@ -151,7 +124,7 @@ export default function AdminUsersPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600">New This Month</p>
-              <p className="text-xl font-bold text-gray-900">{stats.newThisMonth}</p>
+              <p className="text-xl font-bold text-gray-900">0</p>
             </div>
           </div>
         </div>

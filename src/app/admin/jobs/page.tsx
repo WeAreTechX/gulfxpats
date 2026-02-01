@@ -22,7 +22,7 @@ export default function AdminSourcesPage() {
   const [activeTab, setActiveTab] = useState<TabType>('listings');
   const [refresh, setRefresh] = useState(false);
 
-  const [stats, setStats] = useState<QueryStats>({ total_jobs: 0, published_jobs: 0, unpublished_jobs: 0, archived_jobs: 0, total_sources: 0 });
+  const [stats, setStats] = useState<QueryStats>({ total_jobs: 0, published_jobs: 0, unpublished_jobs: 0, archived_jobs: 0, total_sources: 0, total_scrapings: 0 });
 
   const tabs = [
     { id: 'listings' as TabType, label: 'Listings' },
@@ -129,7 +129,7 @@ export default function AdminSourcesPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Fetches</p>
-                <p className="text-xl font-bold text-gray-900">0</p>
+                <p className="text-xl font-bold text-gray-900">{stats?.total_scrapings}</p>
               </div>
             </div>
           </div>

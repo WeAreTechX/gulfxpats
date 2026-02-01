@@ -13,7 +13,7 @@ export default function Footer() {
               <div className="w-10 h-10 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-[#04724D]/20 group-hover:shadow-[#04724D]/30 transition-shadow">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">Jingu</span>
+              <span className="text-2xl font-bold text-gray-900">GulfXpats</span>
             </Link>
             <p className="text-gray-600 leading-relaxed mb-6 max-w-sm">
               Discover amazing job opportunities with top companies. Your next career move starts here. We connect talent with opportunity.
@@ -124,9 +124,9 @@ export default function Footer() {
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Contact</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="mailto:hello@jingu.com" className="flex items-center gap-2 text-gray-600 hover:text-[#04724D] transition-colors">
+                  <a href="mailto:hello@gulfxpats.com" className="flex items-center gap-2 text-gray-600 hover:text-[#04724D] transition-colors">
                     <Mail className="h-4 w-4" />
-                    <span>hello@jingu.com</span>
+                    <span>hello@gulfxpats.com</span>
                   </a>
                 </li>
                 <li>
@@ -175,7 +175,7 @@ export default function Footer() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} Jingu. All rights reserved.
+              &copy; {new Date().getFullYear()} GulfXpats. All rights reserved.
             </p>
             <p className="text-sm text-gray-500">
               Made with <span className="text-red-500">♥</span> by{' '}

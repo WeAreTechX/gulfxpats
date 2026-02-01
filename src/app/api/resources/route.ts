@@ -4,41 +4,36 @@ import { ResourcesService } from '../../../../server/supabase/services/resources
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const resourceTypeId = searchParams.get('resourceTypeId') || undefined;
-    const status = searchParams.get('status') || undefined;
-    const search = searchParams.get('search') || undefined;
-    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
-    const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
+    const params = request.nextUrl.searchParams;
+    const type_id = params.get('type_id') || undefined;
+    const search = params.get('search') || undefined;
+    const page = params.get('page') ? parseInt(params.get('page')!) : undefined;
+    const page_size = params.get('page_size') ? parseInt(params.get('page_size')!) : undefined;
+    const order_by = params.get('order_by') || undefined;
+    const order_asc = params.get('order_asc') || undefined;
+
+    const includeStats = params.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
     const resourcesService = new ResourcesService(supabase);
-    
-    const { data: resources, count } = await resourcesService.getAll({
-      resourceTypeId,
-      status,
+
+    const { list, pagination } = await resourcesService.index({
+      type_id,
       search,
-      limit,
-      offset,
+      page,
+      page_size,
+      order_by,
+      order_asc
     });
 
-    // Transform resources to match the existing frontend format
-    const transformedResources = resources.map(resource => ({
-      id: resource.id,
-      title: resource.title,
-      type: resource.resource_type?.code || 'article',
-      url: resource.url,
-      description: resource.description || '',
-      duration: '',
-      author: '',
-      publishedAt: resource.created_at,
-      tags: [],
-    }));
+    let stats = null;
+    if (includeStats) {
+      stats = await resourcesService.getStats();
+    }
 
     return NextResponse.json({
       success: true,
-      resources: transformedResources,
-      count: count || transformedResources.length,
+      data: { list, pagination, ...(stats && { stats }) },
     });
   } catch (error) {
     console.error('Error fetching resources:', error);

@@ -15,22 +15,22 @@ const figtree = Figtree({
 
 export const metadata: Metadata = {
   title: {
-    default: "Jingu - Find Your Dream Job",
-    template: "%s | Jingu",
+    default: "GulfXpats - Find Your Dream Job",
+    template: "%s | GulfXpats",
   },
   description: "Discover amazing job opportunities with top companies. Search, filter, and apply to jobs that match your skills and interests.",
   keywords: ["jobs", "careers", "employment", "job search", "companies", "hiring"],
-  authors: [{ name: "Jingu Team" }],
+  authors: [{ name: "GulfXpats Team" }],
   openGraph: {
-    title: "Jingu - Find Your Dream Job",
+    title: "GulfXpats - Find Your Dream Job",
     description: "Discover amazing job opportunities with top companies.",
     type: "website",
     locale: "en_US",
-    siteName: "Jingu",
+    siteName: "GulfXpats",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jingu - Find Your Dream Job",
+    title: "GulfXpats - Find Your Dream Job",
     description: "Discover amazing job opportunities with top companies.",
   },
   robots: {

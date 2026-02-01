@@ -7,7 +7,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ReactNode, useMemo } from "react";
 import {ChevronDown, ChevronLeft, ChevronRight, Database, Loader2, MoreVertical} from "lucide-react";
-import {Pagination} from "@/types";
+import {QueryPagination} from "@/types";
 
 interface CustomDataTableProps {
   loading?: boolean;
@@ -19,7 +19,7 @@ interface CustomDataTableProps {
   dropdownOptionsTrigger?: 'icon' | 'text';
   dropdownOptions?: { label: string; action: string }[];
   onOptionClick?: (action: string, rowIndex: number) => void;
-  pagination: Pagination | undefined;
+  pagination: QueryPagination | undefined;
   hidePagination?: boolean,
   onPageChange?: (page: number) => void;
   onRetryAction: () => void;

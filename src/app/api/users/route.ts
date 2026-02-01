@@ -4,21 +4,26 @@ import { UsersService } from '../../../../server/supabase/services/users';
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const status = searchParams.get('status') || undefined;
-    const includeStats = searchParams.get('includeStats') === 'true';
-    const search = searchParams.get('search') || undefined;
-    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
-    const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
+    const params = request.nextUrl.searchParams;
+    const search = params.get('search') || undefined;
+    const status_code = params.get('status_code') || undefined;
+    const page = params.get('page') ? parseInt(params.get('page')!) : undefined;
+    const page_size = params.get('page_size') ? parseInt(params.get('page_size')!) : undefined;
+    const order_by = params.get('order_by') || undefined;
+    const order_asc = params.get('order_asc') || undefined;
+
+    const includeStats = params.get('includeStats') === 'true';
 
     const supabase = await createServerSupabaseClient();
     const usersService = new UsersService(supabase);
 
     const { list, pagination } = await usersService.index({
-      status,
       search,
-      limit,
-      offset,
+      status_code,
+      page,
+      page_size,
+      order_by,
+      order_asc
     });
 
     let stats = null;

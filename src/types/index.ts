@@ -87,8 +87,10 @@ export interface UserCreate {
 
 export interface User extends UserCreate {
   id: string;
-  user: string;
+  location: string;
+  country: string;
   status_id: number;
+  status: Entity;
   created_at: Date | string;
   modified_at: Date | string;
 }

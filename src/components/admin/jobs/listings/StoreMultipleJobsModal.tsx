@@ -372,8 +372,8 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
     setStep('complete');
   };
 
-  const headersRequired = ['title', 'description', 'company_name', 'job_type_code', 'industry_code', 'location', 'currency_code', 'apply_url'];
-  const headers = ['title', 'description', 'company_name', 'job_type_code', 'industry_code', 'location', 'salary_min', 'salary_max', 'salary_frequency', 'currency_code', 'apply_url'];
+  const headersRequired = ['title', 'description', 'company_name', 'type_code', 'industry_code', 'location', 'currency_code', 'apply_url'];
+  const headers = ['title', 'description', 'company_name', 'type_code', 'industry_code', 'location', 'salary_min', 'salary_max', 'salary_frequency', 'currency_code', 'apply_url'];
   
   const downloadTemplate = () => {
     const sampleRow = [
@@ -528,8 +528,8 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
                         </div>
                         <p className="text-xs text-slate-500 mt-3">* Required fields are in red</p>
                         <div className="mt-3 text-xs text-slate-600 space-y-1">
-                          <p><strong>job_type_code:</strong> full-time, part-time, contract, internship, freelance</p>
-                          <p><strong>industry_code:</strong> it, finance, healthcare, education, energy, etc.</p>
+                          <p><strong>type_code:</strong> full-time, part-time, contract, internship, freelance</p>
+                          <p><strong>industry_code:</strong> information-technology, finance, healthcare, education, energy, etc.</p>
                           <p><strong>currency_code:</strong> NGN, USD, GBP, EUR, etc.</p>
                           <p><strong>salary_frequency:</strong> monthly or annually</p>
                         </div>

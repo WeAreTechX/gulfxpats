@@ -79,7 +79,7 @@ export default function AuthModal() {
                     <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                       <Sparkles className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-xl font-bold">Jingu</span>
+                    <span className="text-xl font-bold">GulfXpats</span>
                   </div>
 
                   <Dialog.Title as="h3" className="text-2xl font-bold">

@@ -34,7 +34,7 @@ export default function CompanyPreviewModal({ isOpen, onClose, company }: Compan
       try {
         await navigator.share({
           title: company.name,
-          text: `Check out ${company.name} on Jingu`,
+          text: `Check out ${company.name} on GulfXpats`,
           url: window.location.origin + `/companies/${company.id}`,
         });
       } catch (err) {

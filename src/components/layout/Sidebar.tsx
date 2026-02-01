@@ -53,7 +53,7 @@ export default function Sidebar() {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-black">Jingu</h1>
+            <h1 className="text-2xl font-bold text-black">GulfXpats</h1>
           </div>
 
           {/* Navigation */}
@@ -82,7 +82,7 @@ export default function Sidebar() {
           {/* Footer */}
           <div className="p-4 border-t border-gray-200">
             <p className="text-xs text-gray-500 text-center">
-              © 2024 Jingu. All rights reserved.
+              © 2024 GulfXpats. All rights reserved.
             </p>
           </div>
         </div>
