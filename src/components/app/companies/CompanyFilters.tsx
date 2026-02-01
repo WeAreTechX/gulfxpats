@@ -22,7 +22,7 @@ export default function CompanyFilters({
   className 
 }: CompanyFiltersProps) {
   const [expandedSections, setExpandedSections] = useState({
-    location: true,
+    location: false,
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -127,6 +127,7 @@ export default function CompanyFilters({
                 <label key={location} className="flex items-center gap-3 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors">
                   <div className="relative">
                     <input
+                      disabled={!availableLocations.length}
                       type="checkbox"
                       checked={filters.locations.includes(location)}
                       onChange={() => handleLocationToggle(location)}

@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
 
-        if (session?.user && session?.user?.user_metadata?.role) {
+        if (session?.user?.user_metadata?.role && session.user.user_metadata.role === 'user') {
           await fetchProfile(session.user.email!);
         }
       } catch (error) {
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
 
-      if (session?.user && session?.user?.user_metadata?.role) {
+      if (session?.user?.user_metadata?.role && session.user.user_metadata.role === 'user') {
         await fetchProfile(session.user.email!);
       } else {
         setProfile(null);

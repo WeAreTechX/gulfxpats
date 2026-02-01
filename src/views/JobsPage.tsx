@@ -189,7 +189,7 @@ export default function JobsPage() {
     if (isInitialized) {
       fetchJobs(!loading);
     }
-  }, [isInitialized, debouncedSearch, filters, jobTypes, fetchJobs, loading]);
+  }, [isInitialized, debouncedSearch, filters]);
 
   // Handle filter changes
   const handleFiltersChange = (newFilters: Filters) => {

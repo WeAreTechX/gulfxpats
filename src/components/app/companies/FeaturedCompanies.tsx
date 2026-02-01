@@ -17,7 +17,7 @@ export default function FeaturedCompanies() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const companiesRes = await fetch('/api/companies?limit=4&order_by=rank&order_dir=asc');
+        const companiesRes = await fetch('/api/companies?page_size=4&order_by=rank&order_dir=asc');
         const companiesData = await companiesRes.json();
         if (companiesData.success) setCompanies(companiesData.data.list);
       } catch (error) {

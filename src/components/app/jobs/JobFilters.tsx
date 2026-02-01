@@ -30,9 +30,9 @@ const SALARY_RANGES = [
 export default function JobFilters(props: JobFiltersProps) {
   const { filters, onFiltersChange, jobTypes, availableLocations, className } = props;
   const [expandedSections, setExpandedSections] = useState({
-    jobType: true,
-    location: true,
-    salary: true,
+    jobType: false,
+    location: false,
+    salary: false,
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -118,6 +118,7 @@ export default function JobFilters(props: JobFiltersProps) {
           </div>
           <div className="relative">
             <input
+              disabled={true}
               type="checkbox"
               checked={filters.remote}
               onChange={(e) => onFiltersChange({ ...filters, remote: e.target.checked })}
@@ -155,6 +156,7 @@ export default function JobFilters(props: JobFiltersProps) {
               <label key={type.id} className="flex items-center gap-3 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="relative">
                   <input
+                    disabled={true}
                     type="checkbox"
                     checked={filters.jobTypes.includes(type.code)}
                     onChange={() => handleJobTypeToggle(type.code)}
@@ -200,6 +202,7 @@ export default function JobFilters(props: JobFiltersProps) {
                 <label key={location} className="flex items-center gap-3 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors">
                   <div className="relative">
                     <input
+                      disabled={true}
                       type="checkbox"
                       checked={filters.locations.includes(location)}
                       onChange={() => handleLocationToggle(location)}
@@ -247,6 +250,7 @@ export default function JobFilters(props: JobFiltersProps) {
               <label key={range.label} className="flex items-center gap-3 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="relative">
                   <input
+                    disabled={true}
                     type="radio"
                     name="salary"
                     checked={filters.salaryMin === range.min && filters.salaryMax === range.max}

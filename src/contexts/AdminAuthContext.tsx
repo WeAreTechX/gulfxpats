@@ -16,6 +16,7 @@ interface AdminAuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null; admin: Admin | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: Error | null }>;
   refreshAdmin: () => Promise<void>;
 }
 
@@ -194,6 +195,19 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updatePassword = async (newPassword: string): Promise<{ error: Error | null }> => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) throw error;
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
   const refreshAdmin = async () => {
     if (user) {
       const adminData = await fetchAdminProfile(user.email!);
@@ -222,6 +236,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signOut,
         resetPassword,
+        updatePassword,
         refreshAdmin,
       }}
     >

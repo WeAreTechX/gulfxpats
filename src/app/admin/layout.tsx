@@ -224,9 +224,12 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#04724D] rounded-full"></span>
               </button>
-              <button className="p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+              <Link 
+                href="/admin/profile"
+                className="p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              >
                 <Settings className="h-5 w-5" />
-              </button>
+              </Link>
               
               {/* Mobile User Avatar */}
               <div className="lg:hidden w-9 h-9 bg-gradient-to-br from-[#04724D] to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold">

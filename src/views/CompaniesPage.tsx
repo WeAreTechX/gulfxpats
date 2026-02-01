@@ -154,7 +154,7 @@ export default function CompaniesPage() {
     if (!loading) {
       fetchCompanies(false);
     }
-  }, [isInitialized, debouncedSearch, filters, loading, fetchCompanies]);
+  }, [isInitialized, debouncedSearch, filters]);
 
   // Handle filter changes
   const handleFiltersChange = (newFilters: Filters) => {

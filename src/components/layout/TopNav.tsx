@@ -1,21 +1,21 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import {usePathname} from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { 
-  Home, 
-  Briefcase, 
-  Building2, 
-  BookOpen, 
-  Menu, 
+import {
+  Home,
+  Briefcase,
+  Building2,
+  BookOpen,
+  Menu,
   X,
   LogIn,
   UserPlus,
   LogOut,
   User,
   ChevronDown,
-  Sparkles
+  Sparkles, LayoutDashboard
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -66,8 +66,8 @@ export default function TopNav() {
     if (profile) {
       return profile.first_name;
     }
-    if (user?.email) {
-      return user.email.split('@')[0];
+    if (user?.email && user?.user_metadata?.first_name) {
+      return user?.user_metadata?.first_name;
     }
     return 'User';
   };
@@ -151,14 +151,33 @@ export default function TopNav() {
                         <p className="text-sm font-medium text-gray-900">{getUserDisplayName()}</p>
                         <p className="text-xs text-gray-500">{user.email}</p>
                       </div>
-                      <Link
-                        href="/profile"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        <User className="h-4 w-4 mr-3 text-gray-400" />
-                        Profile
-                      </Link>
+                      {
+                        user && user.user_metadata && user.user_metadata.role === 'user' && (
+                          <Link
+                            href="/profile"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <User className="h-4 w-4 mr-3 text-gray-400" />
+                            Profile
+                          </Link>
+                        )
+                      }
+
+                      {
+                        user && user.user_metadata && user.user_metadata.role.includes('admin') && (
+                          <Link
+                            href="/admin/overview"
+                            target={"_blank"}
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <LayoutDashboard className="h-4 w-4 mr-3 text-gray-400" />
+                            Dashboard
+                          </Link>
+                        )
+                      }
+
                       <hr className="my-1 border-gray-100" />
                       <button
                         onClick={handleSignOut}
