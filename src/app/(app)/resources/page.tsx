@@ -34,7 +34,7 @@ const DEFAULT_RESOURCE_TYPES = [
 
 export default function ResourcesPage() {
   const [resources, setResources] = useState<Resource[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
@@ -58,8 +58,6 @@ export default function ResourcesPage() {
         setLoading(false);
       }
     };
-
-    fetchResources();
   }, []);
 
   const filteredResources = useMemo(() => {
