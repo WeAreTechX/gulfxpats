@@ -1,13 +1,12 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, Status, JobType, JobIndustry, ResourceType, Currency, Source } from '@/types/supabase';
-import {Job} from "@/types/jobs";
-import {Company} from "@/types/companies";
+import { Database } from '@/types/supabase';
+import { Entity, Job, JobSource, Currency, Company} from "@/types";
 
 export class LookupsService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
   // Statuses
-  async getStatuses(): Promise<Status[]> {
+  async getStatuses(): Promise<Entity[]> {
     const { data, error } = await this.supabase
       .from('statuses')
       .select('*')
@@ -17,7 +16,7 @@ export class LookupsService {
     return data || [];
   }
 
-  async getStatusByCode(code: string): Promise<Status | null> {
+  async getStatusByCode(code: string): Promise<Entity | null> {
     const { data, error } = await this.supabase
       .from('statuses')
       .select('*')
@@ -29,7 +28,7 @@ export class LookupsService {
   }
 
   // Job Types
-  async getJobTypes(): Promise<JobType[]> {
+  async getJobTypes(): Promise<Entity[]> {
     const { data, error } = await this.supabase
       .from('job_types')
       .select('*')
@@ -39,7 +38,7 @@ export class LookupsService {
     return data || [];
   }
 
-  async getJobTypeByCode(code: string): Promise<JobType | null> {
+  async getJobTypeByCode(code: string): Promise<Entity | null> {
     const { data, error } = await this.supabase
       .from('job_types')
       .select('*')
@@ -51,7 +50,7 @@ export class LookupsService {
   }
 
   // Job Industries
-  async getIndustries(): Promise<JobIndustry[]> {
+  async getIndustries(): Promise<Entity[]> {
     const { data, error } = await this.supabase
       .from('industries')
       .select('*')
@@ -61,7 +60,7 @@ export class LookupsService {
     return data || [];
   }
 
-  async getIndustryByCode(code: string): Promise<JobIndustry | null> {
+  async getIndustryByCode(code: string): Promise<Entity | null> {
     const { data, error } = await this.supabase
       .from('industries')
       .select('*')
@@ -73,7 +72,7 @@ export class LookupsService {
   }
 
   // Resource Types
-  async getResourceTypes(): Promise<ResourceType[]> {
+  async getResourceTypes(): Promise<Entity[]> {
     const { data, error } = await this.supabase
       .from('resource_types')
       .select('*')
@@ -83,7 +82,7 @@ export class LookupsService {
     return data || [];
   }
 
-  async getResourceTypeByCode(code: string): Promise<ResourceType | null> {
+  async getResourceTypeByCode(code: string): Promise<Entity | null> {
     const { data, error } = await this.supabase
       .from('resource_types')
       .select('*')
@@ -143,7 +142,7 @@ export class LookupsService {
   }
 
   // Sources
-  async getJobSources(): Promise<Source[]> {
+  async getJobSources(): Promise<JobSource[]> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .select('*')
@@ -154,7 +153,7 @@ export class LookupsService {
   }
 
   // Companies
-  async getCompanies(): Promise<Source[]> {
+  async getCompanies(): Promise<JobSource[]> {
     const { data, error } = await this.supabase
       .from('companies')
       .select('*')
@@ -164,7 +163,7 @@ export class LookupsService {
     return data || [];
   }
 
-  async getJobsSourceByCode(code: string): Promise<Source | null> {
+  async getJobsSourceByCode(code: string): Promise<JobSource | null> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .select('*')
@@ -175,7 +174,7 @@ export class LookupsService {
     return data;
   }
 
-  async getJobsSourceById(id: number): Promise<Source | null> {
+  async getJobsSourceById(id: number): Promise<JobSource | null> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .select('*')

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import CompaniesPage from '@/views/CompaniesPage';
+import {Suspense} from "react";
 
 export const metadata: Metadata = {
   title: 'Companies - GulfXpats',
@@ -18,5 +19,9 @@ export const metadata: Metadata = {
 };
 
 export default function Companies() {
-  return <CompaniesPage />;
+  return (
+    <Suspense>
+      <CompaniesPage />
+    </Suspense>
+  );
 }

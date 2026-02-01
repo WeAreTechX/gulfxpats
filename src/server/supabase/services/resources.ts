@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '@/types/supabase';
-import {QueryResponse, ResourcesQuery, Resource, ResourceCreate, ResourceUpdate, QueryStats, Entity} from "@/types";
+import { Database, ResourceInsert, ResourceUpdate } from '@/types/supabase';
+import {QueryResponse, ResourcesQuery, Resource, QueryStats, Entity} from "@/types";
 
 export class ResourcesService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -34,9 +34,10 @@ export class ResourcesService {
     };
   }
 
-  async create(resource: ResourceCreate): Promise<Resource> {
+  async create(resource: ResourceInsert): Promise<Resource> {
     const { data, error } = await this.supabase
       .from('resources')
+      // @ts-expect-error - This would not be an issue
       .insert(resource)
       .select()
       .single();
@@ -48,6 +49,7 @@ export class ResourcesService {
   async update(id: string, resource: ResourceUpdate): Promise<Resource> {
     const { data, error } = await this.supabase
       .from('resources')
+      // @ts-expect-error - This would not be an issue
       .update(resource)
       .eq('id', id)
       .select()

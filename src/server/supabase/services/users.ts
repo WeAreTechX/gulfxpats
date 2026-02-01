@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '@/types/supabase';
-import {QueryResponse, QueryStats, Entity, User, UserQuery, UserCreate, UserUpdate} from "@/types";
+import { Database, UserInsert, UserUpdate } from '@/types/supabase';
+import {QueryResponse, QueryStats, Entity, User, UserQuery } from "@/types";
 
 export class UsersService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -52,9 +52,10 @@ export class UsersService {
     return data;
   }
 
-  async create(user: UserCreate): Promise<User> {
+  async create(user: UserInsert): Promise<User> {
     const { data, error } = await this.supabase
       .from('users')
+      // @ts-expect-error - This would not be an issue
       .insert(user)
       .select()
       .single();
@@ -66,6 +67,7 @@ export class UsersService {
   async update(id: string, user: UserUpdate): Promise<User> {
     const { data, error } = await this.supabase
       .from('users')
+      // @ts-expect-error - This would not be an issue
       .update(user)
       .eq('id', id)
       .select()

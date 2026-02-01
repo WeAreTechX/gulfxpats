@@ -1,11 +1,11 @@
 import {
   Entity, EntityCreate, EntityUpdate,
-  User, UserCreate, UserUpdate,
+  User, UserCreate, UserUpdate as UserUpdateRef,
   Admin, AdminUpdate, Currency,
-  Resource, ResourceCreate, ResourceUpdate,
-  JobSourceCreate, JobSource,
-  Company, CompanyCreate, CompanyUpdate, CompanyJobSource, CompanyJobSourceCreate,
-  JobsScrapings, JobsScrapingsCreate, Job, JobCreate, JobUpdate
+  Resource, ResourceCreate, ResourceUpdate as ResourceUpdateRef,
+  JobSourceCreate, JobSource, JobSourceUpdate as JobSourceUpdateRef,
+  Company, CompanyCreate, CompanyUpdate as CompanyUpdateRef, CompanyJobSource, CompanyJobSourceCreate,
+  JobsScrapings, JobsScrapingsCreate, Job, JobCreate, JobUpdate as JobUpdateRef
 } from "@/types/index";
 
 export interface Database {
@@ -24,7 +24,7 @@ export interface Database {
       users: {
         Row: User;
         Insert: UserCreate;
-        Update: UserUpdate;
+        Update: UserUpdateRef;
       };
       admins: {
         Row: Admin;
@@ -53,17 +53,17 @@ export interface Database {
       resources: {
         Row: Resource;
         Insert: ResourceCreate;
-        Update: ResourceUpdate;
+        Update: ResourceUpdateRef;
       };
       jobs_sources: {
         Row: JobSource;
         Insert: JobSourceCreate;
-        Update: JobSourceCreate;
+        Update: JobSourceUpdateRef;
       };
       companies: {
         Row: Company;
         Insert: CompanyCreate;
-        Update: CompanyUpdate;
+        Update: CompanyUpdateRef;
       };
       companies_jobs_sources: {
         Row: CompanyJobSource;
@@ -82,7 +82,7 @@ export interface Database {
       jobs: {
         Row: Job;
         Insert: JobCreate;
-        Update: JobUpdate;
+        Update: JobUpdateRef;
       };
 
     };
@@ -106,32 +106,32 @@ export interface Database {
 //
 // // Insert types
 // export type StatusInsert = Database['public']['Tables']['statuses']['Insert'];
-// export type UserInsert = Database['public']['Tables']['users']['Insert'];
+export type UserInsert = Database['public']['Tables']['users']['Insert'];
 // export type AdminInsert = Database['public']['Tables']['admins']['Insert'];
-// export type CompanyInsert = Database['public']['Tables']['companies']['Insert'];
+export type CompanyInsert = Database['public']['Tables']['companies']['Insert'];
 // export type JobTypeInsert = Database['public']['Tables']['job_types']['Insert'];
 // export type JobIndustryInsert = Database['public']['Tables']['job_industries']['Insert'];
 // export type CurrencyInsert = Database['public']['Tables']['currencies']['Insert'];
-// export type JobInsert = Database['public']['Tables']['jobs']['Insert'];
+export type JobInsert = Database['public']['Tables']['jobs']['Insert'];
 // export type ResourceTypeInsert = Database['public']['Tables']['resource_types']['Insert'];
-// export type ResourceInsert = Database['public']['Tables']['resources']['Insert'];
+export type ResourceInsert = Database['public']['Tables']['resources']['Insert'];
 // export type LocaleInsert = Database['public']['Tables']['locales']['Insert'];
-// export type SourceInsert = Database['public']['Tables']['sources']['Insert'];
+export type JobSourceInsert = Database['public']['Tables']['jobs_sources']['Insert'];
 // export type CompanySourceInsert = Database['public']['Tables']['companies_sources']['Insert'];
 //
 // // Update types
 // export type StatusUpdate = Database['public']['Tables']['statuses']['Update'];
-// export type UserUpdate = Database['public']['Tables']['users']['Update'];
+export type UserUpdate = Database['public']['Tables']['users']['Update'];
 // export type AdminUpdate = Database['public']['Tables']['admins']['Update'];
-// export type CompanyUpdate = Database['public']['Tables']['companies']['Update'];
+export type CompanyUpdate = Database['public']['Tables']['companies']['Update'];
 // export type JobTypeUpdate = Database['public']['Tables']['job_types']['Update'];
 // export type JobIndustryUpdate = Database['public']['Tables']['job_industries']['Update'];
 // export type CurrencyUpdate = Database['public']['Tables']['currencies']['Update'];
-// export type JobUpdate = Database['public']['Tables']['jobs']['Update'];
+export type JobUpdate = Database['public']['Tables']['jobs']['Update'];
 // export type ResourceTypeUpdate = Database['public']['Tables']['resource_types']['Update'];
-// export type ResourceUpdate = Database['public']['Tables']['resources']['Update'];
+export type ResourceUpdate = Database['public']['Tables']['resources']['Update'];
 // export type LocaleUpdate = Database['public']['Tables']['locales']['Update'];
-// export type SourceUpdate = Database['public']['Tables']['sources']['Update'];
+export type JobSourceUpdate = Database['public']['Tables']['jobs_sources']['Update'];
 // export type CompanySourceUpdate = Database['public']['Tables']['companies_sources']['Update'];
 //
 // // Extended types with relations

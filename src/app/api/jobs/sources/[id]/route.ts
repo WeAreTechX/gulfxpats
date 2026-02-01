@@ -55,12 +55,10 @@ export async function PUT(
       }
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
     const source = await jobsSourcesService.update(parseInt(id), {
       name: body.name,
       code: body.code,
-      base_url: body.base_url,
-      created_by_id: session?.user.id || undefined
+      base_url: body.base_url
     });
 
     return NextResponse.json({

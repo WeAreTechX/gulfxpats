@@ -251,8 +251,7 @@ export interface JobSource extends Entity {
 }
 
 export interface JobSourceUpdate extends EntityCreate {
-  base_url?: string;
-  created_by_id?: string;
+  base_url: string;
 }
 
 /**

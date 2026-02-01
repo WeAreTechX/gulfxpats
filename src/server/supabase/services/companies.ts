@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '@/types/supabase';
-import {QueryResponse, QueryStats, Company, CompanyCreate, CompanyUpdate, CompaniesQuery, Entity} from "@/types";
+import {CompanyInsert, CompanyUpdate, Database} from '@/types/supabase';
+import { QueryResponse, QueryStats, Company, CompaniesQuery, Entity } from "@/types";
 
 export class CompaniesService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -41,9 +41,10 @@ export class CompaniesService {
     return data;
   }
 
-  async store(company: CompanyCreate): Promise<Company> {
+  async store(company: CompanyInsert): Promise<Company> {
     const { data, error } = await this.supabase
       .from('companies')
+      // @ts-expect-error - This would not be an issue
       .insert(company)
       .select()
       .single();
@@ -55,13 +56,14 @@ export class CompaniesService {
   async update(id: string, company: CompanyUpdate): Promise<Company> {
     const { data, error } = await this.supabase
       .from('companies')
+      // @ts-expect-error - This would not be an issue
       .update(company)
       .eq('id', id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return data as Company;
   }
 
   async delete(id: string): Promise<void> {

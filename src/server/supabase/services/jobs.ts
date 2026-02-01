@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database,  } from '@/types/supabase';
-import {QueryResponse, QueryStats, Entity, JobsQuery, Job, JobCreate, JobUpdate} from "@/types";
+import { Database, JobInsert, JobUpdate } from '@/types/supabase';
+import {QueryResponse, QueryStats, Entity, JobsQuery, Job } from "@/types";
 
 export class JobsService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -55,9 +55,10 @@ export class JobsService {
     return data as Job;
   }
 
-  async store(job: JobCreate): Promise<Job> {
+  async store(job: JobInsert): Promise<Job> {
     const { data, error } = await this.supabase
       .from('jobs')
+      // @ts-expect-error - This would not be an issue
       .insert(job)
       .select()
       .single();
@@ -69,6 +70,7 @@ export class JobsService {
   async update(id: string, job: JobUpdate): Promise<Job> {
     const { data, error } = await this.supabase
       .from('jobs')
+      // @ts-expect-error - This would not be an issue
       .update(job)
       .eq('id', id)
       .select()

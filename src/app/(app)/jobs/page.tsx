@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import JobsPage from '@/views/JobsPage';
+import {Suspense} from "react";
 
 export const metadata: Metadata = {
   title: 'Jobs - GulfXpats',
@@ -18,5 +19,9 @@ export const metadata: Metadata = {
 };
 
 export default function Jobs() {
-  return <JobsPage />;
+  return (
+    <Suspense>
+      <JobsPage />
+    </Suspense>
+  );
 }
