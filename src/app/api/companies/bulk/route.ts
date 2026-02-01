@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '../../../../../server/supabase/server';
-import { CompaniesService } from '../../../../../server/supabase/services/companies';
+import { createServerSupabaseClient } from '@/server/supabase/server';
+import { CompaniesService } from '@/server/supabase/services/companies';
 import { CompanyCreate } from "@/types";
 
 export async function POST(request: NextRequest) {

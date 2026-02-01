@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 import DataTable from "@/components/custom/DataTable";
-import Status from "@/components/ui/Status";
+import Status from "@/components/custom/Status";
 import { QueryPagination, User } from "@/types";
 import { formatDate } from "@/lib/date";
-import { Mail } from "lucide-react";
 import {getCountryByIso3} from "@/lib/countries";
-
 
 interface UsersTableProps {
   loading: boolean;

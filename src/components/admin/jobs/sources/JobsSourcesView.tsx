@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   Plus, Search,
 } from 'lucide-react';
@@ -22,11 +22,7 @@ export default function JobsSourcesView({ refresh, onFetchAction }: QueryViewAct
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSource, setEditingSource] = useState<JobSource | null>(null);
 
-  useEffect(() => {
-    fetchSources();
-  }, [refresh, currentPage]);
-
-  const fetchSources = async () => {
+  const fetchSources = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -48,7 +44,11 @@ export default function JobsSourcesView({ refresh, onFetchAction }: QueryViewAct
     } finally {
       setLoading(false);
     }
-  };
+  }, [onFetchAction]);
+
+  useEffect(() => {
+    fetchSources();
+  }, [refresh, currentPage, fetchSources]);
 
   const handleOpenModal = (source?: JobSource) => {
     setEditingSource(source || null);

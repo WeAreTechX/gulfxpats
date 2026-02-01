@@ -115,6 +115,10 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
       errors.push('Invalid company LinkedIn URL');
     }
 
+    if (company.contact_email && company.contact_email.trim() && !isValidEmail(company.contact_email)) {
+      errors.push('Invalid company contact email');
+    }
+
     return {
       isValid: errors.length === 0,
       errors,
@@ -367,7 +371,7 @@ export default function StoreMultipleCompanyModal({ isOpen, onClose, onSuccess }
           result.errors.push({
             row: batchIndex * batchSize + idx + 1,
             name: company.name,
-            error: 'Network error',
+            error: `${error}: Network error`,
           });
         });
       }

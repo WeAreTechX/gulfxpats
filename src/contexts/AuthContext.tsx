@@ -2,7 +2,7 @@
 
 import {createContext, useContext, useEffect, useState, ReactNode, useMemo} from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { getSupabaseClient } from '../../server/supabase/client';
+import { getSupabaseClient } from '@/server/supabase/client';
 import {User, UserCreate} from "@/types";
 import {useRouter} from "next/navigation";
 
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase.auth]);
 
   const signUp = async (payload: UserCreate): Promise<{ error: Error | null }> => {
     try {

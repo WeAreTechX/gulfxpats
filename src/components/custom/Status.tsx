@@ -1,8 +1,8 @@
 import { Ban, CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Status } from "@/types";
+import { Entity } from "@/types";
 
-export default function Status(status: Status) {
+export default function Status(status: Entity) {
   if (!status) {
     return <span>-</span>
   }

@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { CompaniesSources, Company, Source } from '@/types/companies';
+import { CompanyJobSource, Company, JobSource } from '@/types';
 
 interface StoreCompanySourceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  source?: CompaniesSources | null;
+  source?: CompanyJobSource | null;
 }
 
 export default function StoreCompanySourceModal({
@@ -19,7 +19,7 @@ export default function StoreCompanySourceModal({
 }: StoreCompanySourceModalProps) {
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [availableSources, setAvailableSources] = useState<Source[]>([]);
+  const [availableSources, setAvailableSources] = useState<JobSource[]>([]);
   const [formData, setFormData] = useState({
     company_id: '',
     source_id: '',
@@ -33,7 +33,7 @@ export default function StoreCompanySourceModal({
       if (source) {
         setFormData({
           company_id: source.company_id || '',
-          source_id: source.source_id?.toString() || '',
+          source_id: source.jobs_source_id?.toString() || '',
         });
       } else {
         setFormData({

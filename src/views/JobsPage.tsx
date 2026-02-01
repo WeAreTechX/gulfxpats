@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Job, JobType } from '@/types/jobs';
+import { Job, Entity } from '@/types';
 import JobCard from '@/components/app/jobs/JobCard';
 import JobFilters from '@/components/app/jobs/JobFilters';
 import JobPreviewModal from '@/components/app/jobs/JobPreviewModal';
@@ -20,7 +20,7 @@ export default function JobsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [jobTypes, setJobTypes] = useState<JobType[]>([]);
+  const [jobTypes, setJobTypes] = useState<Entity[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
@@ -64,7 +64,7 @@ export default function JobsPage() {
       salaryMax,
     });
     setIsInitialized(true);
-  }, []);
+  }, [searchParams]);
 
   // Update URL when filters or search change
   const updateURL = useCallback((search: string, currentFilters: Filters) => {
@@ -105,14 +105,14 @@ export default function JobsPage() {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [filters, isInitialized, searchQuery, updateURL]);
 
   // Update URL when filters change
   useEffect(() => {
     if (isInitialized) {
       updateURL(debouncedSearch, filters);
     }
-  }, [filters, isInitialized]);
+  }, [debouncedSearch, filters, isInitialized, updateURL]);
 
   // Build query params for API call
   const buildQueryParams = useCallback(() => {
@@ -189,7 +189,7 @@ export default function JobsPage() {
     if (isInitialized) {
       fetchJobs(!loading);
     }
-  }, [isInitialized, debouncedSearch, filters, jobTypes]);
+  }, [isInitialized, debouncedSearch, filters, jobTypes, fetchJobs, loading]);
 
   // Handle filter changes
   const handleFiltersChange = (newFilters: Filters) => {
@@ -232,7 +232,7 @@ export default function JobsPage() {
         filters.locations.some(loc => job.location?.toLowerCase().includes(loc.toLowerCase()));
 
       const matchesJobType = filters.jobTypes.length <= 1 ||
-        filters.jobTypes.includes(job.job_type?.code || '');
+        filters.jobTypes.includes(job.type?.code || '');
 
       return matchesRemote && matchesSalary && matchesLocation && matchesJobType;
     });

@@ -85,7 +85,7 @@ export default function ProfilePage() {
         toast.error('Update failed', data.error || 'Failed to update profile');
       }
     } catch (error) {
-      toast.error('Update failed', 'An unexpected error occurred');
+      toast.error('Update failed', `${error}: An unexpected error occurred`);
     } finally {
       setSavingProfile(false);
     }
@@ -115,7 +115,7 @@ export default function ProfilePage() {
         setConfirmPassword('');
       }
     } catch (error) {
-      toast.error('Update failed', 'An unexpected error occurred');
+      toast.error('Update failed', `${error}: An unexpected error occurred`);
     } finally {
       setSavingPassword(false);
     }

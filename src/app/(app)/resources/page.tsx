@@ -71,7 +71,7 @@ export default function ResourcesPage() {
       
       // Resource type filter
       const matchesType = filters.resourceTypes.length === 0 || 
-        filters.resourceTypes.includes(resource.type);
+        filters.resourceTypes.includes(resource.type.code);
 
       return matchesSearch && matchesType;
     });
@@ -80,7 +80,7 @@ export default function ResourcesPage() {
   // Sort resources by publishedAt (newest first)
   const sortedResources = useMemo(() => {
     return [...filteredResources].sort((a, b) => {
-      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
   }, [filteredResources]);
 
@@ -175,7 +175,7 @@ export default function ResourcesPage() {
                 </span>
               </h1>
               <p className="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed">
-                We're building a comprehensive library of resources to accelerate your career growth. 
+                We&#39;re building a comprehensive library of resources to accelerate your career growth.
                 From expert guides to practical tools — everything you need in one place.
               </p>
 
@@ -210,7 +210,7 @@ export default function ResourcesPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-                What's Coming
+                What&#39;s Coming
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
                 A curated collection of resources tailored for professionals in the African tech ecosystem
@@ -341,7 +341,7 @@ export default function ResourcesPage() {
                   Stay in the Loop
                 </h3>
                 <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-                  Follow us for the latest updates on our resource library launch and get exclusive previews of what's coming.
+                  Follow us for the latest updates on our resource library launch and get exclusive previews of what&#39;s coming.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row justify-center gap-4">

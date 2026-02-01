@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   Plus,
-  Database,
-  RefreshCw,
-  Download, Search,
+  RefreshCw, Search,
 } from 'lucide-react';
 import JobsSourcesTable from '@/components/admin/jobs/sources/JobsSourcesTable';
 import StoreJobSourceModal from '@/components/admin/jobs/sources/StoreJobSourceModal';
@@ -25,11 +23,7 @@ export default function ScrapingsView({ refresh, onFetchAction }: QueryViewActio
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSource, setEditingSource] = useState<JobSource | null>(null);
 
-  useEffect(() => {
-    fetchSources();
-  }, [refresh, currentPage]);
-
-  const fetchSources = async () => {
+  const fetchSources = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -51,7 +45,12 @@ export default function ScrapingsView({ refresh, onFetchAction }: QueryViewActio
     } finally {
       setLoading(false);
     }
-  };
+  }, [onFetchAction]);
+
+  useEffect(() => {
+    fetchSources();
+  }, [refresh, currentPage, fetchSources]);
+
 
   const handleOpenModal = (source?: JobSource) => {
     setEditingSource(source || null);

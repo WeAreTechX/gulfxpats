@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '../../../../server/supabase/server';
-import { ResourcesService } from '../../../../server/supabase/services/resources';
+import { createServerSupabaseClient } from '@/server/supabase/server';
+import { ResourcesService } from '@/server/supabase/services/resources';
+import {Statuses} from "@/types";
 
 export async function GET(request: NextRequest) {
   try {
@@ -55,8 +56,9 @@ export async function POST(request: NextRequest) {
       title: body.title,
       description: body.description,
       url: body.url,
-      resource_type_id: body.resourceTypeId,
-      status_id: body.statusId || 1, // Default to active
+      type_id: body.type_id,
+      is_premium: body.is_premium || false,
+      status_id: body.status_id || Statuses.Unpublished
     });
 
     return NextResponse.json({

@@ -181,6 +181,8 @@ export interface CompanyJobSource extends  CompanyJobSourceCreate {
   id: string;
   created_at: Date | string;
   modified_at: Date | string;
+  company: Company;
+  source: JobSource
 }
 
 export interface CompanyJobSourceUpdate {
@@ -203,6 +205,7 @@ export interface ResourceCreate {
   rank?: number;
   metadata?: { [key: string]: Json };
   tags?: string[];
+  status_id?: number;
 }
 
 export interface Resource extends ResourceCreate {
@@ -211,6 +214,8 @@ export interface Resource extends ResourceCreate {
   status_id: number;
   status: Entity;
   created_by: Admin;
+  created_at: Date | string;
+  modified_at: Date | string;
 }
 
 export interface ResourceUpdate {
@@ -238,10 +243,16 @@ export interface ResourcesQuery extends Query {
  */
 export interface JobSourceCreate extends EntityCreate {
   base_url: string;
+  created_by_id?: string;
 }
 
 export interface JobSource extends Entity {
   base_url: string
+}
+
+export interface JobSourceUpdate extends EntityCreate {
+  base_url?: string;
+  created_by_id?: string;
 }
 
 /**
@@ -277,16 +288,16 @@ export interface JobCreate {
   title: string;
   description: string;
   company_id: string | null;
-  company_name: string | null;
+  company_name: string;
   jobs_scrapings_id: string | null;
   location?: string;
   country: string;
   salary_min?: number;
   salary_max?: number;
   salary_frequency?: 'monthly' | 'annually';
-  currency_id: number | undefined | null;
+  currency_id: number | undefined;
   currency_code?: string;
-  industry_id: number | undefined | null;
+  industry_id: number | undefined;
   apply_url: string;
   metadata?: { [key: string]: Json };
   tags?: string[];

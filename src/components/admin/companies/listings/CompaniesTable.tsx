@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import DataTable from "@/components/custom/DataTable";
-import Status from "@/components/ui/Status";
+import Status from "@/components/custom/Status";
 import {QueryPagination, Company} from "@/types";
 import {formatDate} from "@/lib/date";
 import {getCountryByIso3} from "@/lib/countries";
@@ -50,6 +50,7 @@ export default function CompaniesTable(props: CompaniesTableProps) {
 
   const handleOptionClick = (action: string, rowIndex: number) => {
     const company = companies[rowIndex];
+    console.log(company);
     switch (action) {
       case "edit":
         //

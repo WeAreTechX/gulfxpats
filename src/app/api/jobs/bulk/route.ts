@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '../../../../../server/supabase/server';
-import { JobsService } from '../../../../../server/supabase/services/jobs';
+import { createServerSupabaseClient } from '@/server/supabase/server';
+import { JobsService } from '@/server/supabase/services/jobs';
 import {Json} from "@/types";
 
 interface BulkJobInput {
   title: string;
   description: string;
-  company_name?: string | null;
+  company_id?: string | null;
+  company_name: string;
   type_code?: string;
   industry_code?: string;
   jobs_scrapings_id?: number;
@@ -85,16 +86,8 @@ export async function POST(request: NextRequest) {
 
         // Lookup company ID
         let company_id: string | undefined;
-        if (job.company_id) {
-          company_id = companyMap.get(job.company_id);
-          if (!company_id) {
-            results.errors.push({
-              row: i + 1,
-              title: job.title,
-              error: `Company "${job.company_name}" not found. Please add the company first.`,
-            });
-            continue;
-          }
+        if (job.company_name) {
+          company_id = companyMap.get(job.company_name);
         }
 
         // Lookup job type ID
@@ -105,7 +98,7 @@ export async function POST(request: NextRequest) {
             results.errors.push({
               row: i + 1,
               title: job.title,
-              error: `Job type "${job.type_id}" not found. Valid values: full-time, part-time, contract, internship, freelance`,
+              error: `Job type "${job.type_code}" not found. Valid values: full-time, part-time, contract, internship, freelance`,
             });
             continue;
           }
@@ -144,7 +137,7 @@ export async function POST(request: NextRequest) {
           title: job.title.trim(),
           description: job.description || '',
           company_id: company_id || null,
-          company_name: job.company_name || null,
+          company_name: job.company_name,
           type_id: type_id,
           jobs_scrapings_id: null,
           industry_id: industry_id,

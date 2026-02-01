@@ -1,18 +1,18 @@
 import { useMemo } from "react";
 import DataTable from "@/components/custom/DataTable";
-import { Pagination } from "@/types";
+import { QueryPagination } from "@/types";
 import { formatDate } from "@/lib/date";
-import { CompaniesSources } from "@/types/companies";
-import { Globe, Building2 } from "lucide-react";
+import { CompanyJobSource } from "@/types";
+import { Building2 } from "lucide-react";
 
 interface CompaniesSourcesTableProps {
   loading: boolean;
   error: string | null;
-  sources: CompaniesSources[];
-  pagination: Pagination | undefined;
+  sources: CompanyJobSource[];
+  pagination: QueryPagination | undefined;
   onPageChange: (page: number) => void;
   onRetryAction: () => void;
-  onEdit: (source: CompaniesSources) => void;
+  onEdit: (source: CompanyJobSource) => void;
 }
 
 export default function CompaniesSourcesTable(props: CompaniesSourcesTableProps) {
@@ -46,7 +46,7 @@ export default function CompaniesSourcesTable(props: CompaniesSourcesTableProps)
           )}
         </div>,
         <span key="synced_at" className="text-sm text-gray-600">
-          {item.synced_at ? formatDate(item.synced_at) : '—'}
+          {item.created_at ? formatDate(item.created_at) : '—'}
         </span>,
         <span key="created_at" className="text-sm text-gray-600">{formatDate(item.created_at)}</span>,
         <span key="modified_at" className="text-sm text-gray-600">{formatDate(item.modified_at)}</span>,
@@ -89,7 +89,7 @@ export default function CompaniesSourcesTable(props: CompaniesSourcesTableProps)
         onEdit(source);
         break;
       case "remove":
-        handleDelete(source.id).then();
+        handleDelete(parseInt(source.id)).then();
         break;
       default:
         break;

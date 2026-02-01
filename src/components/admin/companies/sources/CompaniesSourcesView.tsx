@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   Plus,
   Search,
 } from 'lucide-react';
 import CompaniesSourcesTable from '@/components/admin/companies/sources/CompaniesSourcesTable';
 import StoreCompanySourceModal from '@/components/admin/companies/StoreCompanySourceModal';
-import { QueryStats, CompaniesSources } from '@/types';
+import { QueryStats, CompanyJobSource } from '@/types';
 
 interface CompaniesSourcesViewProps {
   refresh: boolean;
@@ -15,8 +15,7 @@ interface CompaniesSourcesViewProps {
 }
 
 export default function CompaniesSourcesView({ refresh, onStatsChange }: CompaniesSourcesViewProps) {
-  const [sources, setSources] = useState<CompaniesSources[]>([]);
-  const [stats, setStats] = useState<{ total: number; active: number; inactive: number }>({ total: 0, active: 0, inactive: 0 });
+  const [sources, setSources] = useState<CompanyJobSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,13 +26,9 @@ export default function CompaniesSourcesView({ refresh, onStatsChange }: Compani
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingSource, setEditingSource] = useState<CompaniesSources | null>(null);
+  const [editingSource, setEditingSource] = useState<CompanyJobSource | null>(null);
 
-  useEffect(() => {
-    fetchSources();
-  }, [refresh, currentPage]);
-
-  const fetchSources = async () => {
+  const fetchSources = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -44,9 +39,8 @@ export default function CompaniesSourcesView({ refresh, onStatsChange }: Compani
       if (result.success) {
         const { list, stats, pagination } = result.data;
         setSources(list || []);
-        setStats(stats || { total: 0, active: 0, inactive: 0 });
         setPagination(pagination || { count: 1, current_page: 1, total_count: 1, total_pages: 1 });
-        
+
         if (onStatsChange && stats) {
           onStatsChange({ total_sources: stats.total });
         }
@@ -59,9 +53,14 @@ export default function CompaniesSourcesView({ refresh, onStatsChange }: Compani
     } finally {
       setLoading(false);
     }
-  };
+  }, [onStatsChange]);
 
-  const handleOpenModal = (source?: CompaniesSources) => {
+  useEffect(() => {
+    fetchSources();
+  }, [refresh, currentPage, fetchSources]);
+
+
+  const handleOpenModal = (source?: CompanyJobSource) => {
     setEditingSource(source || null);
     setIsModalOpen(true);
   };

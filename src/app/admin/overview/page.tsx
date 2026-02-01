@@ -199,7 +199,7 @@ export default function AdminOverview() {
             {getGreeting()}, {admin?.first_name}
           </h1>
           <p className="text-slate-500 mt-1">
-            Here's what's happening with your platform today.
+            Here&#39;s what&#39;s happening with your platform today.
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-slate-500">

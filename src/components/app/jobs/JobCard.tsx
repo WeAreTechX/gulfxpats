@@ -4,6 +4,7 @@ import { Job } from '@/types';
 import { MapPin, Clock, Banknote, Building2, ArrowUpRight, Zap, Bookmark } from 'lucide-react';
 import { formatDate } from "@/lib/date";
 import { formatSalary } from "@/lib/utils";
+import CustomImage from "@/components/custom/Image";
 
 interface JobCardProps {
   job: Job;
@@ -56,7 +57,12 @@ export default function JobCard({ job, onViewJob }: JobCardProps) {
           {/* Company logo */}
           <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden">
             {job.company?.logo_url ? (
-              <img src={job.company.logo_url} alt={job.company.name} className="w-full h-full object-cover" />
+              <CustomImage
+                src={job.company.logo_url}
+                alt={job.company_name}
+                width={64}
+                height={64}
+                className="rounded-xl object-cover border border-gray-100" />
             ) : (
               <Building2 className="h-6 w-6 text-gray-400" />
             )}

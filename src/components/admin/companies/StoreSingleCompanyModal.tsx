@@ -312,100 +312,104 @@ export default function StoreSingleCompanyModal({ isOpen, onClose, onSuccess, co
                   </div>
 
                   {/* Social Links */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-slate-900 mb-4">Social Links</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Company LinkedIn
-                        </label>
-                        <input
-                          type="url"
-                          name="metadata.linkedin"
-                          value={formData.metadata.linkedin || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                          placeholder="https://linkedin.com/company/..."
-                        />
-                      </div>
+                  {formData.metadata && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900 mb-4">Social Links</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Company LinkedIn
+                          </label>
+                          <input
+                            type="url"
+                            name="metadata.linkedin"
+                            value={(formData.metadata.linkedin as string) || ''}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder="https://linkedin.com/company/..."
+                          />
+                        </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Company Email
-                        </label>
-                        <input
-                          type="email"
-                          name="metadata.email"
-                          value={formData?.metadata?.email || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                          placeholder="hello@company.com"
-                        />
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Company Email
+                          </label>
+                          <input
+                            type="email"
+                            name="metadata.email"
+                            value={(formData?.metadata.email as string) || ''}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder="hello@company.com"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Contact Person */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-slate-900 mb-4">Contact Person</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          First Name
-                        </label>
-                        <input
-                          type="text"
-                          name="contact.first_name"
-                          value={formData?.contact?.first_name || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                          placeholder="John"
-                        />
-                      </div>
+                  {formData.contact && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900 mb-4">Contact Person</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            First Name
+                          </label>
+                          <input
+                            type="text"
+                            name="contact.first_name"
+                            value={(formData.contact.first_name as string) || ''}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder="John"
+                          />
+                        </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Last Name
-                        </label>
-                        <input
-                          type="text"
-                          name="contact.last_name"
-                          value={formData?.contact?.last_name || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                          placeholder="Doe"
-                        />
-                      </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Last Name
+                          </label>
+                          <input
+                            type="text"
+                            name="contact.last_name"
+                            value={(formData.contact?.last_name as string) || ''}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder="Doe"
+                          />
+                        </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          Email
-                        </label>
-                        <input
-                          type="email"
-                          name="contact.email"
-                          value={formData?.contact?.email || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                          placeholder="contact@company.com"
-                        />
-                      </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Email
+                          </label>
+                          <input
+                            type="email"
+                            name="contact.email"
+                            value={(formData.contact?.email as string) || ''}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder="contact@company.com"
+                          />
+                        </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          LinkedIn Profile
-                        </label>
-                        <input
-                          type="url"
-                          name="contact.linkedin"
-                          value={formData?.contact?.linkedin || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                          placeholder="https://www.linkedin.com/in/johndoe"
-                        />
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                            LinkedIn Profile
+                          </label>
+                          <input
+                            type="url"
+                            name="contact.linkedin"
+                            value={(formData?.contact?.linkedin as string) || ''}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            placeholder="https://www.linkedin.com/in/johndoe"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </form>
 
                 {/* Footer */}

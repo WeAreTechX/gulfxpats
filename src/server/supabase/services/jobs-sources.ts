@@ -1,11 +1,11 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database, SourceUpdate } from '@/types/supabase';
-import { Source } from '@/types/jobs';
+import { Database } from '@/types/supabase';
+import {JobSource, JobSourceCreate, JobSourceUpdate} from '@/types';
 
 export class JobsSourcesService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
-  async index(): Promise<{ list: Source[]; pagination: { count: number; current_page: number; total_count: number; total_pages: number } }> {
+  async index(): Promise<{ list: JobSource[]; pagination: { count: number; current_page: number; total_count: number; total_pages: number } }> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .select('*')
@@ -25,7 +25,7 @@ export class JobsSourcesService {
     };
   }
 
-  async show(id: number): Promise<Source | null> {
+  async show(id: number): Promise<JobSource | null> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .select('*')
@@ -36,7 +36,7 @@ export class JobsSourcesService {
     return data;
   }
 
-  async getByCode(code: string): Promise<Source | null> {
+  async getByCode(code: string): Promise<JobSource | null> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .select('*')
@@ -47,7 +47,7 @@ export class JobsSourcesService {
     return data;
   }
 
-  async store(source: Source): Promise<Source> {
+  async store(source: JobSourceCreate): Promise<JobSource> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .insert(source)
@@ -58,7 +58,7 @@ export class JobsSourcesService {
     return data;
   }
 
-  async update(id: number, source: SourceUpdate): Promise<Source> {
+  async update(id: number, source: JobSourceUpdate): Promise<JobSource> {
     const { data, error } = await this.supabase
       .from('jobs_sources')
       .update(source)

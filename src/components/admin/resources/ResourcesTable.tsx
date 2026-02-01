@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import DataTable from "@/components/custom/DataTable";
-import Status from "@/components/ui/Status";
-import { Pagination, Status as StatusType } from "@/types";
+import Status from "@/components/custom/Status";
+import { QueryPagination, Entity } from "@/types";
 import { formatDate } from "@/lib/date";
 import { ExternalLink } from "lucide-react";
 
@@ -12,7 +12,7 @@ export interface Resource {
   url: string;
   resource_type?: { id: number; name: string; code: string };
   is_premium: boolean;
-  status?: StatusType;
+  status?: Entity;
   created_at: string;
   modified_at: string;
 }
@@ -21,7 +21,7 @@ interface ResourcesTableProps {
   loading: boolean;
   error: string | null;
   resources: Resource[];
-  pagination: Pagination | undefined;
+  pagination: QueryPagination | undefined;
   onPageChange: (page: number) => void;
   onRowChange: () => void;
 }

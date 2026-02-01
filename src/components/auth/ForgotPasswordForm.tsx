@@ -30,8 +30,8 @@ export default function ForgotPasswordForm({ onSuccess, onBack }: ForgotPassword
         setSuccess(true);
         toast.success('Email sent!', 'Check your inbox for the password reset link.');
       }
-    } catch (err) {
-      toast.error('Request failed', 'An unexpected error occurred');
+    } catch (error) {
+      toast.error('Request failed', `${error}: An unexpected error occurred`);
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ export default function ForgotPasswordForm({ onSuccess, onBack }: ForgotPassword
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Check your email</h3>
         <p className="text-gray-600 mb-6">
-          We've sent a password reset link to <strong>{email}</strong>
+          We&#39;ve sent a password reset link to <strong>{email}</strong>
         </p>
         <button
           type="button"

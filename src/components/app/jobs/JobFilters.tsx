@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X, ChevronDown, ChevronUp, SlidersHorizontal, Wifi } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { JobType} from "@/types/jobs";
+import { Entity} from "@/types";
 
 interface JobFiltersProps {
   filters: {
@@ -15,7 +15,7 @@ interface JobFiltersProps {
   };
   onFiltersChange: (filters: any) => void;
   availableLocations: string[];
-  jobTypes: JobType[];
+  jobTypes: Entity[];
   className?: string;
 }
 

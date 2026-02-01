@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   Plus,
   Search,
@@ -17,7 +17,6 @@ interface CompaniesViewProps {
 
 export default function CompaniesListing({ refresh, onStatsChange }: CompaniesViewProps) {
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [stats, setStats] = useState<QueryStats>({ total: 0, published: 0, unpublished: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,11 +28,7 @@ export default function CompaniesListing({ refresh, onStatsChange }: CompaniesVi
   const [isMultipleModalOpen, setIsMultipleModalOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, [refresh, currentPage]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -44,9 +39,8 @@ export default function CompaniesListing({ refresh, onStatsChange }: CompaniesVi
       if (companiesData.success) {
         const { list, stats, pagination } = companiesData.data;
         setCompanies(list || []);
-        setStats(stats || {});
         setPagination(pagination || { count: 1, current_page: 1, total_count: 1, total_pages: 1 });
-        
+
         if (onStatsChange && stats) {
           onStatsChange(stats);
         }
@@ -57,7 +51,11 @@ export default function CompaniesListing({ refresh, onStatsChange }: CompaniesVi
     } finally {
       setLoading(false);
     }
-  };
+  }, [onStatsChange]);
+
+  useEffect(() => {
+    fetchData();
+  }, [refresh, currentPage, fetchData]);
 
   const handleOpenModal = (company?: Company) => {
     setEditingCompany(company || null);

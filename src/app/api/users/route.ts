@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '../../../../server/supabase/server';
-import { UsersService } from '../../../../server/supabase/services/users';
+import { createServerSupabaseClient } from '@/server/supabase/server';
+import { UsersService } from '@/server/supabase/services/users';
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,10 +60,11 @@ export async function PUT(request: NextRequest) {
     const usersService = new UsersService(supabase);
     
     const user = await usersService.update(id, {
-      first_name: updateData.firstName,
-      last_name: updateData.lastName,
+      first_name: updateData.first_name,
+      last_name: updateData.last_name,
       location: updateData.location,
-      status_id: updateData.statusId,
+      country: updateData.country,
+      status_id: updateData.status_id
     });
 
     return NextResponse.json({

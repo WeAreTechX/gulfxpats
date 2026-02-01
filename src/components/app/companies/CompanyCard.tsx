@@ -3,6 +3,7 @@
 import { Company } from '@/types';
 import { MapPin, Globe, Briefcase, ArrowUpRight, Building2, Users, ExternalLink } from 'lucide-react';
 import {getCountryByIso3} from "@/lib/countries";
+import CustomImage from "@/components/custom/Image";
 
 interface CompanyCardProps {
   company: Company;
@@ -27,11 +28,12 @@ export default function CompanyCard({ company, variant = 'default', onViewCompan
         <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-[#04724D]/20 hover:shadow-lg transition-all">
           <div className="flex-shrink-0">
             {company.logo_url ? (
-              <img 
+              <CustomImage
                 src={company.logo_url}
                 alt={company.name}
-                className="w-8 h-8 rounded-xl object-cover border border-gray-100"
-              />
+                width={64}
+                height={64}
+                className="rounded-xl object-cover border border-gray-100" />
             ) : (
               <div className="w-12 h-12 bg-gradient-to-br from-[#E6F4F0] to-teal-100 rounded-xl flex items-center justify-center border border-[#04724D]/20">
                 <Building2 className="h-6 w-6 text-[#04724D]" />
@@ -58,11 +60,12 @@ export default function CompanyCard({ company, variant = 'default', onViewCompan
           {/* Company logo */}
           <div className="flex-shrink-0">
             {company.logo_url ? (
-              <img 
+              <CustomImage
                 src={company.logo_url}
                 alt={company.name}
-                className="w-11 h-11 rounded-xl object-cover border border-gray-100 shadow-sm"
-              />
+                width={64}
+                height={64}
+                className="w-11 h-11 rounded-xl object-cover border border-gray-100 shadow-sm" />
             ) : (
               <div className="w-16 h-16 bg-gradient-to-br from-[#E6F4F0] to-teal-100 rounded-2xl flex items-center justify-center border border-[#04724D]/20 shadow-sm">
                 <Building2 className="h-8 w-8 text-[#04724D]" />

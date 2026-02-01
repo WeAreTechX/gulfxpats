@@ -120,6 +120,29 @@ export default function StoreSingleJobModal({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleCompanyChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { value } = e.target;
+    
+    if (value) {
+      // Company selected - find the company and prefill company_name
+      const selectedCompany = companies.find(company => company.id === value);
+      setFormData(prev => ({
+        ...prev,
+        company_id: value,
+        company_name: selectedCompany?.name || ''
+      }));
+    } else {
+      // No company selected - clear company_name and enable field
+      setFormData(prev => ({
+        ...prev,
+        company_id: '',
+        company_name: ''
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -266,12 +289,12 @@ export default function StoreSingleJobModal({
                           </label>
                           <select
                             name="company_id"
-                            value={formData.company_id}
-                            onChange={handleChange}
+                            value={formData.company_id as string}
+                            onChange={handleCompanyChange}
                             required
                             className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                           >
-                            <option value="">Select company</option>
+                            <option value="">Select or enters company name</option>
                             {companies.map((company) => (
                               <option key={company.id} value={company.id}>
                                 {company.name}
@@ -279,20 +302,22 @@ export default function StoreSingleJobModal({
                             ))}
                           </select>
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">
-                            Company Name <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            name="company_name"
-                            value={formData.company_name}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
-                            placeholder=""
-                          />
-                        </div>
+                        {!formData.company_id && (
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
+                              Company Name <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="company_name"
+                              value={formData.company_name}
+                              onChange={handleChange}
+                              required
+                              className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                              placeholder="Enter company name"
+                            />
+                          </div>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -435,7 +460,6 @@ export default function StoreSingleJobModal({
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                         >
-                          <option value="">Select frequency</option>
                           <option key={'monthly'} value={'monthly'}>Monthly</option>
                           <option key={'annually'} value={'annually'}>Annually</option>
                         </select>

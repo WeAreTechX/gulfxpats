@@ -14,4 +14,3 @@ export { default as CompaniesListing } from './companies/listings/CompaniesListi
 export { default as CompaniesSourcesView } from './companies/sources/CompaniesSourcesView';
 export { default as UsersTable } from './users/UsersTable';
 export { default as ResourcesTable } from './resources/ResourcesTable';
-export { default as AdminsTable } from './admins/AdminsTable';

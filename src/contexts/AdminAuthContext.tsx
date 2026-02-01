@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import {User as SupabaseUser, Session, PostgrestSingleResponse} from '@supabase/supabase-js';
-import { getSupabaseClient } from '../../server/supabase/client';
+import {User as SupabaseUser, Session } from '@supabase/supabase-js';
+import { getSupabaseClient } from '@/server/supabase/client';
 import {Admin, Statuses} from "@/types";
 
 interface AdminAuthContextType {

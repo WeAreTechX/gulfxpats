@@ -2,13 +2,12 @@
 
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { Job } from '@/types/jobs';
+import { Job } from '@/types';
 import { formatSalary } from '@/lib/utils';
 import { formatDate } from '@/lib/date';
 import {
   X,
   MapPin,
-  Clock,
   Banknote,
   Building2,
   ExternalLink,
@@ -19,6 +18,7 @@ import {
   Share2,
   Zap,
 } from 'lucide-react';
+import CustomImage from "@/components/custom/Image";
 
 interface JobPreviewModalProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ interface JobPreviewModalProps {
 export default function JobPreviewModal({ isOpen, onClose, job }: JobPreviewModalProps) {
   if (!job) return null;
 
-  const salary = formatSalary(job.salary_min, job.salary_max, job.currency?.code || 'USD');
+  const salary = job.salary_min && job.salary_max && formatSalary(job.salary_min, job.salary_max, job.currency?.code || 'USD');
   const isNew = new Date(job.created_at).getTime() > Date.now() - 3 * 24 * 60 * 60 * 1000;
 
   const jobTypeConfig: Record<string, { bg: string; text: string; border: string }> = {
@@ -40,7 +40,7 @@ export default function JobPreviewModal({ isOpen, onClose, job }: JobPreviewModa
     'freelance': { bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-200' },
   };
 
-  const typeStyle = jobTypeConfig[job.job_type?.code || ''] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' };
+  const typeStyle = jobTypeConfig[job.type?.code || ''] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -114,11 +114,12 @@ export default function JobPreviewModal({ isOpen, onClose, job }: JobPreviewModa
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg">
                       {job.company?.logo_url ? (
-                        <img 
-                          src={job.company.logo_url} 
-                          alt={job.company.name} 
-                          className="w-full h-full object-cover" 
-                        />
+                        <CustomImage
+                          src={job.company.logo_url}
+                          alt={job.company_name}
+                          width={64}
+                          height={64}
+                          className="object-cover border border-gray-100" />
                       ) : (
                         <Building2 className="h-8 w-8 text-gray-400" />
                       )}
@@ -137,7 +138,7 @@ export default function JobPreviewModal({ isOpen, onClose, job }: JobPreviewModa
                   <div className="flex flex-wrap gap-2 mt-4">
                     <span className={`inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg border ${typeStyle.bg} ${typeStyle.text} ${typeStyle.border}`}>
                       <Briefcase className="h-3 w-3 mr-1.5" />
-                      {job.job_type?.name || 'Full Time'}
+                      {job.type?.name || 'Full Time'}
                     </span>
                     {job.location && (
                       <span className="inline-flex items-center px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-lg">
@@ -206,7 +207,7 @@ export default function JobPreviewModal({ isOpen, onClose, job }: JobPreviewModa
                       <div className="bg-gray-50 rounded-lg p-3">
                         <span className="text-xs text-gray-500 block mb-1">Job Type</span>
                         <span className="text-sm font-medium text-gray-900 capitalize">
-                          {job.job_type?.name || 'Full Time'}
+                          {job.type?.name || 'Full Time'}
                         </span>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3">

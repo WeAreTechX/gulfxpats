@@ -9,7 +9,7 @@ import {
   Star,
 } from 'lucide-react';
 import ResourcesTable, { Resource } from '@/components/admin/resources/ResourcesTable';
-import { Pagination } from '@/types';
+import { QueryPagination } from '@/types';
 
 interface ResourceStats {
   total: number;
@@ -24,7 +24,7 @@ export default function AdminResourcesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState<Pagination>({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
+  const [pagination, setPagination] = useState<QueryPagination>({ count: 1, current_page: 1, total_count: 1, total_pages: 1 });
 
   const fetchResources = async () => {
     try {
@@ -37,19 +37,8 @@ export default function AdminResourcesPage() {
       if (data.success) {
         const { list, stats, pagination } = data.data || {};
         setResources(list || data.resources || []);
-        if (stats) {
-          setStats(stats);
-        } else {
-          // Calculate stats from resources list
-          const resourceList = list || data.resources || [];
-          setStats({
-            total: resourceList.length,
-            published: resourceList.filter((r: Resource) => r.status?.code === 'published').length,
-            unpublished: resourceList.filter((r: Resource) => r.status?.code === 'unpublished').length,
-            premium: resourceList.filter((r: Resource) => r.is_premium).length,
-          });
-        }
-        setPagination(pagination || { count: 1, current_page: 1, total_count: resourceList?.length || 0, total_pages: 1 });
+        setStats(stats || { total: 0, published: 0, unpublished: 0, premium: 0 });
+        setPagination(pagination || { count: 1, current_page: 1, total_count: 1, total_pages: 1 });
       } else {
         setError('Failed to fetch resources');
       }

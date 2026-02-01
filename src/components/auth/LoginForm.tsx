@@ -32,8 +32,8 @@ export default function LoginForm({ onSuccess, onForgotPassword, onSignup }: Log
         toast.success('Welcome back!', 'You have successfully signed in.');
         onSuccess();
       }
-    } catch (err) {
-      toast.error('Login failed', 'An unexpected error occurred');
+    } catch (error) {
+      toast.error('Login failed', `${error}: An unexpected error occurred`);
     } finally {
       setLoading(false);
     }

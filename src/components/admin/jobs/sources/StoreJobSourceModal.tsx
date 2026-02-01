@@ -3,13 +3,13 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Database, Loader2 } from 'lucide-react';
-import { Source } from '@/types/companies';
+import { JobSource } from '@/types';
 
 interface StoreSourceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  source?: Source | null;
+  source?: JobSource | null;
 }
 
 interface SourceFormData {

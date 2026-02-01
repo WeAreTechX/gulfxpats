@@ -177,7 +177,7 @@ export function DatePicker({
                     key={idx}
                     type="button"
                     onClick={() => !isDisabled && handleDateSelect(day)}
-                    // @ts-ignore
+                    // @ts-expect-error - This would not be an issue
                     disabled={isDisabled}
                     className={cn(
                       "h-9 w-9 text-sm rounded-md transition-colors",

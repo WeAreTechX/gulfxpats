@@ -360,7 +360,7 @@ export default function StoreMultipleJobsModal({ isOpen, onClose, onSuccess }: S
           result.errors.push({
             row: batchIndex * batchSize + idx + 1,
             title: job.title,
-            error: 'Network error',
+            error: `${error}: Network error`,
           });
         });
       }

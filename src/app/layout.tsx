@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Figtree} from "next/font/google";
+import { Figtree} from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/custom/Toast";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
 
 const figtree = Figtree({
   subsets: ["latin"],

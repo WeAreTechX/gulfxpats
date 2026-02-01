@@ -1,6 +1,6 @@
-import {useMemo, useState} from "react";
+import {useMemo} from "react";
 import DataTable from "@/components/custom/DataTable";
-import Status from "@/components/ui/Status";
+import Status from "@/components/custom/Status";
 import {QueryPagination, Job} from "@/types";
 import {formatDate} from "@/lib/date";
 import {formatSalary} from "@/lib/utils";
@@ -15,8 +15,6 @@ interface JobsTableProps {
 }
 
 export default function JobsTable(props: JobsTableProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingJob, setEditingJob] = useState<Job | null>(null);
 
   const { loading, error, jobs, pagination, onPageChange, onRowChange } = props;
 
@@ -29,7 +27,7 @@ export default function JobsTable(props: JobsTableProps) {
       const cells = [
         <div key="title" className="min-w-[180px]">
           <p className="font-medium text-gray-900">{job.title}</p>
-          {job.salary_min && (
+          {job.salary_min && job.salary_max && (
             <p className="text-gray-500 flex items-center gap-1 mt-1">
               {formatSalary(job.salary_min, job.salary_max, job.currency?.code)}
             </p>
@@ -61,11 +59,6 @@ export default function JobsTable(props: JobsTableProps) {
     { label: "Remove", action: "remove" }
   ]
 
-  const handleOpenModal = (job?: Job) => {
-    setEditingJob(job || null);
-    setIsModalOpen(true);
-  };
-
   const handleDelete = async (jobId: string) => {
     if (!confirm('Are you sure you want to delete this job?')) return;
 
@@ -94,7 +87,7 @@ export default function JobsTable(props: JobsTableProps) {
         //
         break;
       case "edit":
-        handleOpenModal(job)
+        //
         break;
       case "publish":
         //

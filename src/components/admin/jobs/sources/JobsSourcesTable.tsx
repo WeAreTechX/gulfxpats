@@ -1,18 +1,17 @@
 import { useMemo } from "react";
 import DataTable from "@/components/custom/DataTable";
-import { Pagination } from "@/types";
+import { QueryPagination, JobSource } from "@/types";
 import { formatDate } from "@/lib/date";
-import { Source } from "@/types/companies";
 import { Globe } from "lucide-react";
 
 interface SourcesTableProps {
   loading: boolean;
   error: string | null;
-  sources: Source[];
-  pagination: Pagination | undefined;
+  sources: JobSource[];
+  pagination: QueryPagination | undefined;
   onPageChange: (page: number) => void;
   onRetryAction: () => void;
-  onEdit: (source: Source) => void;
+  onEdit: (source: JobSource) => void;
 }
 
 export default function JobsSourcesTable(props: SourcesTableProps) {
@@ -85,7 +84,7 @@ export default function JobsSourcesTable(props: SourcesTableProps) {
         onEdit(source);
         break;
       case "remove":
-        handleDelete(source.id).then();
+        handleDelete(source.id.toString()).then();
         break;
       default:
         break;

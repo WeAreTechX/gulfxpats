@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   Plus,
   Search,
@@ -24,11 +24,7 @@ export default function JobsListing({ refresh, onFetchAction}: QueryViewAction) 
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, [refresh, currentPage]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -39,15 +35,19 @@ export default function JobsListing({ refresh, onFetchAction}: QueryViewAction) 
       if (jobsData.success) {
         const { list, stats, pagination } = jobsData.data;
         setJobs(list || []);
-        onFetchAction({ total_published: stats.published, published_jobs: stats.published, unpublished_jobs: stats.unpublished, archived_jobs: stats.archived });
         setPagination(pagination ||  { count: 1, current_page: 1, total_count: 1, total_pages: 1 })
+        onFetchAction({ total_published: stats.published, published_jobs: stats.published, unpublished_jobs: stats.unpublished, archived_jobs: stats.archived });
       }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [onFetchAction]);
+
+  useEffect(() => {
+    fetchData();
+  }, [refresh, currentPage, fetchData]);
 
   const handleOpenModal = (job?: Job) => {
     setEditingJob(job || null);
@@ -61,27 +61,6 @@ export default function JobsListing({ refresh, onFetchAction}: QueryViewAction) 
 
   const handleSuccess = () => {
     fetchData();
-  };
-
-  const handleDelete = async (jobId: string) => {
-    if (!confirm('Are you sure you want to delete this job?')) return;
-
-    try {
-      const response = await fetch(`/api/jobs/${jobId}`, {
-        method: 'DELETE',
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        fetchData();
-      } else {
-        alert('Error: ' + data.error);
-      }
-    } catch (error) {
-      console.error('Error deleting job:', error);
-      alert('Failed to delete job');
-    }
   };
 
   return (

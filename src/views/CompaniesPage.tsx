@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Company } from '@/types/companies';
+import { Company } from '@/types';
 import CompanyCard from '@/components/app/companies/CompanyCard';
 import CompanyFilters from '@/components/app/companies/CompanyFilters';
 import CompanyPreviewModal from '@/components/app/companies/CompanyPreviewModal';
@@ -52,7 +52,7 @@ export default function CompaniesPage() {
       hasOpenJobs,
     });
     setIsInitialized(true);
-  }, []);
+  }, [searchParams]);
 
   // Update URL when filters or search change
   const updateURL = useCallback((search: string, currentFilters: Filters) => {
@@ -85,14 +85,14 @@ export default function CompaniesPage() {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [filters, isInitialized, searchQuery, updateURL]);
 
   // Update URL when filters change
   useEffect(() => {
     if (isInitialized) {
       updateURL(debouncedSearch, filters);
     }
-  }, [filters, isInitialized]);
+  }, [debouncedSearch, filters, isInitialized, updateURL]);
 
   // Build query params from filters
   const buildQueryParams = useCallback(() => {
@@ -147,14 +147,14 @@ export default function CompaniesPage() {
   // Initial fetch
   useEffect(() => {
     fetchCompanies();
-  }, []);
+  }, [fetchCompanies]);
 
   // Fetch when filters or search change
   useEffect(() => {
     if (!loading) {
       fetchCompanies(false);
     }
-  }, [isInitialized, debouncedSearch, filters]);
+  }, [isInitialized, debouncedSearch, filters, loading, fetchCompanies]);
 
   // Handle filter changes
   const handleFiltersChange = (newFilters: Filters) => {

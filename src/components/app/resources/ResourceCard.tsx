@@ -1,7 +1,7 @@
 'use client';
 
 import { Resource } from '@/types';
-import { ExternalLink, BookOpen, Video, Headphones, FileText, Wrench, Clock } from 'lucide-react';
+import { ExternalLink, BookOpen, Video, Headphones, FileText, Wrench } from 'lucide-react';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -28,8 +28,8 @@ const typeColors: Record<string, string> = {
 };
 
 export default function ResourceCard({ resource }: ResourceCardProps) {
-  const IconComponent = typeIcons[resource.type] || BookOpen;
-  const colorClass = typeColors[resource.type] || 'bg-gray-100 text-gray-700';
+  const IconComponent = typeIcons[resource.type.name] || BookOpen;
+  const colorClass = typeColors[resource.type.name] || 'bg-gray-100 text-gray-700';
 
   const formatDate = (dateString: string) => {
     try {
@@ -53,7 +53,7 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
       <div className="flex items-start justify-between mb-3">
         <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${colorClass}`}>
           <IconComponent className="h-3 w-3 mr-1" />
-          {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
+          {resource.type.name.charAt(0).toUpperCase() + resource.type.name.slice(1)}
         </div>
         <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-[#101418] transition-colors" />
       </div>
@@ -70,18 +70,12 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
 
       <div className="flex items-center justify-between text-xs text-gray-500">
         <div className="flex items-center space-x-3">
-          {resource.author && (
-            <span>By {resource.author}</span>
-          )}
-          {resource.duration && (
-            <span className="flex items-center">
-              <Clock className="h-3 w-3 mr-1" />
-              {resource.duration}
-            </span>
+          {resource.created_by && (
+            <span>By {resource.created_by.first_name}</span>
           )}
         </div>
-        {resource.publishedAt && (
-          <span>{formatDate(resource.publishedAt)}</span>
+        {resource.created_at && (
+          <span>{formatDate(resource.created_at as string)}</span>
         )}
       </div>
 

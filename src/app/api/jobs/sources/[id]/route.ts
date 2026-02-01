@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '../../../../../../server/supabase/server';
-import { SourcesService } from '../../../../../../server/supabase/services/sources';
+import { createServerSupabaseClient } from '@/server/supabase/server';
+import { JobsSourcesService } from '@/server/supabase/services/jobs-sources';
 
 export async function GET(
   request: NextRequest,
@@ -9,9 +9,9 @@ export async function GET(
   try {
     const { id } = await params;
     const supabase = await createServerSupabaseClient();
-    const sourcesService = new SourcesService(supabase);
+    const jobsSourcesService = new JobsSourcesService(supabase);
     
-    const source = await sourcesService.show(parseInt(id));
+    const source = await jobsSourcesService.show(parseInt(id));
 
     if (!source) {
       return NextResponse.json(
@@ -42,11 +42,11 @@ export async function PUT(
     const body = await request.json();
     
     const supabase = await createServerSupabaseClient();
-    const sourcesService = new SourcesService(supabase);
+    const jobsSourcesService = new JobsSourcesService(supabase);
 
     // Check if code already exists for a different source
     if (body.code) {
-      const existing = await sourcesService.getByCode(body.code);
+      const existing = await jobsSourcesService.getByCode(body.code);
       if (existing && existing.id !== parseInt(id)) {
         return NextResponse.json(
           { success: false, error: 'A source with this code already exists' },
@@ -54,14 +54,13 @@ export async function PUT(
         );
       }
     }
-    
-    const source = await sourcesService.update(parseInt(id), {
+
+    const { data: { session } } = await supabase.auth.getSession();
+    const source = await jobsSourcesService.update(parseInt(id), {
       name: body.name,
       code: body.code,
-      description: body.description,
-      website_url: body.website_url,
-      logo_url: body.logo_url,
-      is_active: body.is_active,
+      base_url: body.base_url,
+      created_by_id: session?.user.id || undefined
     });
 
     return NextResponse.json({
@@ -84,9 +83,9 @@ export async function DELETE(
   try {
     const { id } = await params;
     const supabase = await createServerSupabaseClient();
-    const sourcesService = new SourcesService(supabase);
+    const jobsSourcesService = new JobsSourcesService(supabase);
     
-    await sourcesService.delete(parseInt(id));
+    await jobsSourcesService.delete(parseInt(id));
 
     return NextResponse.json({
       success: true,

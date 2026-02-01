@@ -19,7 +19,7 @@
 
 # production
 /build
-/server/supabase/schema
+/src/server/supabase/schema
 
 # misc
 .DS_Store

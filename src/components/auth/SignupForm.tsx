@@ -37,7 +37,7 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
         setCountry(data.country_code_iso3);
       }
     } catch (error) {
-      console.log('Could not auto-detect location');
+      console.log(`${error}: Could not auto-detect location`);
     }
   };
 
@@ -64,8 +64,8 @@ export default function SignupForm({ onSuccess, onLogin }: SignupFormProps) {
           onSuccess();
         }, 2000);
       }
-    } catch (err) {
-      toast.error('Signup failed', 'An unexpected error occurred');
+    } catch (error) {
+      toast.error('Signup failed', `${error}:  An unexpected error occurred`);
     } finally {
       setLoading(false);
     }

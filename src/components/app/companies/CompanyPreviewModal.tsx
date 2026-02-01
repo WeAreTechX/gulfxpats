@@ -2,7 +2,7 @@
 
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { Company } from '@/types/companies';
+import { Company } from '@/types';
 import {
   X,
   MapPin,
@@ -10,13 +10,12 @@ import {
   Building2,
   ExternalLink,
   Briefcase,
-  Users,
   Share2,
   Bookmark,
-  Mail,
-  Linkedin,
+  Mail
 } from 'lucide-react';
 import { getCountryByIso3 } from '@/lib/countries';
+import CustomImage from "@/components/custom/Image";
 
 interface CompanyPreviewModalProps {
   isOpen: boolean;
@@ -26,8 +25,6 @@ interface CompanyPreviewModalProps {
 
 export default function CompanyPreviewModal({ isOpen, onClose, company }: CompanyPreviewModalProps) {
   if (!company) return null;
-
-  const locationName = company.location ? getCountryByIso3(company.location)?.name : null;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -92,11 +89,12 @@ export default function CompanyPreviewModal({ isOpen, onClose, company }: Compan
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-20 h-20 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg">
                       {company.logo_url ? (
-                        <img 
-                          src={company.logo_url} 
-                          alt={company.name} 
-                          className="w-full h-full object-cover" 
-                        />
+                        <CustomImage
+                          src={company.logo_url}
+                          alt={company.name}
+                          width={64}
+                          height={64}
+                          className="rounded-xl object-cover border border-gray-100" />
                       ) : (
                         <Building2 className="h-10 w-10 text-gray-400" />
                       )}
@@ -106,18 +104,14 @@ export default function CompanyPreviewModal({ isOpen, onClose, company }: Compan
                         {company.name}
                       </Dialog.Title>
                       {company.metadata?.industry && (
-                        <p className="text-white/80 font-medium mb-2">
-                          {company.metadata.industry}
-                        </p>
+                        <p className="text-white/80 font-medium mb-2">-</p>
                       )}
                       {/* Quick Info Pills */}
                       <div className="flex flex-wrap gap-2">
-                        {locationName && (
-                          <span className="inline-flex items-center px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-lg">
-                            <MapPin className="h-3 w-3 mr-1.5" />
-                            {locationName}
-                          </span>
-                        )}
+                        <span className="inline-flex items-center px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-lg">
+                          <MapPin className="h-3 w-3 mr-1.5" />
+                          {getCountryByIso3(company.country)?.name}
+                        </span>
                         {company.jobs_count !== undefined && company.jobs_count > 0 && (
                           <span className="inline-flex items-center px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-lg">
                             <Briefcase className="h-3 w-3 mr-1.5" />
@@ -145,10 +139,10 @@ export default function CompanyPreviewModal({ isOpen, onClose, company }: Compan
                     <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
                       <div className="flex items-center text-gray-600 mb-1">
                         <MapPin className="h-4 w-4 mr-2" />
-                        <span className="text-sm font-medium">Location</span>
+                        <span className="text-sm font-medium">Country</span>
                       </div>
                       <p className="text-lg font-bold text-gray-900 truncate">
-                        {locationName || 'Not specified'}
+                        {getCountryByIso3(company.country)?.name}
                       </p>
                     </div>
                   </div>
@@ -190,60 +184,58 @@ export default function CompanyPreviewModal({ isOpen, onClose, company }: Compan
                         <div className="bg-gray-50 rounded-lg p-3">
                           <span className="text-xs text-gray-500 block mb-1">Industry</span>
                           <span className="text-sm font-medium text-gray-900">
-                            {company.metadata.industry}
+                            {company.metadata.industry as string}
                           </span>
                         </div>
                       )}
-                      {locationName && (
-                        <div className="bg-gray-50 rounded-lg p-3">
-                          <span className="text-xs text-gray-500 block mb-1">Country</span>
-                          <span className="text-sm font-medium text-gray-900">
-                            {locationName}
-                          </span>
-                        </div>
-                      )}
-                      {company.address && (
+                      {company.location && (
                         <div className="bg-gray-50 rounded-lg p-3 col-span-2">
-                          <span className="text-xs text-gray-500 block mb-1">Address</span>
+                          <span className="text-xs text-gray-500 block mb-1">Location</span>
                           <span className="text-sm font-medium text-gray-900">
-                            {company.address}
+                            {company.location}
                           </span>
                         </div>
                       )}
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <span className="text-xs text-gray-500 block mb-1">Country</span>
+                        <span className="text-sm font-medium text-gray-900">
+                            {getCountryByIso3(company.country)?.name}
+                          </span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Contact Information */}
-                  {(company.contact?.email || company.contact?.linkedin || company.metadata?.email) && (
-                    <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
-                        <div className="w-1 h-4 bg-[#04724D] rounded-full mr-2"></div>
-                        Contact
-                      </h4>
+
+                  <div className="mb-6">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                      <div className="w-1 h-4 bg-[#04724D] rounded-full mr-2"></div>
+                      Contact
+                    </h4>
+                    {company?.metadata?.contact && (
                       <div className="flex flex-wrap gap-3">
-                        {(company.contact?.email || company.metadata?.email) && (
-                          <a
-                            href={`mailto:${company.contact?.email || company.metadata?.email}`}
-                            className="inline-flex items-center px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-700 transition-colors"
-                          >
-                            <Mail className="h-4 w-4 mr-2 text-gray-500" />
-                            Email
-                          </a>
-                        )}
-                        {(company.contact?.linkedin || company.metadata?.linkedin) && (
-                          <a
-                            href={company.contact?.linkedin || company.metadata?.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-700 transition-colors"
-                          >
-                            <Linkedin className="h-4 w-4 mr-2 text-gray-500" />
-                            LinkedIn
-                          </a>
-                        )}
-                      </div>
+                      {(company.contact?.email) && (
+                        <a
+                          href={`mailto:${company.contact?.email as string}`}
+                          className="inline-flex items-center px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-700 transition-colors"
+                        >
+                          <Mail className="h-4 w-4 mr-2 text-gray-500" />
+                          Email
+                        </a>
+                      )}
+                      {(company.contact?.linkedin || company.metadata?.linkedin) && (
+                        <a
+                          href={company.contact?.linkedin as string}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-700 transition-colors"
+                        >
+                          LinkedIn
+                        </a>
+                      )}
                     </div>
-                  )}
+                    )}
+                  </div>
 
                   {/* Website Card */}
                   {company.website_url && (

@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '../../../../../server/supabase/server';
-import { CompaniesService } from '../../../../../server/supabase/services/companies';
+import { createServerSupabaseClient } from '@/server/supabase/server';
+import { CompaniesService } from '@/server/supabase/services/companies';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
-    const company = await companiesService.show(params.id);
+    const company = await companiesService.show(id);
     
     if (!company) {
       return NextResponse.json(
@@ -34,16 +35,17 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
     // Check if company exists
-    const existingCompany = await companiesService.show(params.id);
+    const existingCompany = await companiesService.show(id);
     if (!existingCompany) {
       return NextResponse.json(
         { success: false, error: 'Company not found' },
@@ -70,7 +72,7 @@ export async function PUT(
       updateData.metadata = body.additionalData;
     }
 
-    const company = await companiesService.update(params.id, updateData);
+    const company = await companiesService.update(id, updateData);
 
     return NextResponse.json({
       success: true,
@@ -87,14 +89,15 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createServerSupabaseClient();
     const companiesService = new CompaniesService(supabase);
     
     // Check if company exists
-    const existingCompany = await companiesService.show(params.id);
+    const existingCompany = await companiesService.show(id);
     if (!existingCompany) {
       return NextResponse.json(
         { success: false, error: 'Company not found' },
@@ -102,7 +105,7 @@ export async function DELETE(
       );
     }
 
-    await companiesService.delete(params.id);
+    await companiesService.delete(id);
 
     return NextResponse.json({
       success: true,

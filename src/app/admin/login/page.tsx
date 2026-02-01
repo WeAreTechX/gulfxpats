@@ -15,7 +15,7 @@ export default function AdminLogin() {
   const router = useRouter();
   const toast = useToast();
   
-  const { signIn, resetPassword, admin, loading } = useAdminAuth();
+  const { signIn, admin, loading } = useAdminAuth();
 
   useEffect(() => {
     // If already logged in as admin, redirect to overview
@@ -37,7 +37,7 @@ export default function AdminLogin() {
         router.replace('/admin/overview');
       }
     } catch (error) {
-      toast.error('Error', 'An unexpected error occurred. Please try again.');
+      toast.error('Error', `${error}: An unexpected error occurred. Please try again.`);
     } finally {
       setIsLoading(false);
     }
