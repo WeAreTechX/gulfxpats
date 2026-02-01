@@ -1,7 +1,7 @@
 import {
   Entity, EntityCreate, EntityUpdate,
   User, UserCreate, UserUpdate as UserUpdateRef,
-  Admin, AdminUpdate, Currency,
+  Admin, AdminUpdate as AdminUpdateRef, Currency,
   Resource, ResourceCreate, ResourceUpdate as ResourceUpdateRef,
   JobSourceCreate, JobSource, JobSourceUpdate as JobSourceUpdateRef,
   Company, CompanyCreate, CompanyUpdate as CompanyUpdateRef, CompanyJobSource, CompanyJobSourceCreate,
@@ -28,7 +28,7 @@ export interface Database {
       };
       admins: {
         Row: Admin;
-        Update: AdminUpdate;
+        Update: AdminUpdateRef;
       };
       currencies: {
         Row: Currency;
@@ -122,7 +122,7 @@ export type JobSourceInsert = Database['public']['Tables']['jobs_sources']['Inse
 // // Update types
 // export type StatusUpdate = Database['public']['Tables']['statuses']['Update'];
 export type UserUpdate = Database['public']['Tables']['users']['Update'];
-// export type AdminUpdate = Database['public']['Tables']['admins']['Update'];
+export type AdminUpdate = Database['public']['Tables']['admins']['Update'];
 export type CompanyUpdate = Database['public']['Tables']['companies']['Update'];
 // export type JobTypeUpdate = Database['public']['Tables']['job_types']['Update'];
 // export type JobIndustryUpdate = Database['public']['Tables']['job_industries']['Update'];

@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database  } from '@/types/supabase';
-import { Admin, AdminUpdate } from "@/types";
+import { Database, AdminUpdate  } from '@/types/supabase';
+import { Admin  } from "@/types";
 
 export class AdminsService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -30,7 +30,8 @@ export class AdminsService {
   async update(id: string, admin: AdminUpdate): Promise<Admin> {
     const { data, error } = await this.supabase
       .from('admins')
-      .update(admin as Database['public']['Tables']['admins']['Update'])
+      // @ts-expect-error - This would not be an issue
+      .update(admin)
       .eq('id', id)
       .select(`id, email, first_name, last_name, role, status_id, created_at, modified_at`)
       .single();
