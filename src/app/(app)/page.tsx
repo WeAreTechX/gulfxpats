@@ -73,7 +73,7 @@ export default function HomePage() {
 
         <div className="text-center px-4">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#E6F4F0] to-teal-50 border border-[#04724D]/20 mb-8 shadow-sm">
+          <div className="hidden items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#E6F4F0] to-teal-50 border border-[#04724D]/20 mb-8 shadow-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#04724D] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#04724D]"></span>
@@ -82,7 +82,7 @@ export default function HomePage() {
           </div>
           
           {/* Main heading */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mb-6 tracking-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 mt-6 mb-6 tracking-tight">
             <span className="block">Find Your Perfect</span>
             <span className="block mt-2 bg-gradient-to-r from-[#04724D] via-teal-600 to-teal-500 bg-clip-text text-transparent">
               Career Match
@@ -105,14 +105,14 @@ export default function HomePage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Job title, keyword, or industry..."
+                  placeholder="Company name, job title, keyword, or industry..."
                   className="flex-1 text-gray-900 placeholder-gray-400 focus-visible:outline-none focus:outline-none text-base"
                 />
                 <button
                   type="submit"
                   className="bg-teal-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40 hover:from-[#035E3F] hover:to-teal-700 transition-all ml-3"
                 >
-                  Search Jobs
+                  Search companies
                 </button>
               </div>
             </div>
@@ -136,20 +136,20 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center gap-8 lg:gap-16">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#E6F4F0] rounded-2xl flex items-center justify-center">
-                <Briefcase className="h-6 w-6 text-[#04724D]" />
-              </div>
-              <div className="text-left">
-                <p className="text-2xl font-bold text-gray-900">500+</p>
-                <p className="text-sm text-gray-500">Active Jobs</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#E6F4F0] rounded-2xl flex items-center justify-center">
                 <Building2 className="h-6 w-6 text-[#04724D]" />
               </div>
               <div className="text-left">
                 <p className="text-2xl font-bold text-gray-900">100+</p>
                 <p className="text-sm text-gray-500">Companies</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#E6F4F0] rounded-2xl flex items-center justify-center">
+                <Briefcase className="h-6 w-6 text-[#04724D]" />
+              </div>
+              <div className="text-left">
+                <p className="text-2xl font-bold text-gray-900">500+</p>
+                <p className="text-sm text-gray-500">Active Jobs</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -166,7 +166,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 border-t border-gray-100">
+      <section className="hidden py-20 border-t border-gray-100">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose GulfXpats?</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">We&apos;re committed to helping you find the perfect opportunity with tools and features designed for your success.</p>
@@ -188,14 +188,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Jobs Section */}
-      <FeaturedJobs />
-
       {/* Trusted Companies Section */}
       <FeaturedCompanies />
 
       {/* Testimonial Section */}
-      <section className="py-20">
+      <section className="hidden py-20">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Loved by Job Seekers</h2>
           <p className="text-gray-600">See what our community has to say about their experience</p>
@@ -281,19 +278,13 @@ export default function HomePage() {
             
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
-                href="/jobs"
+                href="/companies"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#04724D] rounded-xl font-semibold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
               >
-                <Briefcase className="h-5 w-5 mr-2" />
-                Browse Jobs
-                <ChevronRight className="h-5 w-5 ml-1" />
-              </Link>
-              <Link
-                href="/companies"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-xl font-semibold hover:bg-white/20 transition-colors"
-              >
                 <Building2 className="h-5 w-5 mr-2" />
+
                 Explore Companies
+                <ChevronRight className="h-5 w-5 ml-1" />
               </Link>
             </div>
             

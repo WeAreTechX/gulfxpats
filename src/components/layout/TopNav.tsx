@@ -23,7 +23,6 @@ import { AuthModal } from '@/components/auth';
 
 const navigation = [
   { name: 'Home', href: '/', icon: Home },
-  { name: 'Jobs', href: '/jobs', icon: Briefcase },
   { name: 'Companies', href: '/companies', icon: Building2 },
   { name: 'Resources', href: '/resources', icon: BookOpen },
 ];

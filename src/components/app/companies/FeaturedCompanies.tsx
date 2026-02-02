@@ -17,7 +17,7 @@ export default function FeaturedCompanies() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const companiesRes = await fetch('/api/companies?page_size=4&order_by=rank&order_dir=asc');
+        const companiesRes = await fetch('/api/companies?page_size=9');
         const companiesData = await companiesRes.json();
         if (companiesData.success) setCompanies(companiesData.data.list);
       } catch (error) {
@@ -59,7 +59,7 @@ export default function FeaturedCompanies() {
       <section className="py-15">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Trusted Companies</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Top Companies</h2>
             <p className="text-gray-600 mt-2">Join teams at these amazing organizations</p>
           </div>
           {companies && companies.length > 0 && (
@@ -74,20 +74,31 @@ export default function FeaturedCompanies() {
         </div>
 
         {companies && companies.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {companies.map((company, index) => (
-              <div
-                key={company.id}
-                className="opacity-0 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {companies.map((company, index) => (
+                <div
+                  key={company.id}
+                  className="opacity-0 animate-fade-in-up"
+                  style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+                >
+                  <CompanyCard
+                    company={company}
+                    onViewCompany={handleViewCompany}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 flex justify-center">
+              <Link
+                href="/companies"
+                className="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white text-sm rounded-xl font-medium hover:bg-gray-800 transition-colors group"
               >
-                <CompanyCard 
-                  company={company} 
-                  onViewCompany={handleViewCompany}
-                />
-              </div>
-            ))}
-          </div>
+                View All
+                <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </>
         ) : (
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl border border-gray-100">
             <CompaniesEmptyState />

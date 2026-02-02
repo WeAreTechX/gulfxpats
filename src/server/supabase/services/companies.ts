@@ -12,7 +12,7 @@ export class CompaniesService {
 
     // Apply filters
     if (options?.search) query = query.or(`name.ilike.%${options.search}%,short_description.ilike.%${options.search}%,long_description.ilike.%${options.search}%`);
-    if (options?.country) query = query.ilike('country', `%${options.country}%`);
+    if (options?.country) query = query.in('country', options.country.split(","));
 
     // Apply pagination
     if (options?.page_size) query = query.limit(options.page_size);

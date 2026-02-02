@@ -44,7 +44,7 @@ export default function Footer() {
             <div className="">
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Platform</h3>
               <ul className="space-y-3">
-                <li>
+                <li className="hidden">
                   <Link href="/jobs" className="flex items-center gap-2 text-gray-600 hover:text-[#04724D] transition-colors group">
                     <Briefcase className="h-4 w-4" />
                     <span>Browse Jobs</span>
@@ -73,23 +73,13 @@ export default function Footer() {
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Company</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                  <Link href="https://linkedin.com/company/wearetechx" className="text-gray-600 hover:text-[#04724D] transition-colors">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
+                  <Link href="https://linkedin.com/company/wearetechx" className="text-gray-600 hover:text-[#04724D] transition-colors">
                     Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/" className="text-gray-600 hover:text-[#04724D] transition-colors">
-                    Blog
                   </Link>
                 </li>
               </ul>

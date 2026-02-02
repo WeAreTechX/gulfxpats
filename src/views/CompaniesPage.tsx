@@ -1,17 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Company } from '@/types';
 import CompanyCard from '@/components/app/companies/CompanyCard';
 import CompanyFilters from '@/components/app/companies/CompanyFilters';
 import CompanyPreviewModal from '@/components/app/companies/CompanyPreviewModal';
 import { Search, SlidersHorizontal, X, Building2, Sparkles, Loader2 } from 'lucide-react';
-import {useRouter, useSearchParams} from "next/navigation";
-
-interface Filters {
-  locations: string[];
-  hasOpenJobs: boolean;
-}
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function CompaniesPage() {
   const router = useRouter();
@@ -19,53 +14,51 @@ export default function CompaniesPage() {
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searching, setSearching] = useState(false);
+
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize state from URL params
-  const [searchQuery, setSearchQuery] = useState('');
+  // Separate filter states
+  const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [filters, setFilters] = useState<Filters>({
-    locations: [],
-    hasOpenJobs: false
-  });
-
+  const [locations, setLocations] = useState<string[]>([]);
 
   // Modal state
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
-  // Available locations
-  const [availableLocations, setAvailableLocations] = useState<string[]>([]);
+  // Ref to track if this is the initial mount
+  const isFirstRender = useRef(true);
 
   // Initialize filters from URL params on mount
   useEffect(() => {
-    const search = searchParams.get('search') || '';
-    const location = searchParams.get('location') || '';
-    const hasOpenJobs = searchParams.get('hasOpenJobs') === 'true';
-
-    setSearchQuery(search);
-    setDebouncedSearch(search);
-    setFilters({
-      locations: location ? [location] : [],
-      hasOpenJobs,
-    });
+    const searchParam = searchParams.get('search') || '';
+    const locationParam = searchParams.get('locations') || '';
+    
+    setSearch(searchParam);
+    setDebouncedSearch(searchParam);
+    setLocations(locationParam ? locationParam.split(",") : []);
     setIsInitialized(true);
   }, [searchParams]);
 
-  // Update URL when filters or search change
-  const updateURL = useCallback((search: string, currentFilters: Filters) => {
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Update URL when filters change
+  const updateURL = useCallback((currentSearch: string, currentLocations: string[]) => {
     const params = new URLSearchParams();
 
-    if (search) {
-      params.set('search', search);
+    if (currentSearch) {
+      params.set('search', currentSearch);
     }
-    if (currentFilters.locations.length > 0) {
-      params.set('location', currentFilters.locations[0]);
-    }
-    if (currentFilters.hasOpenJobs) {
-      params.set('hasOpenJobs', 'true');
+    if (currentLocations.length > 0) {
+      params.set('locations', currentLocations.join(","));
     }
 
     const queryString = params.toString();
@@ -74,91 +67,63 @@ export default function CompaniesPage() {
     router.replace(newPath, { scroll: false });
   }, [router]);
 
-
-  // Debounce search query and update URL
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-      if (isInitialized) {
-        updateURL(searchQuery, filters);
-      }
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, [filters, isInitialized, searchQuery, updateURL]);
-
-  // Update URL when filters change
+  // Update URL when debounced search or locations change
   useEffect(() => {
     if (isInitialized) {
-      updateURL(debouncedSearch, filters);
+      updateURL(debouncedSearch, locations);
     }
-  }, [debouncedSearch, filters, isInitialized, updateURL]);
-
-  // Build query params from filters
-  const buildQueryParams = useCallback(() => {
-    const params = new URLSearchParams();
-    
-    if (debouncedSearch) {
-      params.append('search', debouncedSearch);
-    }
-    
-    if (filters.locations.length > 0) {
-      params.append('location', filters.locations[0]);
-    }
-
-    if (filters.hasOpenJobs) {
-      params.append('hasOpenJobs', 'true');
-    }
-    
-    return params.toString();
-  }, [debouncedSearch, filters]);
+  }, [debouncedSearch, locations, isInitialized, updateURL]);
 
   // Fetch companies
-  const fetchCompanies = useCallback(async (showLoader = true) => {
+  const fetchCompanies = useCallback(async () => {
     try {
       setLoading(true);
-      if (showLoader) {
-        setSearching(true);
+      const params = new URLSearchParams();
+      
+      if (debouncedSearch) {
+        params.append('search', debouncedSearch);
+      }
+      
+      if (locations.length > 0) {
+        params.append('country', locations.join(","));
       }
 
-      const queryString = buildQueryParams();
+      const queryString = params.toString();
       const companiesRes = await fetch(`/api/companies?${queryString}`);
       const companiesData = await companiesRes.json();
       
       if (companiesData.success) {
         const { list } = companiesData.data;
         setCompanies(list || []);
-        
-        // Extract unique locations
-        const locations = list
-          .map((company: Company) => company.location)
-          .filter(Boolean);
-        const uniqueLocations = [...new Set(locations)] as string[];
-        setAvailableLocations(uniqueLocations.sort());
       }
     } catch (error) {
       console.error('Error fetching companies:', error);
     } finally {
       setLoading(false);
-      setSearching(false);
     }
-  }, [buildQueryParams]);
+  }, [debouncedSearch, locations]);
 
-  // Initial fetch
+  // Fetch when debounced search or locations change
   useEffect(() => {
-    fetchCompanies();
-  }, [fetchCompanies]);
-
-  // Fetch when filters or search change
-  useEffect(() => {
-    if (!loading) {
-      fetchCompanies(false);
+    if (isInitialized) {
+      // Skip first render since we fetch on init
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        fetchCompanies();
+        return;
+      }
+      fetchCompanies();
     }
-  }, [isInitialized, debouncedSearch, filters]);
+  }, [isInitialized, debouncedSearch, locations, fetchCompanies]);
 
-  // Handle filter changes
-  const handleFiltersChange = (newFilters: Filters) => {
-    setFilters(newFilters);
+  // Handle search change
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+  };
+
+  // Handle location change
+  const handleLocationsChange = (newLocations: string[]) => {
+    setLocations(newLocations);
   };
 
   // Handle company card click - open preview modal
@@ -173,38 +138,18 @@ export default function CompaniesPage() {
     setSelectedCompany(null);
   };
 
-  // Clear all filters
-  const clearAllFilters = () => {
-    setSearchQuery('');
-    setFilters({
-      locations: [],
-      hasOpenJobs: false,
-    });
+  // Clear search
+  const clearSearch = () => {
+    setSearch('');
   };
 
-  // Filter companies locally for filters that API doesn't support
-  const filteredCompanies = useMemo(() => {
-    return companies.filter(company => {
-      const matchesOpenJobs = !filters.hasOpenJobs || 
-        (company.jobs_count !== undefined && company.jobs_count > 0);
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSearch('');
+    setLocations([]);
+  };
 
-      // Additional location filtering if multiple locations selected
-      const matchesLocation = filters.locations.length <= 1 || 
-        filters.locations.some(loc => 
-          company.location && company.location.toLowerCase().includes(loc.toLowerCase())
-        );
-
-      return matchesOpenJobs && matchesLocation;
-    });
-  }, [companies, filters]);
-
-  const sortedCompanies = useMemo(() => {
-    return [...filteredCompanies].sort((a, b) => a.name.localeCompare(b.name));
-  }, [filteredCompanies]);
-
-  const activeFilterCount = 
-    filters.locations.length + 
-    (filters.hasOpenJobs ? 1 : 0);
+  const activeFilterCount = locations.length;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -227,7 +172,7 @@ export default function CompaniesPage() {
           Discover Amazing Companies
         </h1>
         <p className="text-gray-600">
-          Explore {sortedCompanies.length} companies and their opportunities
+          Explore {companies.length} companies and their opportunities
         </p>
       </div>
 
@@ -239,18 +184,18 @@ export default function CompaniesPage() {
             <input
               type="text"
               placeholder="Search companies..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#04724D] focus:border-transparent outline-none text-gray-900 shadow-sm placeholder-gray-400"
             />
-            {searching && (
+            {loading && (
               <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
                 <Loader2 className="h-5 w-5 text-[#04724D] animate-spin" />
               </div>
             )}
-            {searchQuery && !searching && (
+            {search && !loading && (
               <button
-                onClick={() => setSearchQuery('')}
+                onClick={clearSearch}
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 <X className="h-5 w-5" />
@@ -280,9 +225,8 @@ export default function CompaniesPage() {
         <div className="hidden lg:block w-72 flex-shrink-0">
           <div className="sticky top-24">
             <CompanyFilters
-              filters={{ ...filters, query: '' }}
-              onFiltersChange={handleFiltersChange}
-              availableLocations={availableLocations}
+              locations={locations}
+              onLocationsChange={handleLocationsChange}
             />
           </div>
         </div>
@@ -302,9 +246,8 @@ export default function CompaniesPage() {
               </div>
               <div className="p-4">
                 <CompanyFilters
-                  filters={{ ...filters, query: '' }}
-                  onFiltersChange={handleFiltersChange}
-                  availableLocations={availableLocations}
+                  locations={locations}
+                  onLocationsChange={handleLocationsChange}
                 />
               </div>
               <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4">
@@ -312,7 +255,7 @@ export default function CompaniesPage() {
                   onClick={() => setShowMobileFilters(false)}
                   className="w-full bg-gradient-to-r from-[#04724D] to-teal-600 text-white py-3.5 rounded-xl font-medium shadow-lg shadow-[#04724D]/25"
                 >
-                  Show {sortedCompanies.length} results
+                  Show {companies.length} results
                 </button>
               </div>
             </div>
@@ -324,22 +267,11 @@ export default function CompaniesPage() {
           {/* Active Filters Pills */}
           {activeFilterCount > 0 && (
             <div className="mb-5 flex flex-wrap gap-2">
-              {filters.hasOpenJobs && (
-                <span className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
-                  Has open jobs
-                  <button
-                    onClick={() => handleFiltersChange({ ...filters, hasOpenJobs: false })}
-                    className="ml-2 hover:text-[#035E3F]"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </span>
-              )}
-              {filters.locations.map(location => (
+              {locations.map(location => (
                 <span key={location} className="inline-flex items-center px-3 py-1.5 bg-[#E6F4F0] text-sm text-[#04724D] rounded-lg font-medium">
                   {location}
                   <button
-                    onClick={() => handleFiltersChange({ ...filters, locations: filters.locations.filter(l => l !== location) })}
+                    onClick={() => handleLocationsChange(locations.filter(l => l !== location))}
                     className="ml-2 hover:text-[#035E3F]"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -358,8 +290,8 @@ export default function CompaniesPage() {
           {/* Results Count */}
           <div className="mb-5 flex items-center justify-between">
             <p className="text-sm text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{sortedCompanies.length}</span> companies
-              {searching && <span className="ml-2 text-[#04724D]">Updating...</span>}
+              Showing <span className="font-semibold text-gray-900">{companies.length}</span> companies
+              {loading && <span className="ml-2 text-[#04724D]">Updating...</span>}
             </p>
           </div>
 
@@ -373,9 +305,9 @@ export default function CompaniesPage() {
             </div>
           )}
 
-          {sortedCompanies.length > 0 ? (
+          {companies.length > 0 ? (
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-              {sortedCompanies.map((company, index) => (
+              {companies.map((company, index) => (
                 <div key={company.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}>
                   <CompanyCard company={company} onViewCompany={handleViewCompany} />
                 </div>
