@@ -15,7 +15,6 @@ import {
   Star,
   ChevronRight
 } from 'lucide-react';
-import FeaturedJobs from "@/components/app/jobs/FeaturedJobs";
 import FeaturedCompanies from "@/components/app/companies/FeaturedCompanies";
 
 export default function HomePage() {
@@ -24,7 +23,7 @@ export default function HomePage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/jobs?search=${encodeURIComponent(searchQuery)}`;
+      window.location.href = `/companies?search=${encodeURIComponent(searchQuery)}`;
     }
   };
 
@@ -98,19 +97,21 @@ export default function HomePage() {
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-12">
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-gray-500 to-black-500 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative flex items-center bg-white border border-gray-200 rounded-2xl px-5 py-4 shadow-xl shadow-gray-200/30">
-                <Search className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
-                <input
-                  id="homeSearch"
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Company name, job title, keyword, or industry..."
-                  className="flex-1 text-gray-900 placeholder-gray-400 focus-visible:outline-none focus:outline-none text-base"
-                />
+              <div className="relative grid grid-cols-1 md:grid-cols-[1fr_auto] items-center bg-white border border-gray-200 rounded-2xl px-5 py-4 shadow-xl shadow-gray-200/30">
+                <div className="flex">
+                  <Search className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
+                  <input
+                    id="homeSearch"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Company name, job title, keyword, or industry..."
+                    className="flex-1 text-gray-900 placeholder-gray-400 focus-visible:outline-none focus:outline-none text-base"
+                  />
+                </div>
                 <button
                   type="submit"
-                  className="bg-teal-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40 hover:from-[#035E3F] hover:to-teal-700 transition-all ml-3"
+                  className="bg-teal-700 text-white px-6 py-2.5 mt-4 md:mt-0 rounded-xl text-sm font-semibold shadow-lg shadow-[#04724D]/25 hover:shadow-[#04724D]/40 hover:from-[#035E3F] hover:to-teal-700 transition-all ml-3"
                 >
                   Search companies
                 </button>

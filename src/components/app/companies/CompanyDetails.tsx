@@ -57,7 +57,7 @@ export default function CompanyDetails({ company, jobs }: CompanyDetailsProps) {
                 <h1 className="text-3xl font-bold text-black mb-2">
                   {company.name}
                 </h1>
-                <p className="text-lg text-gray-600 mb-4">_Industry_</p>
+                {company?.metadata?.indusry && <p className="text-lg text-gray-600 mb-4">{company.metadata.industry as string}</p>}
                 
                 <div className="flex flex-wrap items-center gap-6 text-gray-600">
                   <div className="flex items-center">

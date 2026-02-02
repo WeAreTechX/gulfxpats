@@ -86,7 +86,7 @@ export default function CompanyPreviewModal({ isOpen, onClose, company }: Compan
                   </button>
 
                   {/* Company Info */}
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 w-20 h-20 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg">
                       {company.logo_url ? (
                         <CustomImage
@@ -294,7 +294,7 @@ export default function CompanyPreviewModal({ isOpen, onClose, company }: Compan
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#04724D] to-teal-600 rounded-xl hover:from-[#035E3F] hover:to-teal-700 transition-all shadow-lg shadow-[#04724D]/25"
                       >
-                        Visit Website
+                         Website
                         <ExternalLink className="h-4 w-4" />
                       </a>
                     )}

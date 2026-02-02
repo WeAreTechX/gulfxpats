@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database, JobInsert, JobUpdate } from '@/types/supabase';
-import {QueryResponse, QueryStats, Entity, JobsQuery, Job, Statuses} from "@/types";
+import {QueryResponse, QueryStats, Entity, JobsQuery, Job} from "@/types";
 
 export class JobsService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -16,8 +16,6 @@ export class JobsService {
         currency:currencies(*),
         status:statuses(*)
       `, { count: 'exact' });
-
-    query = query.eq('status_id', Statuses.Published)
 
     if (options?.type_id) query = query.eq('type_id', options.type_id);
     if (options?.industry_id) query = query.eq('industry_id', options.industry_id);

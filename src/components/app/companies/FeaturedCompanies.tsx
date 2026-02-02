@@ -65,7 +65,7 @@ export default function FeaturedCompanies() {
           {companies && companies.length > 0 && (
             <Link
               href="/companies"
-              className="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white text-sm rounded-xl font-medium hover:bg-gray-800 transition-colors group"
+              className="flex items-center justify-center px-5 py-2.5 bg-gray-900 text-white text-sm rounded-xl font-medium hover:bg-gray-800 transition-colors group"
             >
               View All
               <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />

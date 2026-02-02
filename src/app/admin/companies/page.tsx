@@ -51,6 +51,7 @@ export default function AdminCompaniesPage() {
         </div>
         <div className="flex items-center gap-3">
           <button
+            disabled={true}
             onClick={handleRefresh}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
           >

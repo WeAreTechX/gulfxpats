@@ -17,9 +17,18 @@ export default function CompanyFilters({ locations, onLocationsChange, className
   });
 
   const middleEast = [
-    'BHR', 'CYP', 'EGY', 'IRN', 'IRQ', 'ISR', 'JOR', 'KWT', 'UAE',
+    'BHR', 'CYP', 'EGY', 'IRN', 'IRQ', 'JOR', 'KWT', 'UAE',
     'LBN', 'OMN', 'PSE', 'QAT', 'SAU', 'SYR', 'TUR', 'ARE', 'YEM'];
   const countries = COUNTRIES.filter(country => middleEast.includes(country.iso3));
+
+  // Sort countries with selected locations at the top
+  const sortedCountries = [...countries].sort((a, b) => {
+    const aSelected = locations.includes(a.iso3);
+    const bSelected = locations.includes(b.iso3);
+    if (aSelected && !bSelected) return -1;
+    if (!aSelected && bSelected) return 1;
+    return a.name.localeCompare(b.name);
+  });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections(prev => ({
@@ -85,8 +94,8 @@ export default function CompanyFilters({ locations, onLocationsChange, className
         </button>
         {expandedSections.location && (
           <div className="px-5 pb-5 space-y-2 max-h-64 overflow-y-auto">
-            {countries.length > 0 ? (
-              countries.map((country) => (
+            {sortedCountries.length > 0 ? (
+              sortedCountries.map((country) => (
                 <label key={country.code} className="flex items-center gap-3 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors">
                   <div className="relative">
                     <input

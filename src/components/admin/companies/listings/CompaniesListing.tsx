@@ -51,7 +51,7 @@ export default function CompaniesListing({ refresh, onStatsChange }: CompaniesVi
     } finally {
       setLoading(false);
     }
-  }, [onStatsChange]);
+  }, []);
 
   useEffect(() => {
     fetchData();

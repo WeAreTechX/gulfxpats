@@ -43,7 +43,7 @@ export default function JobsListing({ refresh, onFetchAction}: QueryViewAction) 
     } finally {
       setLoading(false);
     }
-  }, [onFetchAction]);
+  }, []);
 
   useEffect(() => {
     fetchData();
