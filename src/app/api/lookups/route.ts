@@ -28,12 +28,6 @@ export async function GET(request: NextRequest) {
       case 'currencies':
         data = await lookupsService.getCurrencies();
         break;
-      case 'job-locations':
-        data = await lookupsService.getJobLocations();
-        break;
-      case 'company-locations':
-        data = await lookupsService.getCompanyLocations();
-        break;
       case 'job-sources':
         data = await lookupsService.getJobSources();
         break;

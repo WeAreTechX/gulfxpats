@@ -115,32 +115,6 @@ export class LookupsService {
     return data;
   }
 
-  // Get unique locations from jobs
-  async getJobLocations(): Promise<string[]> {
-    const { data, error } = await this.supabase
-      .from('jobs')
-      .select('location')
-      .not('location', 'is', null);
-
-    if (error) throw error;
-    
-    const locations = [...new Set(data?.map((j: Job) => j.location).filter(Boolean) as string[])];
-    return locations.sort();
-  }
-
-  // Get unique locations from companies
-  async getCompanyLocations(): Promise<string[]> {
-    const { data, error } = await this.supabase
-      .from('companies')
-      .select('location')
-      .not('location', 'is', null);
-
-    if (error) throw error;
-    
-    const locations = [...new Set(data?.map((c: Company) => c.location).filter(Boolean) as string[])];
-    return locations.sort();
-  }
-
   // Sources
   async getJobSources(): Promise<JobSource[]> {
     const { data, error } = await this.supabase
